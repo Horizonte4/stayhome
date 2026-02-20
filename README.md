@@ -1,3 +1,7 @@
+usar
+docker compose up --build
+docker compose down
+
 Proyecto básico en Django conectado a PostgreSQL, con un formulario web para registrar usuarios en la base de datos.
 
  Requisitos
