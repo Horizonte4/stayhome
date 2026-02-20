@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: stayhome_db
+    restart: always
+    environment:
+      POSTGRES_DB: usuarios_db
+      POSTGRES_USER: usuario_django
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    container_name: stayhome_web
+    restart: always
+    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_NAME: usuarios_db
+      DB_USER: usuario_django
+      DB_PASSWORD: password123
+      DB_HOST: db
+      DB_PORT: 5432
+
+volumes:
+  postgres_data:
