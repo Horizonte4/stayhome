@@ -30,7 +30,7 @@ services:
       DB_USER: usuario_django
       DB_PASSWORD: password123
       DB_HOST: db
-      DB_PORT: 5432
+      DB_PORT: 5433
 
 volumes:
   postgres_data:

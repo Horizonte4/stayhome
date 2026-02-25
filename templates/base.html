@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <!-- En Django usa: <link href="{% static 'pages/app.css' %}" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <title>{% block title %}StayHome{% endblock %}</title>
+</head>
+
+<body>
+
+    <!-- ── NAVBAR ── -->
+    <nav>
+        <a href="#" class="logo"></a>
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                </svg>
+            </div>
+            <span class="logo-text">Stay <span>Home</span></span>
+        </a>
+
+        <ul class="nav-links">
+            <li>
+                <a href="#" class="logo"></a>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                    </svg>
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="#" class="{% block nav_property %}{% endblock %}"></a>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M17 11h2v2h-2v-2zm0 4h2v2h-2v-2zm-4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM1 21h22V3H1v18zm2-2V5h18v14H3zm4-8h2v2H7v-2zm0 4h2v2H7v-2zM7 7h2v2H7V7z" />
+                    </svg>
+                    Property
+                </a>
+            </li>
+            <li>
+                <a href="#" class="{% block nav_bookings %}{% endblock %}"></a>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zM7 10h5v5H7z" />
+                    </svg>
+                    My Booking
+                </a>
+            </li>
+            <li>
+                 <a href="#" class="{% block nav_favorites %}{% endblock %}"></a>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                    Favorites
+                </a>
+            </li>
+            <li>
+                <a href="#" class="{% block nav_messages %}{% endblock %}"></a>
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z" />
+                    </svg>
+                    Messages
+                </a>
+            </li>
+        </ul>
+
+        <div class="nav-right">
+            <a href="#" class="btn-list"></a>
+                <svg viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
+                List Properties
+            </a>
+            <div class="profile-wrapper">
+                <button class="profile-btn" aria-label="Profile">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                    </svg>
+                </button>
+                <span class="online-dot"></span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="page">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
+    <section class="cta-section">
+        <div class="cta-badge">🏡 Join StayHome</div>
+        <h2 class="cta-title">Ready to Find Your Perfect Home?</h2>
+        <p class="cta-sub">
+            Join thousands of satisfied users who found their dream properties through StayHome.
+        </p>
+        <div class="cta-actions">
+             <a href="#" class="cta-btn-primary">🔍 Browse Properties</a>
+            <a href="#" class="cta-btn-secondary">➕ List Your Property</a>
+
+
+        </div>
+        <div class="cta-stats">
+            <div>
+                <div class="cta-stat-num">12,400+</div>
+                <div class="cta-stat-label">Properties Listed</div>
+            </div>
+            <div>
+                <div class="cta-stat-num">8,900+</div>
+                <div class="cta-stat-label">Happy Tenants</div>
+            </div>
+            <div>
+                <div class="cta-stat-num">150+</div>
+                <div class="cta-stat-label">Cities Covered</div>
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+
+</body>
+
+</html>
