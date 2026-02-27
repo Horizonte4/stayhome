@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Home – StayHome{% endblock %}
+{% block nav_home %}active{% endblock %}
+{% block content %}
+  <div class="page">
+    <div class="card" style="max-width: 480px; margin: 60px auto; padding: 32px;">
+
+        <h2 class="section-title" style="text-align:center;">Log in</h2>
+        <p class="section-sub" style="text-align:center; margin-bottom:24px;">
+            Use your email and password to continue.
+        </p>
+
+        <form action="{% url 'inicio_sesion' %}" method="post">
+            {% csrf_token %}
+
+            <div style="margin-bottom:16px;">
+                <label style="font-size:0.85rem; font-weight:600; color:#1e293b;">
+                    Email
+                </label>
+                <input type="email" name="email" required
+                       style="width:100%; padding:10px 12px; border-radius:8px;
+                              border:1px solid #cbd5e1; margin-top:6px;">
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <label style="font-size:0.85rem; font-weight:600; color:#1e293b;">
+                    Password
+                </label>
+                <input type="password" name="password" required
+                       style="width:100%; padding:10px 12px; border-radius:8px;
+                              border:1px solid #cbd5e1; margin-top:6px;">
+            </div>
+
+            <button type="submit" class="btn-list" style="width:100%; justify-content:center;">
+                Log in
+            </button>
+
+            <p style="text-align:center; margin-top:18px; font-size:0.85rem; color:#64748b;">
+                Don't have an account?
+                <a href="{% url 'registrar' %}" style="color:#2563eb; font-weight:600;">
+                    Sign up
+                </a>
+            </p>
+
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+

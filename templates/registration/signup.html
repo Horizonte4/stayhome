@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up – StayHome{% endblock %}
+{% block content %}
+
+<div class="page">
+    <div class="card" style="max-width: 520px; margin: 60px auto; padding: 32px;">
+
+        <h2 class="section-title" style="text-align:center;">Create Account</h2>
+        <p class="section-sub" style="text-align:center; margin-bottom:24px;">
+            Join StayHome to book properties or list your own.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Mostrar errores generales -->
+            {{ form.non_field_errors }}
+
+            <!-- Role Selection -->
+            <div style="margin-bottom:20px;">
+                <label style="font-size:0.85rem; font-weight:600; color:#1e293b;">
+                    I want to join as:
+                </label>
+                <div style="margin-top:8px;">
+                    {{ form.tipo_usuario }}
+                </div>
+                {{ form.tipo_usuario.errors }}
+            </div>
+
+            <!-- First Name -->
+            <div style="margin-bottom:16px;">
+                <label>First Name</label>
+                {{ form.first_name }}
+                {{ form.first_name.errors }}
+            </div>
+
+            <!-- Last Name -->
+            <div style="margin-bottom:16px;">
+                <label>Last Name</label>
+                {{ form.last_name }}
+                {{ form.last_name.errors }}
+            </div>
+
+            <!-- Email -->
+            <div style="margin-bottom:16px;">
+                <label>Email</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <!-- Phone -->
+            <div style="margin-bottom:16px;">
+                <label>Phone</label>
+                {{ form.telefono }}
+                {{ form.telefono.errors }}
+            </div>
+
+            <!-- Password -->
+            <div style="margin-bottom:16px;">
+                <label>Password</label>
+                {{ form.password1 }}
+                {{ form.password1.errors }}
+            </div>
+
+            <!-- Confirm Password -->
+            <div style="margin-bottom:24px;">
+                <label>Confirm Password</label>
+                {{ form.password2 }}
+                {{ form.password2.errors }}
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-list" style="width:100%; justify-content:center;">
+                Create Account
+            </button>
+
+            <p style="text-align:center; margin-top:18px; font-size:0.85rem; color:#64748b;">
+                Already have an account?
+                <a href="{% url 'inicio_sesion' %}" style="color:#2563eb; font-weight:600;">
+                    Log in
+                </a>
+            </p>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

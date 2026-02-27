@@ -18,7 +18,7 @@ services:
     build: .
     container_name: stayhome_web
     restart: always
-    command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
@@ -26,11 +26,12 @@ services:
     depends_on:
       - db
     environment:
+      DEBUG: "False"
       DB_NAME: usuarios_db
       DB_USER: usuario_django
       DB_PASSWORD: password123
       DB_HOST: db
-      DB_PORT: 5433
+      DB_PORT: 5432
 
 volumes:
   postgres_data:

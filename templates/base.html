@@ -77,17 +77,14 @@
                 <svg viewBox="0 0 24 24">
                     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
                 </svg>
-                List Properties
+                List Properties 
             </a>
-            <div class="profile-wrapper">
-                <button class="profile-btn" aria-label="Profile">
-                    <svg viewBox="0 0 24 24">
-                        <path
-                            d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
-                    </svg>
-                </button>
-                <span class="online-dot"></span>
-            </div>
+        <a href="{% url 'inicio_sesion' %}" class="btn-list {% block nav_login %}{% endblock %}">
+    <svg viewBox="0 10 15 24">
+        <path d="M10 17l5-5-5-5v3H3v4h7v3z"/>
+    </svg>
+    Login
+</a>
         </div>
     </nav>
 
