@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Crear Propiedad{% endblock %}
+
+{% block content %}
+
+<h2 class="section-title">Create Property Listing</h2>
+
+<form method="post" style="max-width:600px; margin-top:30px;">
+    {% csrf_token %}
+
+    <div style="margin-bottom:20px;">
+        <label>Title</label>
+        {{ form.titulo }}
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <label>City</label>
+        {{ form.ciudad }}
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <label>Price</label>
+        {{ form.precio }}
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <label>Status</label>
+        {{ form.estado }}
+    </div>
+
+    <div style="margin-bottom:20px;">
+        <label>
+            {{ form.publicacion_activa }} Active
+        </label>
+    </div>
+
+    <button type="submit" class="btn-list">
+        Create Listing
+    </button>
+
+</form>
+
+{% endblock %}

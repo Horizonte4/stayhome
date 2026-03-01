@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Home | StayHome{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section style="
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+    padding: 80px 60px;
+    border-radius: 24px;
+    color: white;
+    margin-bottom: 70px;
+">
+
+    <div style="max-width: 650px;">
+        <h1 style="
+            font-size: clamp(2.4rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 18px;
+        ">
+            Find Your Perfect Home
+        </h1>
+
+        <p style="
+            font-size: 1.05rem;
+            color: #dbeafe;
+            margin-bottom: 36px;
+            line-height: 1.6;
+        ">
+            Discover properties for rent, sale, or short-term stays.
+            Connect directly with owners.
+        </p>
+
+        <!-- SEARCH BAR -->
+        <div style="
+            background: white;
+            padding: 12px;
+            border-radius: 14px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        ">
+            <input type="text"
+                placeholder="Where are you going?"
+                style="
+                    flex: 1;
+                    border: none;
+                    outline: none;
+                    padding: 14px;
+                    border-radius: 10px;
+                    background: #f1f5f9;
+                    font-size: 0.95rem;
+                "
+            >
+
+            <button style="
+                background: #2563eb;
+                color: white;
+                border: none;
+                padding: 14px 28px;
+                border-radius: 10px;
+                font-weight: 600;
+                cursor: pointer;
+            ">
+                Search
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+<!-- FEATURED SECTION -->
+<section>
+    <h2 class="section-title">Featured Properties</h2>
+    <p class="section-sub">
+        Properties will appear here once listings are created.
+    </p>
+
+    <div class="cards">
+        {% for propiedad in propiedades %}
+            <div class="property-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
+                <h3>{{ propiedad.titulo }}</h3>
+                <p>Ciudad: {{ propiedad.ciudad }}</p>
+                <p>Precio: ${{ propiedad.precio }}</p>
+                <p>Estado: {{ propiedad.estado }}</p>
+            </div>
+        {% empty %}
+            <p>No hay propiedades disponibles.</p>
+        {% endfor %}
+    </div>
+</section>
+
+{% endblock %}
