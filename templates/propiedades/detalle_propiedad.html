@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Property Detail – StayHome{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="card" style="max-width: 800px; margin: 40px auto; padding: 32px;">
+
+        <h2 class="section-title">{{ propiedad.titulo }}</h2>
+        <p class="section-sub">Complete property information</p>
+
+        <hr style="margin: 20px 0;">
+
+        <p><strong>City:</strong> {{ propiedad.ciudad }}</p>
+        <p><strong>Price:</strong> ${{ propiedad.precio }}</p>
+        <p><strong>Status:</strong> {{ propiedad.estado }}</p>
+        <p><strong>Published:</strong> {{ propiedad.created_at }}</p>
+        <p><strong>Active listing:</strong>
+            {% if propiedad.publicacion_activa %}
+                Yes
+            {% else %}
+                No
+            {% endif %}
+        </p>
+
+        {% if propiedad.publicacion_activa %}
+        <div style="margin-top: 24px;">
+            <a href="{% url 'transacciones:request_lease' propiedad.id %}" class="btn-list">
+                Request Lease
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

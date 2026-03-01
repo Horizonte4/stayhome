@@ -4,7 +4,6 @@ from .models import Usuario
 
 
 class RegisterForm(UserCreationForm):
-
     TIPO_USUARIO = (
         ('cliente', 'Cliente'),
         ('propietario', 'Propietario'),

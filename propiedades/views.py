@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
 from .models import Propiedad
 
@@ -7,7 +7,6 @@ def listar_propiedades(request):
     """Vista simple para listar propiedades filtrables y paginadas."""
     qs = Propiedad.objects.disponibles()
 
-    # Filtros opcionales desde query params
     ciudad = request.GET.get('ciudad')
     min_precio = request.GET.get('min_precio')
     max_precio = request.GET.get('max_precio')
@@ -23,9 +22,13 @@ def listar_propiedades(request):
         except (ValueError, TypeError):
             pass
 
-    # Paginación
     paginator = Paginator(qs, 20)
     page = request.GET.get('page')
     propiedades = paginator.get_page(page)
 
     return render(request, 'propiedades/lista.html', {'propiedades': propiedades})
+
+
+def detalle_propiedad(request, pk):
+    propiedad = get_object_or_404(Propiedad, pk=pk)
+    return render(request, 'propiedades/detalle_propiedad.html', {'propiedad': propiedad})

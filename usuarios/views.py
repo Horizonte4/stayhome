@@ -1,11 +1,9 @@
-from django.shortcuts import render, redirect
-from .models import Usuario
-from django import forms
+from django.shortcuts import redirect
 from django.views.generic import CreateView
-from django.contrib.auth.forms import UserCreationForm
-from django.urls import reverse_lazy
-
 from django.contrib.auth.views import LoginView
+from django.urls import reverse_lazy
+from django.http import HttpResponse
+
 from .forms import RegisterForm
 from .models import Cliente, Propietario
 
@@ -24,22 +22,32 @@ class Inicio_SesionView(LoginView):
 
         return reverse_lazy('home')
 
+
 class RegistrarView(CreateView):
     form_class = RegisterForm
     template_name = 'registration/signup.html'
     success_url = reverse_lazy('inicio_sesion')
 
     def form_valid(self, form):
-        user = form.save()
+        self.object = form.save()
 
         tipo = form.cleaned_data.get('tipo_usuario')
 
         if tipo == 'cliente':
-            Cliente.objects.create(usuario=user)
+            Cliente.objects.create(usuario=self.object)
         elif tipo == 'propietario':
-            Propietario.objects.create(usuario=user)
+            Propietario.objects.create(usuario=self.object)
 
-        return super().form_valid(form)
+        return redirect(self.get_success_url())
 
 
-   
+def home(request):
+    return HttpResponse("Home StayHome")
+
+
+def dashboard_cliente(request):
+    return HttpResponse("Dashboard Cliente")
+
+
+def dashboard_propietario(request):
+    return HttpResponse("Dashboard Propietario")

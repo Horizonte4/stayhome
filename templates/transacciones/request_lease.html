@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Request Lease – StayHome{% endblock %}
+
+{% block content %}
+<div class="page">
+    <div class="card" style="max-width: 600px; margin: 50px auto; padding: 32px;">
+
+        <h2 class="section-title">Request Lease</h2>
+        <p class="section-sub">
+            Property: <strong>{{ propiedad.titulo }}</strong> - {{ propiedad.ciudad }}
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div style="margin-bottom:16px;">
+                <label>Desired Start Date</label>
+                {{ form.fecha_inicio_deseada }}
+                {{ form.fecha_inicio_deseada.errors }}
+            </div>
+
+            <div style="margin-bottom:24px;">
+                <label>Desired End Date</label>
+                {{ form.fecha_fin_deseada }}
+                {{ form.fecha_fin_deseada.errors }}
+            </div>
+
+            <button type="submit" class="btn-list">
+                Send Request
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
