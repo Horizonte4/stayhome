@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Editar Propiedad: {{ propiedad.titulo }}</h2>
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}  <!-- Renderiza el formulario como párrafos -->
+    <button type="submit">Guardar Cambios</button>
+</form>
+
+{% endblock %}
