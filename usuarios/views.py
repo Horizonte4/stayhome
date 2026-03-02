@@ -1,28 +1,40 @@
 from django.shortcuts import render, redirect
-from .models import Usuario
-from django import forms
 from django.views.generic import CreateView
-from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
+from django import forms
 
-from django.contrib.auth.views import LoginView
-from .forms import RegisterForm
-from .models import Cliente, Propietario
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.db import IntegrityError
 
+from .models import Usuario, Cliente, Propietario
+from .forms import RegisterForm, LoginForm
 
-class Inicio_SesionView(LoginView):
-    template_name = 'registration/login.html'
+def loginaccount(request):
+    if request.method == 'GET':
+        return render(request, 'login.html', {
+            'form': AuthenticationForm()
+        })
+    else:
+        form = AuthenticationForm(data=request.POST)
 
-    def get_success_url(self):
-        user = self.request.user
+        print("FORM VALID:", form.is_valid())
+        print("ERRORS:", form.errors)
 
-        if hasattr(user, 'propietario'):
-            return reverse_lazy('dashboard_propietario')
-
-        if hasattr(user, 'cliente'):
-            return reverse_lazy('dashboard_cliente')
-
-        return reverse_lazy('home')
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            print("LOGIN SUCCESS")
+            return redirect('tablero')
+        else:
+            print("LOGIN FAILED")
+            return render(request, 'login.html', {
+                'form': form,
+                'error': 'Username and password do not match'
+            })
 
 class RegistrarView(CreateView):
     form_class = RegisterForm
@@ -41,5 +53,29 @@ class RegistrarView(CreateView):
 
         return super().form_valid(form)
 
+@login_required
+def dashboard(request):
+    user = request.user
+
+    if hasattr(user, 'propietario'):
+        rol = "propietario"
+    elif hasattr(user, 'cliente'):
+        rol = "cliente"
+    else:
+        rol = "usuario"
+
+    return render(request, "usuarios/tablero.html", {
+        "rol": rol
+    })
+
+#@login_required
+
+#def dashboard(request):
+#   return render(request, "usuarios/dashboard.html")
+
+
+def cerrar_sesion(request):
+    logout(request)
+    return redirect("inicio_sesion")
 
    

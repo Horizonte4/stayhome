@@ -414,4 +414,16 @@ nav {
   color: #94a3b8;
 }
 
+.logout-link {
+  display: inline-block;
+  margin-top: 30px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logout-link:hover {
+  opacity: 0.7;
+}
 
