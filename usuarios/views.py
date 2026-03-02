@@ -9,6 +9,7 @@ from .forms import RegisterForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Cliente, Propietario
+from django.contrib.auth import login, logout, authenticate
 
 
 # HOME
@@ -17,9 +18,9 @@ def home(request):
     return render(request, "usuarios/home.html", {'propiedades': propiedades})
 
 
-def loginaccount(request):
+def Inicio_SesionView(request):
     if request.method == 'GET':
-        return render(request, 'login.html', {
+        return render(request, 'registration/login.html', {
             'form': AuthenticationForm()
         })
     else:
