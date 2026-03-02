@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Listado de Propiedades</h2>
+
+{% if propiedades %}
+    {% for propiedad in propiedades %}
+        <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+            <h3>{{ propiedad.titulo }}</h3>
+            <p>Ciudad: {{ propiedad.ciudad }}</p>
+            <p>Precio: ${{ propiedad.precio }}</p>
+            <p>Estado: {{ propiedad.estado }}</p>
+            <!-- Enlace para editar la propiedad -->
+            <a href="{% url 'propiedades:editar_propiedad' pk=propiedad.pk %}">Editar</a>
+
+            <!-- Formulario para eliminar la propiedad -->
+            <form action="{% url 'propiedades:eliminar_propiedad' pk=propiedad.pk %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; border-radius: 5px;">Eliminar</button>
+            </form>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No hay propiedades disponibles.</p>
+{% endif %}
+
+{% endblock %}

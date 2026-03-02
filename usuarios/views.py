@@ -1,17 +1,21 @@
+from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
-from django import forms
-
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
+from propiedades.models import Propiedad
+from .forms import RegisterForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from django.db import IntegrityError
+from .models import Cliente, Propietario
 
-from .models import Usuario, Cliente, Propietario
-from .forms import RegisterForm, LoginForm
+
+# HOME
+def home(request):
+    propiedades = Propiedad.objects.disponibles()
+    return render(request, "usuarios/home.html", {'propiedades': propiedades})
+
 
 def loginaccount(request):
     if request.method == 'GET':
@@ -36,6 +40,8 @@ def loginaccount(request):
                 'error': 'Username and password do not match'
             })
 
+
+# REGISTRO
 class RegistrarView(CreateView):
     form_class = RegisterForm
     template_name = 'registration/signup.html'
@@ -43,7 +49,6 @@ class RegistrarView(CreateView):
 
     def form_valid(self, form):
         user = form.save()
-
         tipo = form.cleaned_data.get('tipo_usuario')
 
         if tipo == 'cliente':
@@ -54,7 +59,7 @@ class RegistrarView(CreateView):
         return super().form_valid(form)
 
 @login_required
-def dashboard(request):
+def tablero(request):
     user = request.user
 
     if hasattr(user, 'propietario'):
@@ -78,4 +83,13 @@ def cerrar_sesion(request):
     logout(request)
     return redirect("inicio_sesion")
 
+# DASHBOARDS (fuera de las clases)
+@login_required
+def dashboard_cliente(request):
+    return render(request, "usuarios/dashboard_cliente.html")
+
+
+@login_required
+def dashboard_propietario(request):
+    return render(request, "usuarios/dashboard_propietario.html")
    
