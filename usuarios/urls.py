@@ -5,7 +5,7 @@ from .views import (
     RegistrarView,
     Inicio_SesionView,
     dashboard_cliente,
-    dashboard_propietario
+    dashboard_propietario,
 )
 
 urlpatterns = [
