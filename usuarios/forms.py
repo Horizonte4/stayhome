@@ -25,3 +25,22 @@ class RegisterForm(UserCreationForm):
             'password1',
             'password2',
         )
+        
+class LoginForm(forms.Form):
+    email = forms.EmailField(label="Email")
+    password = forms.CharField(
+        label="Password",
+        widget=forms.PasswordInput
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get("email")
+        password = cleaned_data.get("password")
+
+        if email and password:
+            user = authenticate(username=email, password=password)
+            if not user:
+                raise forms.ValidationError("Email o contraseña incorrectos.")
+
+        return cleaned_data

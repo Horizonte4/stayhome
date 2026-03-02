@@ -505,3 +505,100 @@ nav {
   background: #f1f5f9;
   color: #64748b;
 }
+.logout-link {
+  display: inline-block;
+  margin-top: 30px;
+  color: #ef4444;
+  font-weight: 600;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.logout-link:hover {
+  opacity: 0.7;
+}
+
+/* ════════════════════════════════════════
+   AUTH FORM (Register / Login)
+════════════════════════════════════════ */
+
+.auth-card {
+  max-width: 720px;
+  margin: 60px auto;
+  padding: 40px;
+}
+
+.auth-form {
+  margin-top: 20px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.auth-form input,
+.auth-form select {
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.auth-form input:focus,
+.auth-form select:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.full-width {
+  width: 100%;
+  justify-content: center;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.auth-footer a {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .auth-card {
+    padding: 30px 20px;
+  }
+}
