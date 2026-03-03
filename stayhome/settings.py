@@ -158,3 +158,6 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 LOGIN_REDIRECT_URL = 'tablero'
 LOGOUT_REDIRECT_URL = '/registration/login/'
 LOGIN_URL = '/registration/login/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

@@ -3,41 +3,126 @@
 
 {% block content %}
 
-<h2 class="section-title">Create Property Listing</h2>
+<style>
+    .form-card { background:#fff; padding:28px; border-radius:18px; box-shadow:0 16px 40px rgba(0,0,0,0.08); border:1px solid #e5e7eb; max-width:880px; }
+    .form-title { font-size:1.6rem; font-weight:800; margin-bottom:10px; }
+    .form-sub { color:#6b7280; margin-bottom:22px; }
+    .form-grid { display:grid; gap:14px; }
+    .two-col { grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); }
+    .three-col { grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); }
+    .field { display:flex; flex-direction:column; gap:8px; }
+    .field label { font-weight:700; color:#111827; }
+    .field input, .field textarea, .field select { border:1px solid #d1d5db; border-radius:12px; padding:12px 14px; font-size:0.95rem; background:#f9fafb; }
+    .field input:focus, .field textarea:focus, .field select:focus { outline:2px solid #3b82f6; background:#fff; }
+    .pill-checkbox { display:flex; align-items:center; gap:10px; padding:12px 14px; border:1px solid #d1d5db; border-radius:12px; background:#f9fafb; }
+    .submit-bar { margin-top:10px; }
+</style>
 
-<form method="post" style="max-width:600px; margin-top:30px;">
-    {% csrf_token %}
+<div class="form-card">
+    <div class="form-title">Create Property Listing</div>
+    <div class="form-sub">Añade fotos desde tu PC o usa una URL. Completa los datos para que luzca profesional.</div>
 
-    <div style="margin-bottom:20px;">
-        <label>Title</label>
-        {{ form.titulo }}
-    </div>
+    {% if messages %}
+        <div style="background:#ecfeff; border:1px solid #67e8f9; color:#0f172a; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
+            {% for message in messages %}{{ message }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+        </div>
+    {% endif %}
 
-    <div style="margin-bottom:20px;">
-        <label>City</label>
-        {{ form.ciudad }}
-    </div>
+    {% if form.non_field_errors %}
+        <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
+            {% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+        </div>
+    {% endif %}
 
-    <div style="margin-bottom:20px;">
-        <label>Price</label>
-        {{ form.precio }}
-    </div>
+    <form method="post" enctype="multipart/form-data" class="form-grid" novalidate>
+        {% csrf_token %}
 
-    <div style="margin-bottom:20px;">
-        <label>Status</label>
-        {{ form.estado }}
-    </div>
+        <div class="field">
+            <label>Title</label>
+            {{ form.titulo }}
+            {{ form.titulo.errors }}
+        </div>
 
-    <div style="margin-bottom:20px;">
-        <label>
-            {{ form.publicacion_activa }} Active
-        </label>
-    </div>
+        <div class="field">
+            <label>Description</label>
+            {{ form.descripcion }}
+            {{ form.descripcion.errors }}
+        </div>
 
-    <button type="submit" class="btn-list">
-        Create Listing
-    </button>
+        <div class="form-grid two-col">
+            <div class="field">
+                <label>Address</label>
+                {{ form.direccion }}
+                {{ form.direccion.errors }}
+            </div>
+            <div class="field">
+                <label>City</label>
+                {{ form.ciudad }}
+                {{ form.ciudad.errors }}
+            </div>
+        </div>
 
-</form>
+        <div class="form-grid three-col">
+            <div class="field">
+                <label>Price</label>
+                {{ form.precio }}
+                {{ form.precio.errors }}
+            </div>
+            <div class="field">
+                <label>Status</label>
+                {{ form.estado }}
+                {{ form.estado.errors }}
+            </div>
+            <div class="field">
+                <label>Listing type</label>
+                {{ form.tipo_publicacion }}
+                {{ form.tipo_publicacion.errors }}
+            </div>
+            <div class="field">
+                <label>Bedrooms</label>
+                {{ form.habitaciones }}
+                {{ form.habitaciones.errors }}
+            </div>
+            <div class="field">
+                <label>Bathrooms</label>
+                {{ form.banos }}
+                {{ form.banos.errors }}
+            </div>
+            <div class="field">
+                <label>Area (m²)</label>
+                {{ form.metros_cuadrados }}
+                {{ form.metros_cuadrados.errors }}
+            </div>
+            <div class="field">
+                <label>Guests capacity</label>
+                {{ form.capacidad_personas }}
+                {{ form.capacidad_personas.errors }}
+            </div>
+        </div>
+
+        <div class="form-grid two-col">
+            <div class="field">
+                <label>Main photo (upload)</label>
+                {{ form.imagen }}
+                {{ form.imagen.errors }}
+            </div>
+            <div class="field">
+                <label>Main photo URL (optional)</label>
+                {{ form.imagen_url }}
+                {{ form.imagen_url.errors }}
+            </div>
+        </div>
+
+        <div class="pill-checkbox">
+            {{ form.publicacion_activa }}
+            <span>Active publication</span>
+            {{ form.publicacion_activa.errors }}
+        </div>
+
+        <div class="submit-bar">
+            <button type="submit" class="btn-list">Save listing</button>
+        </div>
+    </form>
+</div>
 
 {% endblock %}

@@ -42,6 +42,14 @@ class Usuario(AbstractUser):
     def __str__(self):
         return self.email
 
+    @property
+    def es_propietario(self):
+        return hasattr(self, "propietario")
+
+    @property
+    def es_cliente(self):
+        return hasattr(self, "cliente")
+
 
 # ─────────────────────────────────────────
 # CLIENTE
