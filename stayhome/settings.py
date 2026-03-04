@@ -156,7 +156,7 @@ STATICFILES_DIRS = [
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
 LOGIN_REDIRECT_URL = 'tablero'
-LOGOUT_REDIRECT_URL = '/registration/login/'
+LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = '/registration/login/'
 
 MEDIA_URL = '/media/'

@@ -36,7 +36,7 @@ def Inicio_SesionView(request):
             return redirect('tablero')
         else:
             print("LOGIN FAILED")
-            return render(request, 'login.html', {
+            return render(request, 'registration/login.html', {
                 'form': form,
                 'error': 'Username and password do not match'
             })
@@ -80,9 +80,9 @@ def tablero(request):
 #   return render(request, "usuarios/dashboard.html")
 
 
-def cerrar_sesion(request):
+def logout(request):
     logout(request)
-    return redirect("inicio_sesion")
+    return redirect("home")
 
 # DASHBOARDS (fuera de las clases)
 @login_required

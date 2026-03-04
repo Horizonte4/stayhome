@@ -602,3 +602,14 @@ nav {
     padding: 30px 20px;
   }
 }
+
+/* Form errors */
+.form-errors {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 0.9rem;
+}
