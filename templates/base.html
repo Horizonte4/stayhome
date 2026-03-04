@@ -73,18 +73,20 @@
         </ul>
 
         <div class="nav-right">
-           <a href="{% url 'propiedades:crear_propiedad' %}" class="btn-list">
-    <svg viewBox="0 0 24 24">
-        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-    </svg>
-    List Properties 
-</a>
+           {% if request.user.is_authenticated and request.user.es_propietario %}
+               <a href="{% url 'propiedades:crear_propiedad' %}" class="btn-list">
+        <svg viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+        </svg>
+        List Properties 
+    </a>
+           {% endif %}
         <a href="{% url 'inicio_sesion' %}" class="btn-list {% block nav_login %}{% endblock %}">
     <svg viewBox="0 10 15 24">
         <path d="M10 17l5-5-5-5v3H3v4h7v3z"/>
     </svg>
     Login
-</a>
+    </a>
         </div>
     </nav>
 

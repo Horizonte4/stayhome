@@ -25,6 +25,21 @@ class RegisterForm(UserCreationForm):
             'password1',
             'password2',
         )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name in ['email', 'first_name', 'last_name', 'telefono', 'password1', 'password2', 'tipo_usuario']:
+            if name in self.fields:
+                self.fields[name].required = True
+                self.fields[name].widget.attrs.setdefault('required', 'required')
+
+    def clean(self):
+        cleaned = super().clean()
+        # Ensure telefono present
+        telefono = cleaned.get('telefono')
+        if not telefono:
+            self.add_error('telefono', 'El teléfono es obligatorio.')
+        return cleaned
         
 class LoginForm(forms.Form):
     email = forms.EmailField(label="Email")

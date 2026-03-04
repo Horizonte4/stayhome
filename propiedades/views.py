@@ -1,17 +1,32 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.utils import timezone
+from datetime import date, timedelta
+import calendar
 from .models import Propiedad
 from .forms import PropiedadForm
+from transacciones.models import Contrato
 
 # Crear Propiedad
 @login_required
 def crear_propiedad(request):
+    propietario = getattr(request.user, 'propietario', None)
+    if not propietario:
+        messages.error(request, 'Solo los propietarios pueden crear anuncios.')
+        return redirect('home')
+
     if request.method == 'POST':
-        form = PropiedadForm(request.POST)
+        form = PropiedadForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            propiedad = form.save(commit=False)
+            propiedad.propietario = propietario
+            propiedad.save()
+            messages.success(request, 'Propiedad creada correctamente.')
             return redirect('propiedades:listar_propiedades')
+        else:
+            messages.error(request, 'Corrige los errores marcados para guardar la propiedad.')
     else:
         form = PropiedadForm()
 
@@ -71,3 +86,51 @@ def listar_propiedades(request):
     propiedades = paginator.get_page(page)
 
     return render(request, 'propiedades/lista.html', {'propiedades': propiedades})
+
+
+def _month_bounds(today: date):
+    first = today.replace(day=1)
+    last_day = calendar.monthrange(today.year, today.month)[1]
+    last = today.replace(day=last_day)
+    return first, last
+
+
+def _unavailable_dates(propiedad):
+    hoy = timezone.localdate()
+    start_month, end_month = _month_bounds(hoy)
+    contratos = propiedad.contratos.filter(
+        fecha_inicio__isnull=False,
+        fecha_fin__isnull=False,
+        fecha_inicio__lte=end_month,
+        fecha_fin__gte=start_month,
+    )
+    blocked = set()
+    for contrato in contratos:
+        current = max(start_month, contrato.fecha_inicio)
+        end = min(end_month, contrato.fecha_fin)
+        while current <= end:
+            blocked.add(current)
+            current += timedelta(days=1)
+    return blocked, start_month, end_month
+
+
+def detalle_propiedad(request, pk):
+    propiedad = get_object_or_404(Propiedad, pk=pk, publicacion_activa=True)
+    blocked, start_month, end_month = _unavailable_dates(propiedad)
+
+    days = []
+    current = start_month
+    while current <= end_month:
+        days.append({
+            'date': current,
+            'is_blocked': current in blocked,
+            'is_today': current == timezone.localdate(),
+        })
+        current += timedelta(days=1)
+
+    context = {
+        'propiedad': propiedad,
+        'days': days,
+        'month_label': start_month.strftime('%B %Y'),
+    }
+    return render(request, 'propiedades/detalle.html', context)

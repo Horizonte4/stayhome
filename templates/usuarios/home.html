@@ -73,19 +73,137 @@
 
 <!-- FEATURED SECTION -->
 <section>
-    <h2 class="section-title">Featured Properties</h2>
-    <p class="section-sub">
-        Properties will appear here once listings are created.
-    </p>
+    <style>
+        .property-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:22px; }
+        .featured-card { background:#fff; border:1px solid #e5e7eb; border-radius:18px; overflow:hidden; box-shadow:0 12px 30px rgba(0,0,0,0.08); display:flex; flex-direction:column; }
+        .featured-media { position:relative; padding-top:62%; background-size:cover; background-position:center; }
+        .pill-row { position:absolute; top:14px; left:14px; display:flex; gap:8px; }
+        .pill { background:#111827; color:#fff; padding:6px 10px; border-radius:20px; font-size:12px; font-weight:600; letter-spacing:0.2px; text-transform:uppercase; }
+        .pill-featured { background:#2563eb; }
+        .like-btn { position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.9); display:grid; place-items:center; color:#111827; }
+        .featured-body { padding:18px; display:flex; flex-direction:column; gap:10px; }
+        .featured-title { font-weight:700; font-size:1.05rem; margin:0; }
+        .featured-address { display:flex; align-items:center; gap:6px; color:#6b7280; font-size:0.94rem; margin:0; }
+        .featured-desc { color:#4b5563; margin:0; line-height:1.5; }
+        .meta-row { display:flex; gap:18px; color:#4b5563; font-weight:600; font-size:0.95rem; }
+        .meta-chip { display:flex; align-items:center; gap:8px; }
+        .card-footer { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+        .price-tag { color:#1d4ed8; font-size:1.3rem; font-weight:800; }
+        .price-tag small { color:#6b7280; font-weight:600; }
+        .ghost-btn { border:1px solid #d1d5db; padding:10px 14px; border-radius:10px; color:#0f172a; font-weight:700; background:#f8fafc; text-decoration:none; }
+    </style>
 
-    <div class="cards">
+    <h2 class="section-title">Featured Properties</h2>
+    <p class="section-sub">See what owners are listing right now.</p>
+
+    <div class="property-grid">
         {% for propiedad in propiedades %}
-            <div class="property-card" style="border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 8px;">
-                <h3>{{ propiedad.titulo }}</h3>
-                <p>Ciudad: {{ propiedad.ciudad }}</p>
-                <p>Precio: ${{ propiedad.precio }}</p>
-                <p>Estado: {{ propiedad.estado }}</p>
-            </div>
+            {% if propiedad.imagen %}
+                {% with portada=propiedad.imagen.url %}
+                    <article class="featured-card">
+                        <div class="featured-media" style="background-image:url('{{ portada }}');">
+                            <div class="pill-row">
+                                <span class="pill">{{ propiedad.get_estado_display }}</span>
+                                <span class="pill pill-featured">{{ propiedad.get_tipo_publicacion_display }}</span>
+                                {% if propiedad.publicacion_activa %}<span class="pill pill-featured">Featured</span>{% endif %}
+                            </div>
+                            <div class="like-btn">&#9825;</div>
+                        </div>
+
+                        <div class="featured-body">
+                            <h3 class="featured-title">{{ propiedad.titulo }}</h3>
+                                <p class="featured-address" style="font-weight:700; color:#111827;">{{ propiedad.propietario.usuario.first_name }} {{ propiedad.propietario.usuario.last_name }}</p>
+                            <p class="featured-address">
+                                <span aria-hidden="true">&#x1F4CD;</span>
+                                {{ propiedad.direccion|default:propiedad.ciudad }}
+                            </p>
+                            <p class="featured-desc">{{ propiedad.descripcion|default:"Sin descripción"|truncatewords:18 }}</p>
+
+                            <div class="meta-row">
+                                <span class="meta-chip">🛏 {{ propiedad.habitaciones }} beds</span>
+                                <span class="meta-chip">🛁 {{ propiedad.banos }} baths</span>
+                                <span class="meta-chip">📐 {{ propiedad.metros_cuadrados|default:"--" }} m²</span>
+                                <span class="meta-chip">👥 {{ propiedad.capacidad_personas }} guests</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="price-tag">${{ propiedad.precio|floatformat:0 }}<small>/mo</small></div>
+                                <a class="ghost-btn" href="{% url 'propiedades:detalle_propiedad' pk=propiedad.pk %}">View Details</a>
+                            </div>
+                        </div>
+                    </article>
+                {% endwith %}
+            {% elif propiedad.imagen_url %}
+                {% with portada=propiedad.imagen_url %}
+                    <article class="featured-card">
+                        <div class="featured-media" style="background-image:url('{{ portada }}');">
+                            <div class="pill-row">
+                                <span class="pill">{{ propiedad.get_estado_display }}</span>
+                                <span class="pill pill-featured">{{ propiedad.get_tipo_publicacion_display }}</span>
+                                {% if propiedad.publicacion_activa %}<span class="pill pill-featured">Featured</span>{% endif %}
+                            </div>
+                            <div class="like-btn">&#9825;</div>
+                        </div>
+
+                        <div class="featured-body">
+                            <h3 class="featured-title">{{ propiedad.titulo }}</h3>
+                            <p class="featured-address" style="font-weight:700; color:#111827;">{{ propiedad.propietario.usuario.first_name }} {{ propiedad.propietario.usuario.last_name }}</p>
+                            <p class="featured-address">
+                                <span aria-hidden="true">&#x1F4CD;</span>
+                                {{ propiedad.direccion|default:propiedad.ciudad }}
+                            </p>
+                            <p class="featured-desc">{{ propiedad.descripcion|default:"Sin descripción"|truncatewords:18 }}</p>
+
+                            <div class="meta-row">
+                                <span class="meta-chip">🛏 {{ propiedad.habitaciones }} beds</span>
+                                <span class="meta-chip">🛁 {{ propiedad.banos }} baths</span>
+                                <span class="meta-chip">📐 {{ propiedad.metros_cuadrados|default:"--" }} m²</span>
+                                <span class="meta-chip">👥 {{ propiedad.capacidad_personas }} guests</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="price-tag">${{ propiedad.precio|floatformat:0 }}<small>/mo</small></div>
+                                <a class="ghost-btn" href="{% url 'propiedades:detalle_propiedad' pk=propiedad.pk %}">View Details</a>
+                            </div>
+                        </div>
+                    </article>
+                {% endwith %}
+            {% else %}
+                {% with portada="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80" %}
+                    <article class="featured-card">
+                        <div class="featured-media" style="background-image:url('{{ portada }}');">
+                            <div class="pill-row">
+                                <span class="pill">{{ propiedad.get_estado_display }}</span>
+                                <span class="pill pill-featured">{{ propiedad.get_tipo_publicacion_display }}</span>
+                                {% if propiedad.publicacion_activa %}<span class="pill pill-featured">Featured</span>{% endif %}
+                            </div>
+                            <div class="like-btn">&#9825;</div>
+                        </div>
+
+                        <div class="featured-body">
+                            <h3 class="featured-title">{{ propiedad.titulo }}</h3>
+                            <p class="featured-address" style="font-weight:700; color:#111827;">{{ propiedad.propietario.usuario.first_name }} {{ propiedad.propietario.usuario.last_name }}</p>
+                            <p class="featured-address">
+                                <span aria-hidden="true">&#x1F4CD;</span>
+                                {{ propiedad.direccion|default:propiedad.ciudad }}
+                            </p>
+                            <p class="featured-desc">{{ propiedad.descripcion|default:"Sin descripción"|truncatewords:18 }}</p>
+
+                            <div class="meta-row">
+                                <span class="meta-chip">🛏 {{ propiedad.habitaciones }} beds</span>
+                                <span class="meta-chip">🛁 {{ propiedad.banos }} baths</span>
+                                <span class="meta-chip">📐 {{ propiedad.metros_cuadrados|default:"--" }} m²</span>
+                                <span class="meta-chip">👥 {{ propiedad.capacidad_personas }} guests</span>
+                            </div>
+
+                            <div class="card-footer">
+                                <div class="price-tag">${{ propiedad.precio|floatformat:0 }}<small>/mo</small></div>
+                                <a class="ghost-btn" href="{% url 'propiedades:detalle_propiedad' pk=propiedad.pk %}">View Details</a>
+                            </div>
+                        </div>
+                    </article>
+                {% endwith %}
+            {% endif %}
         {% empty %}
             <p>No hay propiedades disponibles.</p>
         {% endfor %}
