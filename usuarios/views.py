@@ -9,7 +9,8 @@ from .forms import RegisterForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Cliente, Propietario
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login 
+from django.contrib.auth import logout as auth_logout
 
 
 # HOME
@@ -79,12 +80,13 @@ def tablero(request):
 #def dashboard(request):
 #   return render(request, "usuarios/dashboard.html")
 
-
-def logout(request):
-    logout(request)
-    return redirect("home")
-
+@login_required
+def logout_view(request):
+    if request.method == "POST":
+        auth_logout(request)
+        return redirect("home")
 # DASHBOARDS (fuera de las clases)
+
 @login_required
 def dashboard_cliente(request):
     return render(request, "usuarios/dashboard_cliente.html")
