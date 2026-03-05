@@ -5,8 +5,8 @@ from django.views.generic.edit import UpdateView
 
 
 class MessageMixin:
-    """Agrega mensajes de éxito automáticos"""
-    success_message = "Operación exitosa"
+    """adds automatic success message on form_valid"""
+    success_message = "Operation successful"
 
     def form_valid(self, form):
         messages.success(self.request, self.success_message)
@@ -14,26 +14,26 @@ class MessageMixin:
 
 
 class OwnerRequiredMixin(UserPassesTestMixin):
-    """Verifica que el usuario sea dueño del objeto"""
-    owner_field = 'propietario'  # campo que tiene la FK al usuario
+    """checks if the logged in user is the owner of the object"""
+    owner_field = 'owner'  # campo que tiene la FK al usuario
 
     def test_func(self):
         obj = self.get_object()
         owner = getattr(obj, self.owner_field)
-        if hasattr(owner, 'usuario'):
-            return owner.usuario == self.request.user
+        if hasattr(owner, 'user'):
+            return owner.user == self.request.user
         return owner == self.request.user
 
 
 class StaffRequiredMixin(UserPassesTestMixin):
-    """Solo permite acceso a staff"""
+    """only allows access to staff users"""
 
     def test_func(self):
         return self.request.user.is_staff
 
 
 class AjaxResponseMixin:
-    """Retorna JSON si es petición AJAX"""
+    """Returns JSON if the request is AJAX"""
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -46,14 +46,14 @@ class AjaxResponseMixin:
 
 # Ejemplo de vista combinado (opcional):
 try:
-    from propiedades.models import Propiedad
+    from properties.models import Property
 
-    class EditarPropiedadView(LoginRequiredMixin, OwnerRequiredMixin, MessageMixin, UpdateView):
-        model = Propiedad
-        fields = ['titulo', 'descripcion', 'precio']
-        success_message = "Propiedad actualizada correctamente"
-        owner_field = 'propietario'
+    class EditPropertyView(LoginRequiredMixin, OwnerRequiredMixin, MessageMixin, UpdateView):
+        model = Property
+        fields = ['title', 'description', 'price']
+        success_message = "Property updated successfully"
+        owner_field = 'owner'
 except Exception:
-    # Si la app `propiedades` no está disponible en este momento,
+    # Si la app `propierties` no está disponible en este momento,
     # no queremos que la importación rompa la carga del módulo core.
-    EditarPropiedadView = None
+    EditPropertyView = None

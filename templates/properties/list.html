@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Listado de Propiedades</h2>
+
+{% if properties %}
+    {% for property in properties %}
+        <div style="border:1px solid #ccc; padding:14px; margin-bottom:12px; border-radius:8px;">
+            <h3 style="margin:0 0 6px 0;">{{ property.title }}</h3>
+            <p style="margin:0 0 6px 0; color:#555;">{{ property.address|default:property.city }}</p>
+            <p style="margin:0 0 4px 0;">City: {{ property.city }}</p>
+            <p style="margin:0 0 4px 0;">Price: ${{ property.price }}</p>
+            <p style="margin:0 0 4px 0;">state: {{ property.get_state_display }}</p>
+            <p style="margin:0 0 8px 0;">{{ property.rooms }} hab · {{ property.bathrooms }} bathrooms · {{ property.square_meters|default:"--" }} m² · {{ property.capacity }} pers · {{ property.get_listing_type_display }}</p>
+            <p style="margin:0 0 8px 0; color:#555;">Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
+
+            <a href="{% url 'properties:edit_property' pk=property.pk %}">Edit</a>
+
+            <form action="{% url 'properties:delete_property' pk=property.pk %}" method="POST" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; border-radius: 5px;">Eliminar</button>
+            </form>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No properties available.</p>
+{% endif %}
+
+{% endblock %}
