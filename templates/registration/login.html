@@ -1,51 +1,55 @@
 {% extends 'base.html' %}
-{% block title %}Home – StayHome{% endblock %}
-{% block nav_home %}active{% endblock %}
+
+{% block title %}Login – StayHome{% endblock %}
+
 {% block content %}
-  <div class="page">
-    <div class="card" style="max-width: 480px; margin: 60px auto; padding: 32px;">
 
-        <h2 class="section-title" style="text-align:center;">Log in</h2>
-        <p class="section-sub" style="text-align:center; margin-bottom:24px;">
-            Use your email and password to continue.
-        </p>
+<div class="page">
 
-        <form action="{% url 'inicio_sesion' %}" method="post">
-            {% csrf_token %}
+  <div class="card auth-card">
 
-            <div style="margin-bottom:16px;">
-                <label style="font-size:0.85rem; font-weight:600; color:#1e293b;">
-                    Email
-                </label>
-                <input type="text" name="username" required
-                       style="width:100%; padding:10px 12px; border-radius:8px;
-                              border:1px solid #cbd5e1; margin-top:6px;">
-            </div>
+    <h2 class="section-title">Log in</h2>
 
-            <div style="margin-bottom:20px;">
-                <label style="font-size:0.85rem; font-weight:600; color:#1e293b;">
-                    Password
-                </label>
-                <input type="password" name="password" required
-                       style="width:100%; padding:10px 12px; border-radius:8px;
-                              border:1px solid #cbd5e1; margin-top:6px;">
-            </div>
+    <p class="section-sub">
+      Use your email and password to continue.
+    </p>
 
-            <button type="submit" class="btn-list" style="width:100%; justify-content:center;">
-                Log in
-            </button>
+    {% if form.non_field_errors %}
+        <div class="form-errors">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
 
-            <p style="text-align:center; margin-top:18px; font-size:0.85rem; color:#64748b;">
-                Don't have an account?
-                <a href="{% url 'registrar' %}" style="color:#2563eb; font-weight:600;">
-                    Sign up
-                </a>
-            </p>
+    <form method="post" action="{% url 'inicio_sesion' %}" class="auth-form">
+      {% csrf_token %}
 
-        </form>
-    </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="text" name="username" required>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required>
+      </div>
+
+      <button type="submit" class="btn-list full-width">
+        Log in
+      </button>
+
+      <div class="auth-footer">
+        Don't have an account?
+        <a href="{% url 'registrar' %}">
+          Sign up
+        </a>
+      </div>
+
+    </form>
+
+  </div>
+
 </div>
-{% endblock %}
 
+{% endblock %}
 
 

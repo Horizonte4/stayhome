@@ -9,7 +9,8 @@ from .forms import RegisterForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Cliente, Propietario
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login 
+from django.contrib.auth import logout as auth_logout
 
 
 # HOME
@@ -36,7 +37,7 @@ def Inicio_SesionView(request):
             return redirect('tablero')
         else:
             print("LOGIN FAILED")
-            return render(request, 'login.html', {
+            return render(request, 'registration/login.html', {
                 'form': form,
                 'error': 'Username and password do not match'
             })
@@ -79,12 +80,13 @@ def tablero(request):
 #def dashboard(request):
 #   return render(request, "usuarios/dashboard.html")
 
-
-def cerrar_sesion(request):
-    logout(request)
-    return redirect("inicio_sesion")
-
+@login_required
+def logout_view(request):
+    if request.method == "POST":
+        auth_logout(request)
+        return redirect("home")
 # DASHBOARDS (fuera de las clases)
+
 @login_required
 def dashboard_cliente(request):
     return render(request, "usuarios/dashboard_cliente.html")

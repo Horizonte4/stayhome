@@ -80,7 +80,18 @@
     </div>
 
 </div>
-<a href="{% url 'logout' %}" class="logout-link">
-    Log out
-</a>
+{% if user.is_authenticated %}
+
+<form action="{% url 'logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit" class="logout-link">
+        Log out
+    </button>
+</form>
+
+{% else %}
+
+<a href="{% url 'inicio_sesion' %}">Login</a>
+
+{% endif %}
 {% endblock %}
