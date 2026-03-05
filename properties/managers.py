@@ -13,7 +13,7 @@ class PropertyManager(models.Manager):
         Es como hacer: Property.objects.filter(status='available', is_active=True)
         Pero encapsulado en un método reutilizable.
         """
-        return self.filter(state='available', active_listing=True)
+        return self.filter(state__iexact='available', active_listing=True)
 
     def in_city(self, city):
         """
