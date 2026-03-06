@@ -1,30 +1,78 @@
-
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Listado de Propiedades</h2>
+<div class="property-list-page">
+    <h2 class="property-list-title">Property Listing</h2>
 
-{% if properties %}
-    {% for property in properties %}
-        <div style="border:1px solid #ccc; padding:14px; margin-bottom:12px; border-radius:8px;">
-            <h3 style="margin:0 0 6px 0;">{{ property.title }}</h3>
-            <p style="margin:0 0 6px 0; color:#555;">{{ property.address|default:property.city }}</p>
-            <p style="margin:0 0 4px 0;">City: {{ property.city }}</p>
-            <p style="margin:0 0 4px 0;">Price: ${{ property.price }}</p>
-            <p style="margin:0 0 4px 0;">state: {{ property.get_state_display }}</p>
-            <p style="margin:0 0 8px 0;">{{ property.rooms }} hab · {{ property.bathrooms }} bathrooms · {{ property.square_meters|default:"--" }} m² · {{ property.capacity }} pers · {{ property.get_listing_type_display }}</p>
-            <p style="margin:0 0 8px 0; color:#555;">Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
+    {% if properties %}
+        <div class="property-list-grid">
+            {% for property in properties %}
+                <div class="property-card">
 
-            <a href="{% url 'properties:edit_property' pk=property.pk %}">Edit</a>
+                    {% if property.image %}
+                        <img src="{{ property.image.url }}" alt="{{ property.title }}" class="property-card-image">
+                    {% else %}
+                        <div class="property-card-image-placeholder">
+                            No image available
+                        </div>
+                    {% endif %}
 
-            <form action="{% url 'properties:delete_property' pk=property.pk %}" method="POST" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" style="background-color: red; color: white; border: none; padding: 5px 10px; border-radius: 5px;">Eliminar</button>
-            </form>
+                    <div class="property-card-body">
+                        <div class="property-card-badges">
+                            <span class="property-badge property-badge-light">
+                                {{ property.get_listing_type_display }}
+                            </span>
+
+                            {% if property.featured %}
+                                <span class="property-badge property-badge-featured">
+                                    Featured
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        <h3 class="property-card-title">
+                            {{ property.title }}
+                        </h3>
+
+                        <p class="property-card-location">
+                            {{ property.address|default:property.city }}
+                        </p>
+
+                        <p class="property-card-features">
+                            {{ property.rooms }} hab · {{ property.bathrooms }} baños · {{ property.square_meters|default:"--" }} m²
+                        </p>
+
+                        <p class="property-card-meta">
+                            {{ property.capacity }} pers · {{ property.get_state_display }}
+                        </p>
+
+                        <div class="property-card-footer">
+                            <p class="property-card-price">
+                                ${{ property.price }}
+                            </p>
+
+                            <a href="{% url 'properties:property_detail' pk=property.pk %}" class="property-card-details-btn">
+                                View Details
+                            </a>
+                        </div>
+
+                        {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
+                            <div class="property-card-actions">
+                                <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">
+                                    Edit
+                                </a>
+
+                                <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">
+                                    Delete
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-{% else %}
-    <p>No properties available.</p>
-{% endif %}
-
+    {% else %}
+        <p class="property-list-empty">No properties available.</p>
+    {% endif %}
+</div>
 {% endblock %}

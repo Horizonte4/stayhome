@@ -8,6 +8,8 @@ import calendar
 from .models import Property
 from .forms import PropertyForm
 from transactions.models import Contract
+from django.http import HttpResponseForbidden
+from django.views.decorators.http import require_http_methods
 
 # Crear Propiedad
 @login_required
@@ -34,29 +36,53 @@ def create_property(request):
 
 # Delete Property
 @login_required
+@require_http_methods(["GET", "POST"])
 def delete_property(request, pk):
-    property = get_object_or_404(Property, pk=pk)  # Retrieve the property to delete
+    prop = get_object_or_404(Property, pk=pk)
 
-    if request.method == 'POST':
-        property.delete()  # Delete the property
-        return redirect('properties:list_properties')  # Redirect to the list of properties
+    # Solo owners pueden borrar
+    owner = getattr(request.user, "owner", None)
+    if not owner:
+        messages.error(request, "No tienes permisos para eliminar propiedades.")
+        return HttpResponseForbidden("Forbidden")
 
-    return render(request, 'properties/delete_confirmation.html', {'property': property})
+    # Solo puede borrar sus propiedades
+    if prop.owner_id != owner.id:
+        return HttpResponseForbidden("No puedes eliminar una propiedad que no es tuya.")
+
+    if request.method == "POST":
+        prop.delete()
+        messages.success(request, "Propiedad eliminada correctamente.")
+        return redirect("properties:list_properties")
+
+    # GET -> confirmación
+    return render(request, "properties/delete_confirmation.html", {"property": prop})
 
 # Edit Property
 @login_required
 def edit_property(request, pk):
-    property = get_object_or_404(Property, pk=pk)  # Retrieve the property to edit
+    prop = get_object_or_404(Property, pk=pk)
 
-    if request.method == 'POST':
-        form = PropertyForm(request.POST, instance=property)  # Pass the property to the form
+    # Solo owners pueden editar
+    owner = getattr(request.user, "owner", None)
+    if not owner:
+        messages.error(request, "No tienes permisos para editar propiedades.")
+        return HttpResponseForbidden("Forbidden")
+
+    # Solo puede editar sus propiedades
+    if prop.owner_id != owner.id:
+        return HttpResponseForbidden("No puedes editar una propiedad que no es tuya.")
+
+    if request.method == "POST":
+        form = PropertyForm(request.POST, request.FILES, instance=prop)
         if form.is_valid():
-            form.save()  # Save the changes
-            return redirect('properties:list_properties')  # Redirect after saving
+            form.save()
+            messages.success(request, "Propiedad actualizada correctamente.")
+            return redirect("properties:list_properties")
     else:
-        form = PropertyForm(instance=property)  # Pass the property to the form for editing
+        form = PropertyForm(instance=prop)
 
-    return render(request, 'properties/edit.html', {'form': form, 'property': property})
+    return render(request, "properties/edit.html", {"form": form, "property": prop})
 
 # List Properties
 def list_properties(request):

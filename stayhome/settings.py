@@ -155,9 +155,9 @@ STATICFILES_DIRS = [
 ]
 AUTH_USER_MODEL = 'users.User'
 
-LOGIN_REDIRECT_URL = 'dashboard'
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
-LOGIN_URL = '/registration/login/'
+LOGIN_URL = 'home'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
