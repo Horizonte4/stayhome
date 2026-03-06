@@ -1,16 +1,12 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from properties.models import Property
-from .forms import RegisterForm
-from django.contrib.auth.forms import UserCreationForm
+from .forms import RegisterForm, EditProfileForm
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Client, Owner
-from django.contrib.auth import login 
-from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import logout as auth_logout,login 
 
 
 # HOME
@@ -85,6 +81,21 @@ def logout_view(request):
     if request.method == "POST":
         auth_logout(request)
         return redirect("home")
+
+@login_required
+def edit_profile(request):
+
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect('board')
+
+    else:
+        form = EditProfileForm(instance=request.user)
+
+    return render(request, 'users/edit_profile.html', {'form': form})
 # DASHBOARDS (fuera de las clases)
 
 @login_required
