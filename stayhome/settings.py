@@ -61,10 +61,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'stayhome',
-    'usuarios',
-    'propiedades',
+    'users',
+    'properties',
     'core',
-    'transacciones',
+    'transactions',
 ]
 
 MIDDLEWARE = [
@@ -153,9 +153,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
-AUTH_USER_MODEL = 'usuarios.Usuario'
+AUTH_USER_MODEL = 'users.User'
 
-LOGIN_REDIRECT_URL = 'tablero'
+LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = '/registration/login/'
 

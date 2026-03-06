@@ -16,8 +16,8 @@
 
             <div class="form-group">
                 <label>I want to join as</label>
-                {{ form.tipo_usuario }}
-                {{ form.tipo_usuario.errors }}
+                {{ form.user_type }}
+                {{ form.user_type.errors }}
             </div>
 
             <div class="form-row">
@@ -42,8 +42,8 @@
 
             <div class="form-group">
                 <label>Phone</label>
-                {{ form.telefono }}
-                {{ form.telefono.errors }}
+                {{ form.phone }}
+                {{ form.phone.errors }}
             </div>
 
             <div class="form-row">
@@ -66,7 +66,7 @@
 
             <p class="auth-footer">
                 Already have an account?
-                <a href="{% url 'inicio_sesion' %}">Log in</a>
+                <a href="{% url 'login' %}">Log in</a>
             </p>
         </form>
 

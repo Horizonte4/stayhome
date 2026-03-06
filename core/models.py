@@ -30,11 +30,11 @@ class SlugModel(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            source = getattr(self, 'titulo', '') or getattr(self, 'name', '')
+            source = getattr(self, 'title', '') or getattr(self, 'name', '')
             self.slug = slugify(source)[:200]
         super().save(*args, **kwargs)
 
 # Modelo final combinando mixins:
-class Propiedad(TimeStampedModel, SoftDeleteModel, SlugModel):
-    titulo = models.CharField(max_length=200)
+class Property(TimeStampedModel, SoftDeleteModel, SlugModel):
+    title = models.CharField(max_length=200)
     # La propiedad ahora tiene: created_at, updated_at, is_deleted, deleted_at, slug
