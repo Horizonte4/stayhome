@@ -1,78 +1,179 @@
 {% extends "base.html" %}
 
+{% block title %}List Properties{% endblock %}
+
 {% block content %}
+
 <div class="property-list-page">
-    <h2 class="property-list-title">Property Listing</h2>
 
-    {% if properties %}
+<!-- Header -->
+<div class="property-list-header">
+    <h2 class="property-list-title">Explore Properties</h2>
+    <p class="property-list-subtitle">
+        Browse through {{ properties|length }} available properties
+    </p>
+</div>
+
+<div class="property-layout">
+
+    <!-- FILTERS -->
+    <aside class="property-filters">
+
+        <h3>Filters</h3>
+
+        <div class="filter-group">
+            <label>Property Type</label>
+            <select>
+                <option>All Types</option>
+                <option>House</option>
+                <option>Apartment</option>
+                <option>Studio</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Category</label>
+            <select>
+                <option>All Categories</option>
+                <option>For Rent</option>
+                <option>For Sale</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Bedrooms</label>
+            <select>
+                <option>Any</option>
+                <option>1</option>
+                <option>2</option>
+                <option>3+</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label>Price Range</label>
+            <input type="range">
+        </div>
+
+        <button class="filter-clear-btn">
+            Clear Filters
+        </button>
+
+    </aside>
+
+
+    <!-- PROPERTIES -->
+    <div class="property-content">
+
+        <!-- SEARCH -->
+        <div class="property-search">
+            <input type="text" placeholder="Search by title, location, or city...">
+        </div>
+
+        {% if properties %}
+
         <div class="property-list-grid">
-            {% for property in properties %}
-                <div class="property-card">
 
-                    {% if property.image %}
-                        <img src="{{ property.image.url }}" alt="{{ property.title }}" class="property-card-image">
-                    {% else %}
-                        <div class="property-card-image-placeholder">
-                            No image available
-                        </div>
+            {% for property in properties %}
+
+            <div class="property-card">
+
+                {% if property.image %}
+                    <img src="{{ property.image.url }}" 
+                         alt="{{ property.title }}" 
+                         class="property-card-image">
+                {% else %}
+                    <div class="property-card-image-placeholder">
+                        No image available
+                    </div>
+                {% endif %}
+
+                <div class="property-card-body">
+
+                    <div class="property-card-badges">
+
+                        <span class="property-badge property-badge-light">
+                            {{ property.get_listing_type_display }}
+                        </span>
+
+                        {% if property.featured %}
+                            <span class="property-badge property-badge-featured">
+                                Featured
+                            </span>
+                        {% endif %}
+
+                    </div>
+
+                    <h3 class="property-card-title">
+                        {{ property.title }}
+                    </h3>
+
+                    <p class="property-card-location">
+                        {{ property.address|default:property.city }}
+                    </p>
+
+                    <p class="property-card-features">
+                        {{ property.rooms }} hab · 
+                        {{ property.bathrooms }} baños · 
+                        {{ property.square_meters|default:"--" }} m²
+                    </p>
+
+                    <p class="property-card-meta">
+                        {{ property.capacity }} pers · 
+                        {{ property.get_state_display }}
+                    </p>
+
+                    <div class="property-card-footer">
+
+                        <p class="property-card-price">
+                            ${{ property.price|floatformat:0 }}
+                        </p>
+
+                        <a href="{% url 'properties:property_detail' pk=property.pk %}"
+                           class="property-card-details-btn">
+                            View Details
+                        </a>
+
+                    </div>
+
+                    {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
+
+                    <div class="property-card-actions">
+
+                        <a href="{% url 'properties:edit_property' pk=property.pk %}"
+                           class="property-card-action-btn property-card-action-btn-edit">
+                           Edit
+                        </a>
+
+                        <a href="{% url 'properties:delete_property' pk=property.pk %}"
+                           class="property-card-action-btn property-card-action-btn-delete">
+                           Delete
+                        </a>
+
+                    </div>
+
                     {% endif %}
 
-                    <div class="property-card-body">
-                        <div class="property-card-badges">
-                            <span class="property-badge property-badge-light">
-                                {{ property.get_listing_type_display }}
-                            </span>
-
-                            {% if property.featured %}
-                                <span class="property-badge property-badge-featured">
-                                    Featured
-                                </span>
-                            {% endif %}
-                        </div>
-
-                        <h3 class="property-card-title">
-                            {{ property.title }}
-                        </h3>
-
-                        <p class="property-card-location">
-                            {{ property.address|default:property.city }}
-                        </p>
-
-                        <p class="property-card-features">
-                            {{ property.rooms }} hab · {{ property.bathrooms }} baños · {{ property.square_meters|default:"--" }} m²
-                        </p>
-
-                        <p class="property-card-meta">
-                            {{ property.capacity }} pers · {{ property.get_state_display }}
-                        </p>
-
-                        <div class="property-card-footer">
-                            <p class="property-card-price">
-                                ${{ property.price }}
-                            </p>
-
-                            <a href="{% url 'properties:property_detail' pk=property.pk %}" class="property-card-details-btn">
-                                View Details
-                            </a>
-                        </div>
-
-                        {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
-                            <div class="property-card-actions">
-                                <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">
-                                    Edit
-                                </a>
-
-                                <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">
-                                    Delete
-                                </a>
-                            </div>
-                        {% endif %}
-                    </div>
                 </div>
+
+            </div>
+
             {% endfor %}
+
         </div>
-    {% else %}
-        <p class="property-list-empty">No properties available.</p>
-    {% endif %}
+
+        {% else %}
+
+        <p class="property-list-empty">
+            No properties available.
+        </p>
+
+        {% endif %}
+
+    </div>
+
 </div>
+
+</div>
+
 {% endblock %}
