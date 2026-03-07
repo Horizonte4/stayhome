@@ -37,6 +37,7 @@ class Property(models.Model):
     capacity = models.PositiveSmallIntegerField(default=1)
     image = models.ImageField(upload_to='properties/', blank=True, null=True)
     image_url = models.URLField(blank=True)
+    availability_dates = models.CharField(max_length=255, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     active_listing = models.BooleanField(default=True)

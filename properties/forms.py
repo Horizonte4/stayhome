@@ -20,6 +20,7 @@ class PropertyForm(forms.ModelForm):
             'image',
             'image_url',
             'active_listing',
+            'availability_dates',
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Modern Downtown Apartment'}),
@@ -35,6 +36,7 @@ class PropertyForm(forms.ModelForm):
             'capacity': forms.NumberInput(attrs={'class': 'form-input', 'min': 1}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-input'}),
             'image_url': forms.URLInput(attrs={'class': 'form-input', 'placeholder': 'https://...'}),
+            'availability_dates': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'e.g. 2023-01-01 to 2023-01-10'}),
             'active_listing': forms.CheckboxInput(attrs={'class': 'form-checkbox'}),
         }
 
