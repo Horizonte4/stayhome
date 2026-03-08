@@ -1,60 +1,48 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Property Details{% endblock %}
 
 {% block content %}
-<style>
-  .detail-wrap { display:grid; gap:26px; grid-template-columns:2fr 1fr; align-items:start; }
-  @media(max-width:1024px){ .detail-wrap { grid-template-columns:1fr; } }
-  .media-card { background:#fff; border:1px solid #e5e7eb; border-radius:22px; overflow:hidden; box-shadow:0 18px 45px rgba(0,0,0,0.08); }
-  .hero-media { position:relative; padding-top:62%; background-size:cover; background-position:center; }
-  .pill-row { position:absolute; top:16px; left:16px; display:flex; gap:10px; }
-  .pill { background:#111827; color:#fff; padding:8px 12px; border-radius:999px; font-weight:700; font-size:12px; letter-spacing:0.2px; text-transform:uppercase; box-shadow:0 10px 25px rgba(0,0,0,0.12); }
-  .pill-blue { background:#2563eb; }
-  .pill-dark { background:#0f172a; }
-  .media-body { padding:20px 22px; display:grid; gap:12px; }
-  .title { margin:0; font-size:1.7rem; font-weight:800; }
-  .sub { margin:0; color:#6b7280; }
-  .price { margin:0; color:#1d4ed8; font-size:1.5rem; font-weight:900; }
-  .specs { display:flex; gap:14px; flex-wrap:wrap; color:#4b5563; font-weight:700; }
-  .booking-card { background:#fff; border:1px solid #e5e7eb; border-radius:20px; padding:20px; box-shadow:0 18px 45px rgba(0,0,0,0.08); position:sticky; top:20px; }
-  .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-  .cal-title { font-size:1.1rem; font-weight:800; }
-  .legend { display:flex; gap:12px; align-items:center; color:#4b5563; font-size:0.9rem; }
-  .dot { width:14px; height:14px; border-radius:4px; display:inline-block; }
-  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
-  .day { padding:10px 0; text-align:center; border-radius:12px; font-weight:800; border:1px solid transparent; }
-  .day-free { background:#ecfdf3; color:#166534; border-color:#bbf7d0; }
-  .day-busy { background:#fef2f2; color:#991b1b; border-color:#fecaca; }
-  .day-today { box-shadow:0 0 0 2px #2563eb inset; }
-  .cta-btn { width:100%; background:#2563eb; color:#fff; border:none; border-radius:12px; padding:14px; font-weight:800; cursor:pointer; margin-top:14px; }
-  .cta-btn:hover { background:#1d4ed8; }
-  .back-link { display:inline-flex; align-items:center; gap:6px; color:#2563eb; font-weight:700; margin-bottom:12px; }
-</style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <a href="{% url 'properties:list_properties' %}" class="back-link">← Back to Properties</a>
 
 <section class="detail-wrap">
-    <div class="media-card">
-        <div class="hero-media" style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}');">
-            <div class="pill-row">
-                <span class="pill pill-blue">{{ property.get_state_display }}</span>
-                <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
-                {% if property.active_publication %}<span class="pill pill-dark">Active</span>{% endif %}
+    <div>
+        <div class="media-card">
+            <div class="hero-media" style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}');">
+                <div class="pill-row">
+                    <span class="pill pill-blue">{{ property.get_state_display }}</span>
+                    <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
+                    {% if property.active_listing %}<span class="pill pill-dark">Active</span>{% endif %}
+                </div>
+            </div>
+
+            <div class="media-body">
+                <h1 class="title">{{ property.title }}</h1>
+                <p class="sub detail-owner">Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
+                <p class="sub">{{ property.address|default:property.city }}</p>
+                <p class="price">${{ property.price }} <small class="price-unit">/mo</small></p>
+                <p class="sub detail-description">{{ property.description|default:"Sin descripción" }}</p>
+
+                <div class="specs">
+                    <span>🛏 {{ property.rooms }} beds</span>
+                    <span>🛁 {{ property.bathrooms }} baths</span>
+                    <span>📐 {{ property.square_meters|default:"--" }} m²</span>
+                    <span>👥 {{ property.capacity }} guests</span>
+                </div>
             </div>
         </div>
-        <div class="media-body">
-            <h1 class="title">{{ property.title }}</h1>
-            <p class="sub" style="font-weight:700; color:#0f172a;">Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
-            <p class="sub">{{ property.address|default:property.city }}</p>
-            <p class="price">${{ property.price }} <small style="color:#6b7280; font-weight:700;">/mo</small></p>
-            <p class="sub" style="line-height:1.6;">{{ property.description|default:"Sin descripción" }}</p>
-            <div class="specs">
-                <span>🛏 {{ property.bedrooms }} beds</span>
-                <span>🛁 {{ property.bathrooms }} baths</span>
-                <span>📐 {{ property.square_meters|default:"--" }} m²</span>
-                <span>👥 {{ property.guest_capacity }} guests</span>
-            </div>
-        </div>
+
+        {% if property.latitude and property.longitude %}
+        <section class="location-section">
+            <h2 class="location-section-title">where will you go</h2>
+            <p class="location-section-text">
+            </p>
+            <div id="detail-map"></div>
+        </section>
+        {% endif %}
     </div>
 
     <div class="booking-card">
@@ -64,8 +52,8 @@
                 <div class="sub">{{ month_label }}</div>
             </div>
             <div class="legend">
-                <span class="dot" style="background:#22c55e;"></span> available
-                <span class="dot" style="background:#ef4444;"></span> Occupied
+                <span class="dot detail-dot-available"></span> available
+                <span class="dot detail-dot-occupied"></span> Occupied
             </div>
         </div>
         <div class="cal-grid">
@@ -75,9 +63,36 @@
                 </div>
             {% endfor %}
         </div>
-        <p class="sub" style="margin-top:10px;">Dates in red are already booked this month. Green are available.</p>
-        <p class="sub" style="margin:4px 0 0 0; font-weight:700;">Capacity: {{ property.guest_capacity }} guests</p>
+        <p class="sub detail-note">Dates in red are already booked this month. Green are available.</p>
+        <p class="sub detail-capacity">Capacity: {{ property.capacity }} guests</p>
         <button class="cta-btn" type="button">Request booking</button>
     </div>
 </section>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+{% if property.latitude and property.longitude %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const lat = parseFloat("{{ property.latitude|default:'0' }}");
+        const lng = parseFloat("{{ property.longitude|default:'0' }}");
+
+        const map = L.map('detail-map').setView([lat, lng], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map)
+            .bindPopup("{{ property.address|default:property.city|escapejs }}")
+            .openPopup();
+
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 200);
+    });
+</script>
+{% endif %}
+
 {% endblock %}
