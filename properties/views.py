@@ -5,11 +5,13 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from datetime import date, timedelta
 import calendar
-from .models import Property
+from .models import Property,Availability,Booking
 from .forms import PropertyForm
 from transactions.models import Contract
 from django.http import HttpResponseForbidden
 from django.views.decorators.http import require_http_methods
+from datetime import datetime
+import json
 
 # Crear Propiedad
 @login_required
@@ -121,42 +123,54 @@ def _month_bounds(today: date):
     return first, last
 
 
-def _unavailable_dates(property):
-    hoy = timezone.localdate()
-    start_month, end_month = _month_bounds(hoy)
-    contracts = property.contracts.filter(
-        start_date__isnull=False,
-        end_date__isnull=False,
-        start_date__lte=end_month,
-        end_date__gte=start_month,
-    )
-    blocked = set()
-    for contract in contracts:
-        current = max(start_month, contract.start_date)
-        end = min(end_month, contract.end_date)
-        while current <= end:
-            blocked.add(current)
-            current += timedelta(days=1)
-    return blocked, start_month, end_month
+#dias disponibles por el owner para mostrar en el calendario de la propiedad
+def get_available_dates(property):
 
+    if not property.availability_dates:
+        return set()
+
+    dates = property.availability_dates.split(",")
+
+    available = {
+        datetime.strptime(d.strip(), "%Y-%m-%d").date()
+        for d in dates
+    }
+
+    return available
 
 def property_detail(request, pk):
     property = get_object_or_404(Property, pk=pk, active_listing=True)
-    blocked, start_month, end_month = _unavailable_dates(property)
+
+    # fechas disponibles
+    available = get_available_dates(property)
+
+    available_dates_json = json.dumps([
+    d.strftime("%Y-%m-%d") for d in available
+    ])
+
+    today = timezone.localdate()
+
+    start_month = today.replace(day=1)
+    end_month = (start_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
 
     days = []
     current = start_month
+
     while current <= end_month:
+
         days.append({
-            'date': current,
-            'is_blocked': current in blocked,
-            'is_today': current == timezone.localdate(),
+            "date": current,
+            "is_available": current in available,
+            "is_today": current == today
         })
+
         current += timedelta(days=1)
 
     context = {
-        'property': property,
-        'days': days,
-        'month_label': start_month.strftime('%B %Y'),
-    }
-    return render(request, 'properties/detail.html', context)
+    "property": property,
+    "days": days,
+    "month_label": today.strftime("%B %Y"),
+    "available_dates_json": available_dates_json,
+}
+
+    return render(request, "properties/detail.html", context)

@@ -1,5 +1,10 @@
 from django.db import models
 from .managers import PropertyManager
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.contrib.auth.models import User
+from django.conf import settings
+
 
 
 class Property(models.Model):
@@ -47,5 +52,29 @@ class Property(models.Model):
     def __str__(self):
         return f"{self.title} — {self.city}"
 
-    class Meta:
-        ordering = ['-created_at']
+class Meta:
+    ordering = ['-created_at']
+    
+    
+
+class Booking(models.Model):
+
+    property = models.ForeignKey("Property", on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    check_in = models.DateField()
+    check_out = models.DateField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.property} | {self.check_in} - {self.check_out}"
+    
+class Availability(models.Model):
+
+    property = models.ForeignKey(Property, on_delete=models.CASCADE)
+
+    availability_dates = models.DateField()
+
+    def __str__(self):
+        return f"{self.property} | {self.availability_dates}"

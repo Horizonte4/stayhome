@@ -1066,23 +1066,24 @@ gap:6px;
 }
 
 .day{
-padding:10px 0;
+padding:8px;
 text-align:center;
-border-radius:12px;
-font-weight:800;
-border:1px solid transparent;
+border-radius:6px;
 }
 
 .day-free{
-background:#ecfdf3;
-color:#166534;
-border-color:#bbf7d0;
+background:#22c55e;
+color:white;
 }
 
 .day-busy{
-background:#fef2f2;
-color:#991b1b;
-border-color:#fecaca;
+background:#ef4444;
+color:white;
+}
+
+.day-unavailable{
+background:#e5e7eb;
+color:#666;
 }
 
 .day-today{

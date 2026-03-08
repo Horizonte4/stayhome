@@ -3,7 +3,13 @@
 
 {% block content %}
 
-<a href="{% url 'properties:list_properties' %}" class="back-link">← Back to Properties</a>
+<!-- FLATPICKR -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<a href="{% url 'properties:list_properties' %}" class="back-link">
+    ← Back to Properties
+</a>
 
 <section class="detail-wrap">
 
@@ -49,62 +55,80 @@
             <span>🛏 {{ property.bedrooms }} beds</span>
             <span>🛁 {{ property.bathrooms }} baths</span>
             <span>📐 {{ property.square_meters|default:"--" }} m²</span>
-            <span>👥 {{ property.guest_capacity }} guests</span>
+            <span>👥 {{ property.capacity }} guests</span>
+            <span>📅 {{ property.availability_dates|default:"--" }}</span>
         </div>
 
     </div>
 
 </div>
 
-
-<!-- BOOKING -->
+<!-- BOOKING CARD -->
 <div class="booking-card">
 
     <div class="cal-header">
-
-        <div>
-            <div class="cal-title">Reserve property</div>
-            <div class="sub">{{ month_label }}</div>
-        </div>
+        <div class="cal-title">Reserve property</div>
 
         <div class="legend">
-            <span class="dot dot-free"></span> available
-            <span class="dot dot-busy"></span> occupied
+            <span class="dot" style="background:#22c55e;"></span> available
+            <span class="dot" style="background:#ef4444;"></span> unavailable
         </div>
-
     </div>
 
-    <div class="cal-grid">
+    <!-- BOOKING FORM -->
+    <form method="POST">
+    {% csrf_token %}
 
-        {% for day in days %}
-
-        <div class="day 
-            {% if day.is_blocked %}day-busy{% else %}day-free{% endif %}
-            {% if day.is_today %}day-today{% endif %}">
-
-            {{ day.date.day }}
-
-        </div>
-
-        {% endfor %}
-
-    </div>
-
-    <p class="calendar-info">
-        Dates in red are already booked this month. Green are available.
+    <!-- CALENDAR -->
+    <input id="calendar" type="text">
+    <p class="sub" style="margin-top:10px;">
+        Green days are available. Red days are unavailable.
     </p>
 
-    <p class="capacity">
-        Capacity: {{ property.guest_capacity }} guests
+    <p class="sub" style="margin:4px 0 10px 0; font-weight:700;">
+        Capacity: {{ property.capacity }} guests
     </p>
 
-    <button class="cta-btn" type="button">
+    <!-- hidden inputs enviados al backend -->
+    <input type="hidden" name="check_in" id="check_in">
+    <input type="hidden" name="check_out" id="check_out">
+
+    <button class="cta-btn" type="submit">
         Request booking
     </button>
-
+</form>
 </div>
 
-
 </section>
+
+<!-- CALENDAR SCRIPT -->
+<script>
+
+const availableDates = {{ available_dates_json|safe }};
+
+flatpickr("#calendar", {
+
+    inline: true,
+    mode: "range",
+    minDate: "today",
+    dateFormat: "Y-m-d",
+
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+
+        const date = dayElem.dateObj.toISOString().split('T')[0];
+
+        if (availableDates.includes(date)) {
+            dayElem.style.background = "#22c55e";
+            dayElem.style.color = "white";
+        } else {
+            dayElem.style.background = "#ef4444";
+            dayElem.style.color = "white";
+        }
+
+    }
+
+});
+
+</script>
 
 {% endblock %}
