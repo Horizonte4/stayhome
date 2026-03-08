@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Property Details{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <!-- FLATPICKR -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -58,6 +61,15 @@
             <span>👥 {{ property.capacity }} guests</span>
             <span>📅 {{ property.availability_dates|default:"--" }}</span>
         </div>
+
+        {% if property.latitude and property.longitude %}
+        <section class="location-section">
+            <h2 class="location-section-title">where will you go</h2>
+            <p class="location-section-text">
+            </p>
+            <div id="detail-map"></div>
+        </section>
+        {% endif %}
 
     </div>
 
@@ -144,5 +156,32 @@ flatpickr("#calendar", {
 });
 
 </script>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+{% if property.latitude and property.longitude %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const lat = parseFloat("{{ property.latitude|default:'0' }}");
+        const lng = parseFloat("{{ property.longitude|default:'0' }}");
+
+        const map = L.map('detail-map').setView([lat, lng], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker([lat, lng]).addTo(map)
+            .bindPopup("{{ property.address|default:property.city|escapejs }}")
+            .openPopup();
+
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 200);
+    });
+</script>
+{% endif %}
 
 {% endblock %}

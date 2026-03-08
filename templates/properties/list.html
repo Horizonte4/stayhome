@@ -1,179 +1,173 @@
 {% extends "base.html" %}
 
-{% block title %}List Properties{% endblock %}
+{% block title %}Explore Properties{% endblock %}
 
 {% block content %}
-
-<div class="property-list-page">
-
-<!-- Header -->
-<div class="property-list-header">
-    <h2 class="property-list-title">Explore Properties</h2>
-    <p class="property-list-subtitle">
-        Browse through {{ properties|length }} available properties
-    </p>
-</div>
-
-<div class="property-layout">
-
-    <!-- FILTERS -->
-    <aside class="property-filters">
-
-        <h3>Filters</h3>
-
-        <div class="filter-group">
-            <label>Property Type</label>
-            <select>
-                <option>All Types</option>
-                <option>House</option>
-                <option>Apartment</option>
-                <option>Studio</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <label>Category</label>
-            <select>
-                <option>All Categories</option>
-                <option>For Rent</option>
-                <option>For Sale</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <label>Bedrooms</label>
-            <select>
-                <option>Any</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3+</option>
-            </select>
-        </div>
-
-        <div class="filter-group">
-            <label>Price Range</label>
-            <input type="range">
-        </div>
-
-        <button class="filter-clear-btn">
-            Clear Filters
-        </button>
-
-    </aside>
-
-
-    <!-- PROPERTIES -->
-    <div class="property-content">
-
-        <!-- SEARCH -->
-        <div class="property-search">
-            <input type="text" placeholder="Search by title, location, or city...">
-        </div>
-
-        {% if properties %}
-
-        <div class="property-list-grid">
-
-            {% for property in properties %}
-
-            <div class="property-card">
-
-                {% if property.image %}
-                    <img src="{{ property.image.url }}" 
-                         alt="{{ property.title }}" 
-                         class="property-card-image">
-                {% else %}
-                    <div class="property-card-image-placeholder">
-                        No image available
-                    </div>
-                {% endif %}
-
-                <div class="property-card-body">
-
-                    <div class="property-card-badges">
-
-                        <span class="property-badge property-badge-light">
-                            {{ property.get_listing_type_display }}
-                        </span>
-
-                        {% if property.featured %}
-                            <span class="property-badge property-badge-featured">
-                                Featured
-                            </span>
-                        {% endif %}
-
-                    </div>
-
-                    <h3 class="property-card-title">
-                        {{ property.title }}
-                    </h3>
-
-                    <p class="property-card-location">
-                        {{ property.address|default:property.city }}
-                    </p>
-
-                    <p class="property-card-features">
-                        {{ property.rooms }} hab · 
-                        {{ property.bathrooms }} baños · 
-                        {{ property.square_meters|default:"--" }} m²
-                    </p>
-
-                    <p class="property-card-meta">
-                        {{ property.capacity }} pers · 
-                        {{ property.get_state_display }}
-                    </p>
-
-                    <div class="property-card-footer">
-
-                        <p class="property-card-price">
-                            ${{ property.price|floatformat:0 }}
-                        </p>
-
-                        <a href="{% url 'properties:property_detail' pk=property.pk %}"
-                           class="property-card-details-btn">
-                            View Details
-                        </a>
-
-                    </div>
-
-                    {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
-
-                    <div class="property-card-actions">
-
-                        <a href="{% url 'properties:edit_property' pk=property.pk %}"
-                           class="property-card-action-btn property-card-action-btn-edit">
-                           Edit
-                        </a>
-
-                        <a href="{% url 'properties:delete_property' pk=property.pk %}"
-                           class="property-card-action-btn property-card-action-btn-delete">
-                           Delete
-                        </a>
-
-                    </div>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-            {% endfor %}
-
-        </div>
-
-        {% else %}
-
-        <p class="property-list-empty">
-            No properties available.
+<div class="explore-page">
+    <div class="explore-header">
+        <h1 class="explore-title">Explore Properties</h1>
+        <p class="explore-subtitle">
+            Browse through {{ properties.paginator.count|default:properties|length }} available properties
         </p>
-
-        {% endif %}
-
     </div>
 
-</div>
+    <div class="explore-layout">
+        <aside class="explore-sidebar">
+            <form method="get" class="explore-filter-card">
+                <h3 class="explore-filter-title">Filters</h3>
 
+                <div class="explore-filter-group">
+                    <label>Property Type</label>
+                    <select name="listing_type" class="explore-select">
+                        <option value="">All Types</option>
+                        <option value="short_term" {% if filters.listing_type == 'short_term' %}selected{% endif %}>Short-term rental</option>
+                        <option value="long_term" {% if filters.listing_type == 'long_term' %}selected{% endif %}>Long-term rental</option>
+                        <option value="sale" {% if filters.listing_type == 'sale' %}selected{% endif %}>Sale</option>
+                    </select>
+                </div>
+
+                <div class="explore-filter-group">
+                    <label>Category</label>
+                    <select name="state" class="explore-select">
+                        <option value="">All Categories</option>
+                        <option value="available" {% if filters.state == 'available' %}selected{% endif %}>Available</option>
+                        <option value="occupied" {% if filters.state == 'occupied' %}selected{% endif %}>Occupied</option>
+                        <option value="reserved" {% if filters.state == 'reserved' %}selected{% endif %}>Reserved</option>
+                    </select>
+                </div>
+
+                <div class="explore-filter-group">
+                    <label>Bedrooms</label>
+                    <select name="rooms" class="explore-select">
+                        <option value="">Any</option>
+                        <option value="1" {% if filters.rooms == '1' %}selected{% endif %}>1</option>
+                        <option value="2" {% if filters.rooms == '2' %}selected{% endif %}>2</option>
+                        <option value="3" {% if filters.rooms == '3' %}selected{% endif %}>3</option>
+                        <option value="4" {% if filters.rooms == '4' %}selected{% endif %}>4</option>
+                        <option value="5" {% if filters.rooms == '5' %}selected{% endif %}>5+</option>
+                    </select>
+                </div>
+
+                <div class="explore-filter-group">
+                    <label>Location</label>
+                    <input type="text" name="city" placeholder="Search location" value="{{ filters.city }}" class="explore-input">
+                </div>
+
+                <div class="explore-filter-group">
+                    <label>Bathrooms</label>
+                    <input type="number" name="bathrooms" placeholder="Bathrooms" value="{{ filters.bathrooms }}" class="explore-input">
+                </div>
+
+                <div class="explore-filter-group">
+                    <label>Guests</label>
+                    <input type="number" name="capacity" placeholder="Min guests" value="{{ filters.capacity }}" class="explore-input">
+                </div>
+
+                <div class="explore-filter-group">
+                    <label>Price Range</label>
+                    <div class="explore-price-row">
+                        <input type="number" name="min_price" placeholder="Min" value="{{ filters.min_price }}" class="explore-input">
+                        <input type="number" name="max_price" placeholder="Max" value="{{ filters.max_price }}" class="explore-input">
+                    </div>
+                </div>
+
+                <input type="hidden" name="q" value="{{ filters.q }}">
+
+                <div class="explore-filter-actions">
+                    <button type="submit" class="explore-filter-btn">Apply Filters</button>
+                    <a href="{% url 'properties:list_properties' %}" class="explore-clear-btn">✕ Clear Filters</a>
+                </div>
+            </form>
+        </aside>
+
+        <section class="explore-main">
+            <form method="get" class="explore-search-bar">
+                <span class="explore-search-icon">⌕</span>
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Search by title, location, or city..."
+                    value="{{ filters.q }}"
+                    class="explore-search-input"
+                >
+
+                <input type="hidden" name="city" value="{{ filters.city }}">
+                <input type="hidden" name="min_price" value="{{ filters.min_price }}">
+                <input type="hidden" name="max_price" value="{{ filters.max_price }}">
+                <input type="hidden" name="rooms" value="{{ filters.rooms }}">
+                <input type="hidden" name="bathrooms" value="{{ filters.bathrooms }}">
+                <input type="hidden" name="capacity" value="{{ filters.capacity }}">
+                <input type="hidden" name="listing_type" value="{{ filters.listing_type }}">
+                <input type="hidden" name="state" value="{{ filters.state }}">
+            </form>
+
+            <p class="explore-results-count">
+                Showing {{ properties|length }} of {{ properties.paginator.count|default:properties|length }} properties
+            </p>
+
+            {% if properties %}
+                <div class="explore-cards-grid">
+                    {% for property in properties %}
+                        <div class="explore-card">
+                            <div class="explore-card-image-wrap">
+                                {% if property.image %}
+                                    <img src="{{ property.image.url }}" alt="{{ property.title }}" class="explore-card-image">
+                                {% elif property.image_url %}
+                                    <img src="{{ property.image_url }}" alt="{{ property.title }}" class="explore-card-image">
+                                {% else %}
+                                    <div class="property-card-image-placeholder">No image available</div>
+                                {% endif %}
+
+                                <div class="explore-card-badges">
+                                    <span class="explore-badge">{{ property.get_listing_type_display }}</span>
+                                    {% if property.state == 'available' %}
+                                        <span class="explore-badge explore-badge-featured">Featured</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="explore-card-body">
+                                <div class="explore-card-title-row">
+                                    <h3 class="explore-card-title">{{ property.title }}</h3>
+                                    <span class="explore-heart">♡</span>
+                                </div>
+
+                                <p class="explore-card-location">
+                                    📍 {{ property.address|default:property.city }}
+                                </p>
+
+                                <div class="explore-card-meta">
+                                    <span>🛏 {{ property.rooms }}</span>
+                                    <span>🛁 {{ property.bathrooms }}</span>
+                                    <span>📐 {{ property.square_meters|default:"--" }} m²</span>
+                                </div>
+
+                                <div class="explore-card-footer">
+                                    <div>
+                                        <div class="explore-card-price">${{ property.price }}</div>
+                                        <div class="explore-card-owner">{{ property.capacity }} guests · {{ property.get_state_display }}</div>
+                                    </div>
+
+                                    <a href="{% url 'properties:property_detail' pk=property.pk %}" class="explore-details-btn">
+                                        View Details
+                                    </a>
+                                </div>
+
+                                {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
+                                    <div class="property-card-actions">
+                                        <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">Edit</a>
+                                        <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">Delete</a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="property-list-empty">No properties found with the selected filters.</p>
+            {% endif %}
+        </section>
+    </div>
 </div>
 
 {% endblock %}
