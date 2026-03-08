@@ -76,7 +76,7 @@
     </div>
 
     <!-- BOOKING FORM -->
-    <form method="POST">
+    <form method="POST" action="{% url 'transactions:create_booking' property.id %}">
     {% csrf_token %}
 
     <!-- CALENDAR -->
@@ -90,8 +90,8 @@
     </p>
 
     <!-- hidden inputs enviados al backend -->
-    <input type="hidden" name="check_in" id="check_in">
-    <input type="hidden" name="check_out" id="check_out">
+    <input type="hidden" name="check_in" id="check_in" required>
+    <input type="hidden" name="check_out" id="check_out" required>
 
     <button class="cta-btn" type="submit">
         Request booking
@@ -104,7 +104,7 @@
 <!-- CALENDAR SCRIPT -->
 <script>
 
-const availableDates = {{ available_dates_json|safe }};
+const availableDates = JSON.parse('{{ available_dates_json|escapejs }}');
 
 flatpickr("#calendar", {
 
@@ -123,6 +123,20 @@ flatpickr("#calendar", {
         } else {
             dayElem.style.background = "#ef4444";
             dayElem.style.color = "white";
+        }
+
+    },
+
+    onChange: function(selectedDates, dateStr, instance) {
+
+        if (selectedDates.length === 2) {
+
+            const checkIn = selectedDates[0].toISOString().split('T')[0];
+            const checkOut = selectedDates[1].toISOString().split('T')[0];
+
+            document.getElementById("check_in").value = checkIn;
+            document.getElementById("check_out").value = checkOut;
+
         }
 
     }

@@ -1123,3 +1123,11 @@ margin-top:10px;
 font-weight:700;
 margin-top:4px;
 }
+
+.tab-content{
+display:none;
+}
+
+.tab-content.active{
+display:block;
+}
