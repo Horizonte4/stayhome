@@ -1,7 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Crear Propiedad{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
     .form-card { background:#fff; padding:28px; border-radius:18px; box-shadow:0 16px 40px rgba(0,0,0,0.08); border:1px solid #e5e7eb; max-width:880px; }
@@ -16,6 +19,34 @@
     .field input:focus, .field textarea:focus, .field select:focus { outline:2px solid #3b82f6; background:#fff; }
     .pill-checkbox { display:flex; align-items:center; gap:10px; padding:12px 14px; border:1px solid #d1d5db; border-radius:12px; background:#f9fafb; }
     .submit-bar { margin-top:10px; }
+
+    .location-results {
+        margin-top: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        background: #fff;
+        max-height: 220px;
+        overflow-y: auto;
+        display: none;
+    }
+
+    .location-result-item {
+        padding: 10px 14px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+
+    .location-result-item:hover {
+        background: #f3f4f6;
+    }
+
+    #property-map {
+        height: 400px;
+        border-radius: 12px;
+        margin-top: 12px;
+        border: 1px solid #d1d5db;
+        overflow: hidden;
+    }
 </style>
 
 <div class="form-card">
@@ -54,10 +85,18 @@
                 <label>Address</label>
                 {{ form.address }}
                 {{ form.address.errors }}
-            </div>
-            <div class="field">
-                <label>City</label>
+
+                <div id="location-results" class="location-results"></div>
+
                 {{ form.city }}
+                {{ form.latitude }}
+                {{ form.longitude }}
+
+                <div id="property-map"></div>
+            </div>
+
+            <div class="field" style="display:none;">
+                <label>City</label>
                 {{ form.city.errors }}
             </div>
         </div>
@@ -124,5 +163,8 @@
         </div>
     </form>
 </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/property_location.js' %}"></script>
 
 {% endblock %}

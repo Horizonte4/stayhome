@@ -21,6 +21,8 @@ class Property(models.Model):
     description = models.TextField(blank=True)
     address = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=100)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     state = models.CharField(max_length=20, choices=STATE_CHOICES, default='available')
 

@@ -10,6 +10,8 @@ class PropertyForm(forms.ModelForm):
             'description',
             'address',
             'city',
+            'latitude',
+            'longitude',
             'price',
             'state',
             'listing_type',
@@ -24,8 +26,14 @@ class PropertyForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Modern Downtown Apartment'}),
             'description': forms.Textarea(attrs={'class': 'form-input', 'rows': 4, 'placeholder': 'Describe highlights, amenities, nearby places...'}),
-            'address': forms.TextInput(attrs={'class': 'form-input', 'placeholder': '123 Main Street'}),
-            'city': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Downtown'}),
+            'address': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'search location',
+                'autocomplete': 'off',
+                }),
+            'city': forms.HiddenInput(),
+            'latitude': forms.HiddenInput(),
+            'longitude': forms.HiddenInput(),   
             'price': forms.NumberInput(attrs={'class': 'form-input', 'min': 0, 'step': '0.01'}),
             'state': forms.Select(attrs={'class': 'form-input'}),
             'listing_type': forms.Select(attrs={'class': 'form-input'}),
@@ -46,7 +54,7 @@ class PropertyForm(forms.ModelForm):
 
         # Mark core fields as required on the form level
         required_fields = [
-            'title', 'description', 'address', 'city', 'price', 'state', 'publication_type',
+            'title', 'description', 'address', 'city', 'price', 'state', 'listing_type',
             'rooms', 'bathrooms', 'square_meters', 'capacity'
         ]
         for name in required_fields:
@@ -72,5 +80,26 @@ class PropertyForm(forms.ModelForm):
         if not imagen and not imagen_url:
             self.add_error('image', 'Upload an image or provide a URL.')
             self.add_error('image_url', 'Upload an image or provide a URL.')
+
+        #  Additional validations can be added here (e.g., address format, city name, etc.)    
+        lat = cleaned.get('latitude')
+        lng = cleaned.get('longitude')
+        address = cleaned.get('address')
+        city = cleaned.get('city')
+
+        if address and (lat is None or lng is None):
+            self.add_error(
+                'address',
+                'Debes seleccionar una ubicación válida en el mapa.'
+            )
+        
+        if address and not city:
+            self.add_error('address', 'No se pudo detectar la ciudad. Selecciona una ubicación válida.')
+
+        if address and not city:
+            self.add_error(
+                'address',
+                'No se pudo detectar la ciudad. Selecciona una ubicación válida.'
+            )
 
         return cleaned
