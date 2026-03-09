@@ -84,7 +84,7 @@
             <span>🛁 {{ property.bathrooms }} baths</span>
             <span>📐 {{ property.square_meters|default:"--" }} m²</span>
             <span>👥 {{ property.capacity }} guests</span>
-            <span>📅 {{ property.availability_dates|default:"--" }}</span>
+            <span>📅 {{ property.availability_dates|default:"Todos los días disponibles" }}</span>
         </div>
 
         {% if property.latitude and property.longitude %}
@@ -141,7 +141,9 @@
 <!-- CALENDAR SCRIPT -->
 <script>
 
-const availableDates = JSON.parse('{{ available_dates_json|escapejs }}');
+const blockedDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
+const reservedDates = JSON.parse('{{ reserved_dates_json|escapejs }}');
+const allDaysAvailable = {{ all_days_available|yesno:"true,false" }};
 
 flatpickr("#calendar", {
 
@@ -154,7 +156,17 @@ flatpickr("#calendar", {
 
         const date = dayElem.dateObj.toISOString().split('T')[0];
 
-        if (availableDates.includes(date)) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const isPast = dayElem.dateObj < today;
+
+        const isBlocked = blockedDates.includes(date);
+        const isReserved = reservedDates.includes(date);
+
+        if (isPast) {
+            dayElem.style.background = "#e5e7eb"; // gray
+            dayElem.style.color = "#6b7280";
+        } else if (allDaysAvailable || (!isBlocked && !isReserved)) {
             dayElem.style.background = "#22c55e";
             dayElem.style.color = "white";
         } else {
