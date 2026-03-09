@@ -156,6 +156,7 @@
                                 {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
                                     <div class="property-card-actions">
                                         <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">Edit</a>
+                                        <a href="{% url 'properties:edit_calendar' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">Edit calendar</a>
                                         <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">Delete</a>
                                     </div>
                                 {% endif %}

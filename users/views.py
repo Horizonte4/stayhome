@@ -62,13 +62,17 @@ def board(request):
 
     if hasattr(user, 'owner'):
         role = "Owner"
+        my_properties = Property.objects.filter(owner=user.owner)
     elif hasattr(user, 'client'):
         role = "Client"
+        my_properties = Property.objects.none()
     else:
         role = "User"
+        my_properties = Property.objects.none()
 
     return render(request, "users/board.html", {
-        "role": role
+        "role": role,
+        "properties": my_properties,
     })
 
 #@login_required
