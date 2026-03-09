@@ -54,6 +54,31 @@
             {{ property.description|default:"Sin descripción" }}
         </p>
 
+        <p class="description">
+    {{ property.description|default:"Sin descripción" }}
+</p>
+
+<!-- CONTACT OWNER -->
+<div class="contact-owner" style="margin-top:20px;">
+
+{% if request.user.is_authenticated and request.user != property.owner.user %}
+    {% if can_contact_owner %}
+        <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="cta-btn">
+                Contact Owner
+            </button>
+        </form>
+    {% endif %}
+
+{% elif not request.user.is_authenticated %}
+    <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}" class="cta-btn">
+        Login to contact owner
+    </a>
+{% endif %}
+
+</div>
+
         <div class="specs">
             <span>🛏 {{ property.bedrooms }} beds</span>
             <span>🛁 {{ property.bathrooms }} baths</span>
