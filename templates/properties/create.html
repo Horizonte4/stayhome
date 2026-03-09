@@ -5,6 +5,9 @@
 {% block content %}
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <style>
     .form-card { background:#fff; padding:28px; border-radius:18px; box-shadow:0 16px 40px rgba(0,0,0,0.08); border:1px solid #e5e7eb; max-width:880px; }
@@ -132,11 +135,22 @@
                 {{ form.square_meters }}
                 {{ form.square_meters.errors }}
             </div>
-            <div class="field">
+                        <div class="field">
                 <label>Guests capacity</label>
                 {{ form.capacity }}
                 {{ form.capacity.errors }}
             </div>
+            <div class="field">
+                <label>Available dates</label>
+                <input
+                    id="availability-calendar"
+                    name="availability_dates"
+                    class="form-input"
+                    placeholder="Select available dates"
+                >
+            </div>
+
+</div>
         </div>
 
         <div class="form-grid two-col">
@@ -166,5 +180,16 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{% static 'js/property_location.js' %}"></script>
+<script>
+
+flatpickr("#availability-calendar", {
+
+    mode: "multiple",   // permite seleccionar varias fechas
+    minDate: "today",
+    dateFormat: "Y-m-d"
+
+});
+
+</script>
 
 {% endblock %}

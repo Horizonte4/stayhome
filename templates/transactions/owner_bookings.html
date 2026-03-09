@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="container">
+
+<h1>Solicitudes de Reserva</h1>
+
+<div class="booking-list">
+
+{% for booking in pending %}
+
+<div class="booking-card card">
+
+    <div class="booking-info">
+
+        <h3>{{ booking.property.title }}</h3>
+
+        <p>
+        Cliente: {{ booking.user.email }}
+        </p>
+
+        <p>
+        Check-in: {{ booking.check_in }} <br>
+        Check-out: {{ booking.check_out }}
+        </p>
+
+        <p>
+        {{ booking.nights }} noches
+        </p>
+
+    </div>
+
+    <div class="booking-actions">
+
+        <a class="cta-btn"
+           href="{% url 'transactions:approve_booking' booking.id %}">
+           Aprobar
+        </a>
+
+        <a class="cta-btn danger"
+           href="{% url 'transactions:reject_booking' booking.id %}">
+           Rechazar
+        </a>
+
+    </div>
+
+</div>
+
+{% empty %}
+
+<p>No hay solicitudes pendientes.</p>
+
+{% endfor %}
+
+</div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="container">
+
+<h1>Mis Reservas</h1>
+<p class="sub">Gestiona tus reservas de propiedades</p>
+
+<!-- TABS -->
+<div class="booking-tabs">
+
+<button class="tab active" onclick="showTab('pending')">
+Pendientes ({{ pending|length }})
+</button>
+
+<button class="tab" onclick="showTab('approved')">
+Aprobadas ({{ approved|length }})
+</button>
+
+<button class="tab" onclick="showTab('cancelled')">
+Canceladas ({{ cancelled|length }})
+</button>
+
+</div>
+
+
+<!-- ===================== -->
+<!-- PENDIENTES -->
+<!-- ===================== -->
+
+<div id="pending" class="tab-content">
+
+{% for booking in pending %}
+
+<div class="booking-card card">
+
+<div class="booking-image">
+
+<img src="{% if booking.property.image %}
+{{ booking.property.image.url }}
+{% elif booking.property.image_url %}
+{{ booking.property.image_url }}
+{% else %}
+https://images.unsplash.com/photo-1505691938895-1758d7feb511
+{% endif %}" alt="{{ booking.property.title }}">
+
+</div>
+
+
+<div class="booking-info">
+
+<h3>{{ booking.property.title }}</h3>
+
+<span class="status pending">Pendiente</span>
+
+<div class="booking-dates">
+
+<div>
+<strong>Check-in</strong>
+<p>{{ booking.check_in }}</p>
+</div>
+
+<div>
+<strong>Check-out</strong>
+<p>{{ booking.check_out }}</p>
+</div>
+
+</div>
+
+<p class="sub">
+{{ booking.property.capacity }} huéspedes
+</p>
+
+<p class="sub">
+Solicitado el {{ booking.created_at|date:"F j, Y" }}
+</p>
+
+</div>
+
+
+<div class="booking-price">
+
+<h2>${{ booking.total_price }}</h2>
+<p class="sub">{{ booking.nights }} noches</p>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No tienes reservas pendientes.</p>
+
+{% endfor %}
+
+</div>
+
+
+<!-- ===================== -->
+<!-- APROBADAS -->
+<!-- ===================== -->
+
+<div id="approved" class="tab-content" style="display:none;">
+
+{% for booking in approved %}
+
+<div class="booking-card card">
+
+<div class="booking-image">
+
+<img src="{% if booking.property.image %}
+{{ booking.property.image.url }}
+{% elif booking.property.image_url %}
+{{ booking.property.image_url }}
+{% else %}
+https://images.unsplash.com/photo-1505691938895-1758d7feb511
+{% endif %}" alt="{{ booking.property.title }}">
+
+</div>
+
+
+<div class="booking-info">
+
+<h3>{{ booking.property.title }}</h3>
+
+<span class="status approved">Confirmada</span>
+
+<div class="booking-dates">
+
+<div>
+<strong>Check-in</strong>
+<p>{{ booking.check_in }}</p>
+</div>
+
+<div>
+<strong>Check-out</strong>
+<p>{{ booking.check_out }}</p>
+</div>
+
+</div>
+
+<p class="sub">
+{{ booking.property.capacity }} huéspedes
+</p>
+
+</div>
+
+
+<div class="booking-price">
+
+<h2>${{ booking.total_price }}</h2>
+<p class="sub">{{ booking.nights }} noches</p>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No tienes reservas aprobadas.</p>
+
+{% endfor %}
+
+</div>
+
+
+<!-- ===================== -->
+<!-- CANCELADAS -->
+<!-- ===================== -->
+
+<div id="cancelled" class="tab-content" style="display:none;">
+
+{% for booking in cancelled %}
+
+<div class="booking-card card">
+
+<div class="booking-image">
+
+<img src="{% if booking.property.image %}
+{{ booking.property.image.url }}
+{% elif booking.property.image_url %}
+{{ booking.property.image_url }}
+{% else %}
+https://images.unsplash.com/photo-1505691938895-1758d7feb511
+{% endif %}" alt="{{ booking.property.title }}">
+
+</div>
+
+
+<div class="booking-info">
+
+<h3>{{ booking.property.title }}</h3>
+
+<span class="status rejected">Cancelada</span>
+
+<div class="booking-dates">
+
+<div>
+<strong>Check-in</strong>
+<p>{{ booking.check_in }}</p>
+</div>
+
+<div>
+<strong>Check-out</strong>
+<p>{{ booking.check_out }}</p>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="booking-price">
+
+<h2>${{ booking.total_price }}</h2>
+<p class="sub">{{ booking.nights }} noches</p>
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p>No tienes reservas canceladas.</p>
+
+{% endfor %}
+
+</div>
+
+</section>
+
+
+<script>
+
+function showTab(tab){
+
+document.getElementById("pending").style.display="none";
+document.getElementById("approved").style.display="none";
+document.getElementById("cancelled").style.display="none";
+
+document.getElementById(tab).style.display="block";
+
+}
+
+</script>
+
+{% endblock %}
