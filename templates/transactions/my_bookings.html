@@ -24,7 +24,6 @@ Canceladas ({{ cancelled|length }})
 
 </div>
 
-
 <!-- ===================== -->
 <!-- PENDIENTES -->
 <!-- ===================== -->
@@ -46,7 +45,6 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 {% endif %}" alt="{{ booking.property.title }}">
 
 </div>
-
 
 <div class="booking-info">
 
@@ -78,7 +76,6 @@ Solicitado el {{ booking.created_at|date:"F j, Y" }}
 
 </div>
 
-
 <div class="booking-price">
 
 <h2>${{ booking.total_price }}</h2>
@@ -95,7 +92,6 @@ Solicitado el {{ booking.created_at|date:"F j, Y" }}
 {% endfor %}
 
 </div>
-
 
 <!-- ===================== -->
 <!-- APROBADAS -->
@@ -118,7 +114,6 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 {% endif %}" alt="{{ booking.property.title }}">
 
 </div>
-
 
 <div class="booking-info">
 
@@ -144,8 +139,16 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 {{ booking.property.capacity }} huéspedes
 </p>
 
+<div style="margin-top:12px;">
+    <form method="post" action="{% url 'comunication:start_conversation' booking.property.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="cta-btn">
+            Contact Owner
+        </button>
+    </form>
 </div>
 
+</div>
 
 <div class="booking-price">
 
@@ -163,7 +166,6 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 {% endfor %}
 
 </div>
-
 
 <!-- ===================== -->
 <!-- CANCELADAS -->
@@ -187,7 +189,6 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 </div>
 
-
 <div class="booking-info">
 
 <h3>{{ booking.property.title }}</h3>
@@ -210,7 +211,6 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 </div>
 
-
 <div class="booking-price">
 
 <h2>${{ booking.total_price }}</h2>
@@ -230,19 +230,14 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 </section>
 
-
 <script>
+function showTab(tab) {
+    document.getElementById("pending").style.display = "none";
+    document.getElementById("approved").style.display = "none";
+    document.getElementById("cancelled").style.display = "none";
 
-function showTab(tab){
-
-document.getElementById("pending").style.display="none";
-document.getElementById("approved").style.display="none";
-document.getElementById("cancelled").style.display="none";
-
-document.getElementById(tab).style.display="block";
-
+    document.getElementById(tab).style.display = "block";
 }
-
 </script>
 
 {% endblock %}

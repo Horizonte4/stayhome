@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Inbox | StayHome{% endblock %}
+{% block nav_messages %}active{% endblock %}
+
+{% block content %}
+<section class="container">
+    <h1>Inbox</h1>
+
+    {% if conversation_rows %}
+        <div class="chat-list">
+            {% for row in conversation_rows %}
+                <a href="{% url 'comunication:conversation_detail' row.conversation.pk %}" class="chat-row">
+                    <div class="chat-row-header">
+                        <h3>{{ row.property.title }}</h3>
+                        {% if row.last_message_created_at %}
+                            <small>{{ row.last_message_created_at|date:"M d, Y H:i" }}</small>
+                        {% endif %}
+                    </div>
+
+                    <p>
+                        <strong>
+                            {% if row.other_user.get_full_name %}
+                                {{ row.other_user.get_full_name }}
+                            {% else %}
+                                {{ row.other_user.email }}
+                            {% endif %}
+                        </strong>
+                    </p>
+
+                    <p>
+                        {% if row.last_message %}
+                            {{ row.last_message|truncatechars:90 }}
+                        {% else %}
+                            No messages yet.
+                        {% endif %}
+                    </p>
+
+                    {% if row.unread_count %}
+                        <span class="chat-unread-badge">{{ row.unread_count }} unread</span>
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You do not have any conversations yet.</p>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Conversation | StayHome{% endblock %}
+{% block nav_messages %}active{% endblock %}
+
+{% block content %}
+<section class="container">
+    <header class="chat-header">
+        <h1>{{ conversation.property.title }}</h1>
+        <p>
+            Chat with
+            <strong>
+                {% if other_user.get_full_name %}
+                    {{ other_user.get_full_name }}
+                {% else %}
+                    {{ other_user.email }}
+                {% endif %}
+            </strong>
+        </p>
+        <p>
+            <a href="{% url 'properties:property_detail' conversation.property.pk %}">
+                View property
+            </a>
+        </p>
+    </header>
+
+    <div class="chat-messages">
+        {% for message in messages_list %}
+            <div class="message-bubble {% if message.sender == request.user %}message-own{% else %}message-other{% endif %}">
+                <div class="message-meta">
+                    <strong>
+                        {% if message.sender == request.user %}
+                            You
+                        {% else %}
+                            {% if message.sender.get_full_name %}
+                                {{ message.sender.get_full_name }}
+                            {% else %}
+                                {{ message.sender.email }}
+                            {% endif %}
+                        {% endif %}
+                    </strong>
+                    <small>{{ message.created_at|date:"M d, Y H:i" }}</small>
+                </div>
+                <p>{{ message.content|linebreaksbr }}</p>
+            </div>
+        {% empty %}
+            <p>No messages yet. Start the conversation below.</p>
+        {% endfor %}
+    </div>
+
+    <form method="post" action="{% url 'comunication:send_message' conversation.pk %}" class="chat-form">
+        {% csrf_token %}
+        <textarea name="content" rows="4" placeholder="Write your message..." required></textarea>
+        <button type="submit">Send</button>
+    </form>
+</section>
+{% endblock %}
