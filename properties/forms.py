@@ -22,6 +22,7 @@ class PropertyForm(forms.ModelForm):
             'image',
             'image_url',
             'active_listing',
+            'availability_dates',
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Modern Downtown Apartment'}),

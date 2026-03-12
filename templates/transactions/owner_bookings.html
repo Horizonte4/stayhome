@@ -4,57 +4,424 @@
 
 <section class="container">
 
-<h1>Solicitudes de Reserva</h1>
+<h1>My properties reservations</h1>
+<p class="sub">Manage your reservations</p>
 
-<div class="booking-list">
+
+<!-- TABS -->
+
+<div class="booking-tabs">
+
+<div class="tab active" onclick="showTab(event,'pending')">
+Pending
+{% if pending %}
+<span class="badge">{{ pending|length }}</span>
+{% endif %}
+</div>
+
+<div class="tab" onclick="showTab(event,'upcoming')">
+Upcoming
+{% if upcoming %}
+<span class="badge">{{ upcoming|length }}</span>
+{% endif %}
+</div>
+
+<div class="tab" onclick="showTab(event,'rejected')">
+Rejected
+{% if rejected %}
+<span class="badge">{{ rejected|length }}</span>
+{% endif %}
+</div>
+
+<div class="tab" onclick="showTab(event,'past')">
+Past
+{% if past %}
+<span class="badge">{{ past|length }}</span>
+{% endif %}
+</div>
+
+</div>
+
+
+<!-- ===================== -->
+<!-- PENDING -->
+<!-- ===================== -->
+
+<div id="pending" class="tab-content">
 
 {% for booking in pending %}
 
-<div class="booking-card card">
+<div class="booking-card">
 
-    <div class="booking-info">
+<div class="booking-image">
 
-        <h3>{{ booking.property.title }}</h3>
+<img src="{% if booking.property.image %}
+{{ booking.property.image.url }}
+{% elif booking.property.image_url %}
+{{ booking.property.image_url }}
+{% else %}
+https://images.unsplash.com/photo-1505691938895-1758d7feb511
+{% endif %}">
 
-        <p>
-        Cliente: {{ booking.user.email }}
-        </p>
+</div>
 
-        <p>
-        Check-in: {{ booking.check_in }} <br>
-        Check-out: {{ booking.check_out }}
-        </p>
+<div class="booking-info">
 
-        <p>
-        {{ booking.nights }} noches
-        </p>
+<h3>{{ booking.property.title }}</h3>
 
-    </div>
+<span class="status pending">Pending</span>
 
-    <div class="booking-actions">
+<div class="booking-dates">
 
-        <a class="cta-btn"
-           href="{% url 'transactions:approve_booking' booking.id %}">
-           Aprobar
-        </a>
+<div>
+<strong>Check-in</strong>
+<p>{{ booking.check_in|date:"F j, Y" }}</p>
+</div>
 
-        <a class="cta-btn danger"
-           href="{% url 'transactions:reject_booking' booking.id %}">
-           Rechazar
-        </a>
+<div>
+<strong>Check-out</strong>
+<p>{{ booking.check_out|date:"F j, Y" }}</p>
+</div>
 
-    </div>
+</div>
+
+<p class="sub">👤 Client: {{ booking.user.email }}</p>
+<p class="sub">👥 {{ booking.property.capacity }} guests</p>
+
+<p class="sub">
+Booked {{ booking.created_at|date:"F j, Y" }}
+</p>
+
+</div>
+
+
+<div class="booking-price">
+
+<h2>${{ booking.total_price }}</h2>
+
+<p class="sub">{{ booking.nights }} nights</p>
+
+<div class="actions">
+
+<a class="approve-btn"
+href="{% url 'transactions:approve_booking' booking.id %}">
+Approve
+</a>
+
+<a class="reject-btn"
+href="{% url 'transactions:reject_booking' booking.id %}">
+Reject
+</a>
+
+</div>
+
+</div>
 
 </div>
 
 {% empty %}
 
-<p>No hay solicitudes pendientes.</p>
+<div class="empty-state">
+<p>You don't have pending reservations.</p>
+</div>
 
 {% endfor %}
 
 </div>
 
+
+
+<!-- ===================== -->
+<!-- UPCOMING -->
+<!-- ===================== -->
+
+<div id="upcoming" class="tab-content" style="display:none;">
+
+{% for booking in upcoming %}
+
+<div class="booking-card">
+
+<div class="booking-image">
+
+<img src="{% if booking.property.image %}
+{{ booking.property.image.url }}
+{% elif booking.property.image_url %}
+{{ booking.property.image_url }}
+{% else %}
+https://images.unsplash.com/photo-1505691938895-1758d7feb511
+{% endif %}">
+
+</div>
+
+<div class="booking-info">
+
+<h3>{{ booking.property.title }}</h3>
+
+<span class="status approved">Approved</span>
+
+<p class="sub">Client: {{ booking.user.email }}</p>
+
+<div class="booking-dates">
+
+<div>
+<strong>Check-in</strong>
+<p>{{ booking.check_in }}</p>
+</div>
+
+<div>
+<strong>Check-out</strong>
+<p>{{ booking.check_out }}</p>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="booking-price">
+
+<h2>${{ booking.total_price }}</h2>
+
+<p class="sub">{{ booking.nights }} nights</p>
+
+
+
+</div>
+
+</div>
+
+{% empty %}
+<p>No upcoming reservations.</p>
+{% endfor %}
+
+</div>
+
+
+
+<!-- ===================== -->
+<!-- CANCELLED -->
+<!-- ===================== -->
+
+<div id="rejected" class="tab-content" style="display:none;">
+
+{% for booking in rejected %}
+
+<div class="booking-card">
+
+<div class="booking-info">
+
+<h3>{{ booking.property.title }}</h3>
+
+<span class="status rejected">rejected</span>
+
+<p class="sub">
+{{ booking.check_in }} → {{ booking.check_out }}
+</p>
+
+</div>
+
+</div>
+
+{% empty %}
+<p>No cancelled reservations.</p>
+{% endfor %}
+
+</div>
+
+
+
+<!-- ===================== -->
+<!-- PAST -->
+<!-- ===================== -->
+
+<div id="past" class="tab-content" style="display:none;">
+
+{% for booking in past %}
+
+<div class="booking-card">
+
+<div class="booking-image">
+<img src="{{ booking.property.image.url }}">
+</div>
+
+<div class="booking-info">
+
+<h3>{{ booking.property.title }}</h3>
+
+<span class="status past">Finished</span>
+
+<p class="sub">
+{{ booking.check_in }} → {{ booking.check_out }}
+</p>
+
+</div>
+
+<div class="booking-price">
+
+<h2>${{ booking.total_price }}</h2>
+
+</div>
+
+</div>
+
+{% empty %}
+<p>No past reservations.</p>
+{% endfor %}
+
+</div>
+
 </section>
+
+
+
+<script>
+
+function showTab(event,tab){
+
+const contents=document.querySelectorAll(".tab-content")
+const tabs=document.querySelectorAll(".tab")
+
+contents.forEach(c=>c.style.display="none")
+tabs.forEach(t=>t.classList.remove("active"))
+
+document.getElementById(tab).style.display="block"
+
+event.target.classList.add("active")
+
+}
+
+</script>
+
+<style>
+
+/* TABS */
+
+.booking-tabs{
+display:flex;
+background:#f3f4f6;
+border-radius:30px;
+padding:6px;
+margin:30px 0;
+gap:6px;
+}
+
+.tab{
+flex:1;
+text-align:center;
+padding:10px;
+border-radius:30px;
+cursor:pointer;
+font-weight:600;
+}
+
+.tab.active{
+background:white;
+box-shadow:0 2px 10px rgba(0,0,0,.08);
+}
+
+.badge{
+background:#f59e0b;
+color:white;
+padding:3px 8px;
+border-radius:12px;
+margin-left:6px;
+font-size:12px;
+}
+
+
+/* CARD */
+
+.booking-card{
+display:flex;
+gap:20px;
+background:white;
+border-radius:16px;
+padding:20px;
+margin-bottom:20px;
+align-items:center;
+border:1px solid #e5e7eb;
+}
+
+/* IMAGE */
+
+.booking-image img{
+width:200px;
+height:130px;
+object-fit:cover;
+border-radius:12px;
+}
+
+/* INFO */
+
+.booking-info{
+flex:1;
+}
+
+/* PRICE */
+
+.booking-price{
+text-align:right;
+min-width:150px;
+}
+
+.booking-price h2{
+margin:0;
+}
+
+/* ACTIONS */
+
+.actions{
+margin-top:10px;
+display:flex;
+gap:8px;
+justify-content:flex-end;
+}
+
+.approve-btn{
+background:#22c55e;
+color:white;
+padding:8px 14px;
+border-radius:8px;
+text-decoration:none;
+font-weight:600;
+}
+
+.reject-btn{
+background:#ef4444;
+color:white;
+padding:8px 14px;
+border-radius:8px;
+text-decoration:none;
+font-weight:600;
+}
+
+/* STATUS */
+
+.status{
+font-size:12px;
+padding:4px 10px;
+border-radius:20px;
+display:inline-block;
+margin:6px 0;
+}
+
+.pending{
+background:#fef3c7;
+color:#92400e;
+}
+
+.approved{
+background:#dcfce7;
+color:#166534;
+}
+
+.past{
+background:#e5e7eb;
+color:#374151;
+}
+
+</style>
+
+
 
 {% endblock %}
