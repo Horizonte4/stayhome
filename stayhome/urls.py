@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from .views import home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('users.urls')),
+    path('', home, name='home'),
+    path('users/', include('users.urls')),
     path('properties/', include('properties.urls')),
     path('transactions/', include('transactions.urls')),
     path('chat/', include('comunication.urls')),

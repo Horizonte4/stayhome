@@ -2,37 +2,42 @@
 
 {% block content %}
 
-<section class="container">
+<section class="container bookings-page">
 
-<h1>Mis Reservas</h1>
-<p class="sub">Gestiona tus reservas de propiedades</p>
+<h1>My Bookings</h1>
+<p class="sub">Manage your reservations</p>
 
 <!-- TABS -->
 <div class="booking-tabs">
 
-<button class="tab active" onclick="showTab('pending')">
-Pendientes ({{ pending|length }})
+<button class="tab active" onclick="showTab(event,'pending')">
+Pending <span class="badge">{{ pending|length }}</span>
 </button>
 
-<button class="tab" onclick="showTab('approved')">
-Aprobadas ({{ approved|length }})
+<button class="tab" onclick="showTab(event,'approved')">
+Approved <span class="badge">{{ approved|length }}</span>
 </button>
 
-<button class="tab" onclick="showTab('cancelled')">
-Canceladas ({{ cancelled|length }})
+<button class="tab" onclick="showTab(event,'rejected')">
+Rejected <span class="badge">{{ rejected|length }}</span>
+</button>
+
+<button class="tab" onclick="showTab(event,'cancelled')">
+Cancelled <span class="badge">{{ cancelled|length }}</span>
 </button>
 
 </div>
 
+
 <!-- ===================== -->
-<!-- PENDIENTES -->
+<!-- PENDING -->
 <!-- ===================== -->
 
 <div id="pending" class="tab-content">
 
 {% for booking in pending %}
 
-<div class="booking-card card">
+<div class="booking-card">
 
 <div class="booking-image">
 
@@ -42,36 +47,36 @@ Canceladas ({{ cancelled|length }})
 {{ booking.property.image_url }}
 {% else %}
 https://images.unsplash.com/photo-1505691938895-1758d7feb511
-{% endif %}" alt="{{ booking.property.title }}">
+{% endif %}">
 
 </div>
 
-<div class="booking-info">
+<div class="booking-main">
 
 <h3>{{ booking.property.title }}</h3>
 
-<span class="status pending">Pendiente</span>
+<span class="status pending">Pending</span>
 
-<div class="booking-dates">
+<div class="booking-details">
 
-<div>
-<strong>Check-in</strong>
-<p>{{ booking.check_in }}</p>
+<div class="detail">
+<span>Check-in</span>
+<p>{{ booking.check_in|date:"F j, Y" }}</p>
 </div>
 
-<div>
-<strong>Check-out</strong>
-<p>{{ booking.check_out }}</p>
+<div class="detail">
+<span>Check-out</span>
+<p>{{ booking.check_out|date:"F j, Y" }}</p>
 </div>
 
 </div>
 
-<p class="sub">
-{{ booking.property.capacity }} huéspedes
+<p class="guests">
+👥 {{ booking.property.capacity }} guests
 </p>
 
-<p class="sub">
-Solicitado el {{ booking.created_at|date:"F j, Y" }}
+<p class="booking-date">
+Requested on {{ booking.created_at|date:"F j, Y" }}
 </p>
 
 </div>
@@ -79,66 +84,63 @@ Solicitado el {{ booking.created_at|date:"F j, Y" }}
 <div class="booking-price">
 
 <h2>${{ booking.total_price }}</h2>
-<p class="sub">{{ booking.nights }} noches</p>
+<p>{{ booking.nights }} nights</p>
 
 </div>
 
 </div>
 
 {% empty %}
-
-<p>No tienes reservas pendientes.</p>
-
+<p class="empty">You have no pending bookings.</p>
 {% endfor %}
 
 </div>
 
+
 <!-- ===================== -->
-<!-- APROBADAS -->
+<!-- APPROVED -->
 <!-- ===================== -->
 
 <div id="approved" class="tab-content" style="display:none;">
 
 {% for booking in approved %}
 
-<div class="booking-card card">
+<div class="booking-card">
 
-<div class="booking-image">
 
-<img src="{% if booking.property.image %}
-{{ booking.property.image.url }}
-{% elif booking.property.image_url %}
-{{ booking.property.image_url }}
-{% else %}
-https://images.unsplash.com/photo-1505691938895-1758d7feb511
-{% endif %}" alt="{{ booking.property.title }}">
 
-</div>
-
-<div class="booking-info">
+<div class="booking-main">
 
 <h3>{{ booking.property.title }}</h3>
 
-<span class="status approved">Confirmada</span>
+<span class="status approved">Approved</span>
 
-<div class="booking-dates">
+<div class="booking-details">
 
-<div>
-<strong>Check-in</strong>
-<p>{{ booking.check_in }}</p>
+<div class="detail">
+<span>Check-in</span>
+<p>{{ booking.check_in|date:"F j, Y" }}</p>
 </div>
 
-<div>
-<strong>Check-out</strong>
-<p>{{ booking.check_out }}</p>
+<div class="detail">
+<span>Check-out</span>
+<p>{{ booking.check_out|date:"F j, Y" }}</p>
 </div>
 
 </div>
 
-<p class="sub">
-{{ booking.property.capacity }} huéspedes
+<p class="guests">
+👥 {{ booking.property.capacity }} guests
 </p>
 
+</div>
+
+<div class="booking-price">
+
+<h2>${{ booking.total_price }}</h2>
+<p>{{ booking.nights }} nights</p>
+
+</div>
 <div style="margin-top:12px;">
     <form method="post" action="{% url 'comunication:start_conversation' booking.property.pk %}">
         {% csrf_token %}
@@ -147,64 +149,96 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
         </button>
     </form>
 </div>
+</div>
+
+
+
+{% empty %}
+<p class="empty">You have no approved bookings.</p>
+{% endfor %}
+
+</div>
+
+
+<!-- ===================== -->
+<!-- REJECTED -->
+<!-- ===================== -->
+
+<div id="rejected" class="tab-content" style="display:none;">
+
+{% for booking in rejected %}
+
+<div class="booking-card">
+
+
+
+<div class="booking-main">
+
+<h3>{{ booking.property.title }}</h3>
+
+<span class="status rejected">Rejected</span>
+
+<div class="booking-details">
+
+<div class="detail">
+<span>Check-in</span>
+<p>{{ booking.check_in|date:"F j, Y" }}</p>
+</div>
+
+<div class="detail">
+<span>Check-out</span>
+<p>{{ booking.check_out|date:"F j, Y" }}</p>
+</div>
+
+</div>
 
 </div>
 
 <div class="booking-price">
 
 <h2>${{ booking.total_price }}</h2>
-<p class="sub">{{ booking.nights }} noches</p>
 
 </div>
 
 </div>
 
 {% empty %}
-
-<p>No tienes reservas aprobadas.</p>
-
+<p class="empty">No rejected bookings.</p>
 {% endfor %}
 
 </div>
 
+
 <!-- ===================== -->
-<!-- CANCELADAS -->
+<!-- CANCELLED -->
 <!-- ===================== -->
 
 <div id="cancelled" class="tab-content" style="display:none;">
 
 {% for booking in cancelled %}
 
-<div class="booking-card card">
+<div class="booking-card">
 
 <div class="booking-image">
-
-<img src="{% if booking.property.image %}
-{{ booking.property.image.url }}
-{% elif booking.property.image_url %}
-{{ booking.property.image_url }}
-{% else %}
-https://images.unsplash.com/photo-1505691938895-1758d7feb511
-{% endif %}" alt="{{ booking.property.title }}">
-
+<img src="{{ booking.property.image.url }}">
 </div>
 
-<div class="booking-info">
+<div class="booking-main">
 
 <h3>{{ booking.property.title }}</h3>
 
-<span class="status rejected">Cancelada</span>
+<span class="status cancelled">Cancelled</span>
 
-<div class="booking-dates">
+<div class="booking-details">
 
-<div>
-<strong>Check-in</strong>
-<p>{{ booking.check_in }}</p>
+<div class="detail">
+<span>Check-in</span>
+<p>{{ booking.check_in|date:"F j, Y" }}</p>
 </div>
 
-<div>
-<strong>Check-out</strong>
-<p>{{ booking.check_out }}</p>
+<div class="detail">
+<span>Check-out</span>
+<p>{{ booking.check_out|date:"F j, Y" }}</p>
 </div>
 
 </div>
@@ -214,30 +248,197 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 <div class="booking-price">
 
 <h2>${{ booking.total_price }}</h2>
-<p class="sub">{{ booking.nights }} noches</p>
 
 </div>
 
 </div>
 
 {% empty %}
-
-<p>No tienes reservas canceladas.</p>
-
+<p class="empty">No cancelled bookings.</p>
 {% endfor %}
 
 </div>
 
 </section>
 
-<script>
-function showTab(tab) {
-    document.getElementById("pending").style.display = "none";
-    document.getElementById("approved").style.display = "none";
-    document.getElementById("cancelled").style.display = "none";
 
-    document.getElementById(tab).style.display = "block";
+
+<script>
+
+function showTab(event,tab){
+
+const contents=document.querySelectorAll(".tab-content")
+const tabs=document.querySelectorAll(".tab")
+
+contents.forEach(c=>c.style.display="none")
+tabs.forEach(t=>t.classList.remove("active"))
+
+document.getElementById(tab).style.display="block"
+
+event.target.classList.add("active")
+
 }
+
 </script>
+
+
+<style>
+
+/* PAGE */
+
+.bookings-page{
+max-width:1100px;
+margin:auto;
+padding:30px 0;
+}
+
+/* TABS */
+
+.booking-tabs{
+display:flex;
+gap:10px;
+background:#f3f4f6;
+padding:6px;
+border-radius:40px;
+margin:30px 0;
+}
+
+.tab{
+flex:1;
+padding:10px 16px;
+border:none;
+background:none;
+border-radius:40px;
+cursor:pointer;
+font-weight:600;
+}
+
+.tab.active{
+background:white;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.badge{
+background:#f59e0b;
+color:white;
+padding:3px 8px;
+border-radius:12px;
+font-size:12px;
+margin-left:6px;
+}
+
+/* CARD */
+
+.booking-card{
+display:flex;
+gap:20px;
+align-items:center;
+border:1px solid #e5e7eb;
+border-radius:16px;
+padding:20px;
+margin-bottom:20px;
+background:white;
+}
+
+/* IMAGE */
+
+.booking-image img{
+width:220px;
+height:140px;
+object-fit:cover;
+border-radius:12px;
+}
+
+/* INFO */
+
+.booking-main{
+flex:1;
+}
+
+.booking-main h3{
+margin-bottom:6px;
+}
+
+.booking-details{
+display:flex;
+gap:40px;
+margin-top:10px;
+}
+
+.detail span{
+font-size:13px;
+color:#6b7280;
+}
+
+.guests{
+margin-top:8px;
+color:#6b7280;
+}
+
+/* MESSAGE */
+
+.booking-message{
+background:#f3f4f6;
+padding:12px;
+border-radius:10px;
+margin-top:10px;
+}
+
+/* STATUS */
+
+.status{
+font-size:13px;
+padding:4px 10px;
+border-radius:20px;
+display:inline-block;
+margin-bottom:6px;
+}
+
+.pending{
+background:#fef3c7;
+color:#92400e;
+}
+
+.approved{
+background:#dcfce7;
+color:#166534;
+}
+
+.past{
+background:#e5e7eb;
+}
+
+/* PRICE */
+
+.booking-price{
+text-align:right;
+min-width:120px;
+}
+
+.booking-price h2{
+margin:0;
+}
+
+/* BUTTON */
+
+.contact-btn{
+background:#2563eb;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+margin-top:12px;
+}
+
+/* EMPTY */
+
+.empty{
+padding:20px;
+color:#6b7280;
+}
+
+</style>
+
 
 {% endblock %}

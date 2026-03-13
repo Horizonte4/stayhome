@@ -1,19 +1,21 @@
-from django.shortcuts import render, get_object_or_404, redirect
+# Python
+import json
+from datetime import date, datetime, timedelta
+
+# Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.utils import timezone
-from datetime import date, timedelta
-import calendar
-from .models import Property,Availability,Booking
-from .forms import PropertyForm
-from transactions.models import Contract
-from transactions.models import Booking as TxBooking
-from django.http import HttpResponseForbidden
-from django.views.decorators.http import require_http_methods
-from datetime import datetime
-import json
 from django.db.models import Q
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404, redirect
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
+
+# Local apps
+from .models import Property, Booking
+from .forms import PropertyForm
+from transactions.models import Booking
 
 # Crear Propiedad
 @login_required
@@ -123,6 +125,7 @@ def edit_calendar(request, pk):
                 request,
                 "Formato de fechas inválido: " + ", ".join(errors)
             )
+            
         else:
             unique_sorted = sorted(set(parsed_dates))
             prop.availability_dates = ",".join(unique_sorted)  # guardamos fechas bloqueadas
@@ -233,13 +236,6 @@ def list_properties(request):
     return render(request, 'properties/list.html', context)
 
 
-def _month_bounds(today: date):
-    first = today.replace(day=1)
-    last_day = calendar.monthrange(today.year, today.month)[1]
-    last = today.replace(day=last_day)
-    return first, last
-
-
 # Dias bloqueados por el owner para mostrar en el calendario de la propiedad
 def get_blocked_dates(property):
 
@@ -255,7 +251,28 @@ def get_blocked_dates(property):
 
     return blocked
 
+#Dias bloqueados porque ya fueron aprovadas por el owner
+def get_reserved_dates(property):
+
+    bookings = Booking.objects.filter(
+        property=property,
+        status="approved"
+    )
+
+    reserved = set()
+
+    for booking in bookings:
+
+        current = booking.check_in
+
+        while current <= booking.check_out:
+            reserved.add(current.strftime("%Y-%m-%d"))
+            current += timedelta(days=1)
+
+    return list(reserved)
+
 def property_detail(request, pk):
+
     property = get_object_or_404(Property, pk=pk, active_listing=True)
 
     today = timezone.localdate()
@@ -263,26 +280,21 @@ def property_detail(request, pk):
     start_month = today.replace(day=1)
     end_month = (start_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
 
-    all_days_available = not property.availability_dates
     blocked = get_blocked_dates(property)
+    reserved = get_reserved_dates(property)
 
-    # reservas aprobadas -> se muestran como no disponibles
-    reserved = set()
-    approved_bookings = TxBooking.objects.filter(property=property, status="approved")
-    for booking in approved_bookings:
-        current = booking.check_in
-        while current <= booking.check_out:
-            reserved.add(current)
-            current += timedelta(days=1)
-
+    # -------- JSON FOR CALENDAR --------
     blocked_dates_json = json.dumps([
-        d.strftime("%Y-%m-%d") for d in blocked
+        d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else d
+        for d in blocked
     ])
 
-    reserved_dates_json = json.dumps([
-        d.strftime("%Y-%m-%d") for d in reserved
-    ])
+    reserved_dates_json = json.dumps(reserved)
 
+    # -------- AVAILABILITY --------
+    all_days_available = not property.availability_dates
+
+    # -------- DAYS FOR MONTH VIEW --------
     days = []
     current = start_month
 
@@ -290,19 +302,19 @@ def property_detail(request, pk):
 
         days.append({
             "date": current,
-            "is_available": all_days_available or (current not in blocked and current not in reserved),
+            "is_available": all_days_available or (current not in blocked and current.strftime("%Y-%m-%d") not in reserved),
             "is_today": current == today
         })
 
         current += timedelta(days=1)
 
     context = {
-    "property": property,
-    "days": days,
-    "month_label": today.strftime("%B %Y"),
-    "blocked_dates_json": blocked_dates_json,
-    "reserved_dates_json": reserved_dates_json,
-    "all_days_available": all_days_available,
-}
+        "property": property,
+        "days": days,
+        "month_label": today.strftime("%B %Y"),
+        "blocked_dates_json": blocked_dates_json,
+        "reserved_dates_json": reserved_dates_json,
+        "all_days_available": all_days_available,
+    }
 
     return render(request, "properties/detail.html", context)

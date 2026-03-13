@@ -5,6 +5,7 @@
 {% block content %}
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
     .form-card { background:#fff; padding:28px; border-radius:18px; box-shadow:0 16px 40px rgba(0,0,0,0.08); border:1px solid #e5e7eb; max-width:880px; }
@@ -55,13 +56,17 @@
 
     {% if messages %}
         <div style="background:#ecfeff; border:1px solid #67e8f9; color:#0f172a; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
-            {% for message in messages %}{{ message }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+            {% for message in messages %}
+                {{ message }}{% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
         </div>
     {% endif %}
 
     {% if form.non_field_errors %}
         <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
-            {% for error in form.non_field_errors %}{{ error }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+            {% for error in form.non_field_errors %}
+                {{ error }}{% if not forloop.last %}<br>{% endif %}
+            {% endfor %}
         </div>
     {% endif %}
 
@@ -107,31 +112,37 @@
                 {{ form.price }}
                 {{ form.price.errors }}
             </div>
+
             <div class="field">
                 <label>Status</label>
                 {{ form.state }}
                 {{ form.state.errors }}
             </div>
+
             <div class="field">
                 <label>Listing type</label>
                 {{ form.listing_type }}
                 {{ form.listing_type.errors }}
             </div>
+
             <div class="field">
                 <label>Rooms</label>
                 {{ form.rooms }}
                 {{ form.rooms.errors }}
             </div>
+
             <div class="field">
                 <label>Bathrooms</label>
                 {{ form.bathrooms }}
                 {{ form.bathrooms.errors }}
             </div>
+
             <div class="field">
                 <label>Area (m²)</label>
                 {{ form.square_meters }}
                 {{ form.square_meters.errors }}
             </div>
+
             <div class="field">
                 <label>Guests capacity</label>
                 {{ form.capacity }}
@@ -145,6 +156,7 @@
                 {{ form.image }}
                 {{ form.image.errors }}
             </div>
+
             <div class="field">
                 <label>Main photo URL (optional)</label>
                 {{ form.image_url }}
@@ -158,6 +170,25 @@
             {{ form.active_listing.errors }}
         </div>
 
+        <!-- CALENDARIO DE DISPONIBILIDAD -->
+        <div class="field">
+            <label>Blocked dates</label>
+            if your property is for sale do not add dates
+            <input
+                id="availability-calendar"
+                name="availability_dates"
+                placeholder="Select dates to block"
+            >
+
+            <small style="color:#6b7280;">
+                If empty, all dates will be available.
+            </small>
+
+            <button type="button" id="clear-dates" style="margin-top:6px; padding:8px 12px; border-radius:8px; border:1px solid #d1d5db; background:#fff;">
+                Clear blocked dates
+            </button>
+        </div>
+
         <div class="submit-bar">
             <button type="submit" class="btn-list">Save listing</button>
         </div>
@@ -165,6 +196,22 @@
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="{% static 'js/property_location.js' %}"></script>
+
+<script>
+    const fp = flatpickr("#availability-calendar", {
+        mode: "multiple",
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "F j, Y",
+        minDate: "today"
+    });
+
+    const clearBtn = document.getElementById("clear-dates");
+    clearBtn.addEventListener("click", function() {
+        fp.clear();
+    });
+</script>
 
 {% endblock %}
