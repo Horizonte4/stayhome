@@ -1,49 +1,183 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Inbox | StayHome{% endblock %}
 {% block nav_messages %}active{% endblock %}
 
 {% block content %}
-<section class="container">
-    <h1>Inbox</h1>
 
-    {% if conversation_rows %}
-        <div class="chat-list">
-            {% for row in conversation_rows %}
-                <a href="{% url 'comunication:conversation_detail' row.conversation.pk %}" class="chat-row">
-                    <div class="chat-row-header">
-                        <h3>{{ row.property.title }}</h3>
-                        {% if row.last_message_created_at %}
-                            <small>{{ row.last_message_created_at|date:"M d, Y H:i" }}</small>
-                        {% endif %}
-                    </div>
+<section class="container inbox-container">
 
-                    <p>
-                        <strong>
-                            {% if row.other_user.get_full_name %}
-                                {{ row.other_user.get_full_name }}
-                            {% else %}
-                                {{ row.other_user.email }}
-                            {% endif %}
-                        </strong>
-                    </p>
+<h1 class="inbox-title">Messages</h1>
 
-                    <p>
-                        {% if row.last_message %}
-                            {{ row.last_message|truncatechars:90 }}
-                        {% else %}
-                            No messages yet.
-                        {% endif %}
-                    </p>
+{% if conversation_rows %}
 
-                    {% if row.unread_count %}
-                        <span class="chat-unread-badge">{{ row.unread_count }} unread</span>
-                    {% endif %}
-                </a>
-            {% endfor %}
+<div class="chat-list">
+
+{% for row in conversation_rows %}
+
+<a href="{% url 'comunication:conversation_detail' row.conversation.pk %}" class="chat-row">
+
+
+<div class="chat-avatar">
+    {{ row.other_user.email|first|upper }}
+</div>
+
+<div class="chat-content">
+
+    <div class="chat-header">
+
+        <div class="chat-user">
+
+            <strong>
+                {% if row.other_user.get_full_name %}
+                    {{ row.other_user.get_full_name }}
+                {% else %}
+                    {{ row.other_user.email }}
+                {% endif %}
+            </strong>
+
+            <span class="chat-property">
+                {{ row.property.title }}
+            </span>
+
         </div>
-    {% else %}
-        <p>You do not have any conversations yet.</p>
-    {% endif %}
+
+        {% if row.last_message_created_at %}
+        <small class="chat-date">
+            {{ row.last_message_created_at|date:"d M" }}
+        </small>
+        {% endif %}
+
+    </div>
+
+    <div class="chat-preview-row">
+
+        <p class="chat-preview">
+
+            {% if row.last_message %}
+                {{ row.last_message|truncatechars:80 }}
+            {% else %}
+                <em>No messages yet</em>
+            {% endif %}
+
+        </p>
+
+        {% if row.unread_count %}
+        <span class="chat-unread">
+            {{ row.unread_count }}
+        </span>
+        {% endif %}
+
+    </div>
+
+</div>
+
+</a>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-inbox">
+
+
+<h3>No conversations yet</h3>
+<p>Your messages with property owners or guests will appear here.</p>
+
+
+</div>
+
+{% endif %}
+
 </section>
+<style>
+.inbox-title{
+    margin-bottom:25px;
+}
+
+.chat-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.chat-row{
+    display:flex;
+    gap:15px;
+    padding:16px;
+    border-radius:10px;
+    text-decoration:none;
+    color:inherit;
+    background:#fff;
+    border:1px solid #eee;
+    transition:0.2s;
+}
+
+.chat-row:hover{
+    background:#f7f7f7;
+}
+
+.chat-avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    background:#ff385c;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.chat-content{
+    flex:1;
+}
+
+.chat-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.chat-user strong{
+    display:block;
+}
+
+.chat-property{
+    font-size:13px;
+    color:#888;
+}
+
+.chat-preview-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:6px;
+}
+
+.chat-preview{
+    font-size:14px;
+    color:#555;
+    margin:0;
+}
+
+.chat-unread{
+    background:#ff385c;
+    color:white;
+    font-size:12px;
+    padding:4px 8px;
+    border-radius:20px;
+    font-weight:600;
+}
+
+.empty-inbox{
+    text-align:center;
+    padding:60px 20px;
+    color:#777;
+}
+</style>
 {% endblock %}
+

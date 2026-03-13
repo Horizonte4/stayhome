@@ -123,6 +123,80 @@ def inbox(request):
 
 @login_required
 def conversation_detail(request, conversation_id):
+
+    conversation = _get_conversation_for_user_or_404(conversation_id, request.user)
+
+    # -------------------------
+    # MENSAJES DE LA CONVERSACIÓN
+    # -------------------------
+
+    messages_qs = (
+        conversation.messages.with_related()
+        .select_related("sender")
+        .order_by("created_at")
+    )
+
+    conversation.messages.filter(
+        is_read=False
+    ).exclude(sender=request.user).update(is_read=True)
+
+    other_user = conversation.owner if conversation.buyer == request.user else conversation.buyer
+
+
+    # -------------------------
+    # CONVERSACIONES (SIDEBAR)
+    # -------------------------
+
+    last_message_subquery = Message.objects.filter(
+        conversation=OuterRef("pk")
+    ).order_by("-created_at")
+
+    conversations = (
+        Conversation.objects.for_user(request.user)
+        .with_related()
+        .annotate(
+            last_message_content=Subquery(last_message_subquery.values("content")[:1]),
+            last_message_created_at=Subquery(last_message_subquery.values("created_at")[:1]),
+        )
+        .prefetch_related("messages")
+    )
+    print(other_user)
+    conversation_rows = []
+
+    for conv in conversations:
+
+        other = conv.owner if conv.buyer == request.user else conv.buyer
+
+        unread_count = conv.messages.filter(
+            is_read=False
+        ).exclude(sender=request.user).count()
+
+        conversation_rows.append({
+            "conversation": conv,
+            "property": conv.property,
+            "other_user": other,
+            "last_message": conv.last_message_content,
+            "last_message_created_at": conv.last_message_created_at,
+            "unread_count": unread_count,
+        })
+
+
+    context = {
+        "conversation": conversation,
+        "messages_list": messages_qs,
+        "other_user": other_user,
+        "conversation_rows": conversation_rows,   # 👈 IMPORTANTE
+    }
+
+    return render(
+        request,
+        "comunication/conversation_detail.html",
+        context
+    )
+    
+#
+# @login_required
+#def conversation_detail(request, conversation_id):
     conversation = _get_conversation_for_user_or_404(conversation_id, request.user)
 
     messages_qs = (
