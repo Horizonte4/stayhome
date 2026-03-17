@@ -64,11 +64,16 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Price Range</label>
-                    <div class="explore-price-row">
-                        <input type="number" name="min_price" placeholder="Min" value="{{ filters.min_price }}" class="explore-input">
-                        <input type="number" name="max_price" placeholder="Max" value="{{ filters.max_price }}" class="explore-input">
-                    </div>
+                    <label>Availability</label>
+                    <input
+                        type="text"
+                        id="availability_range"
+                        placeholder="Select date range"
+                        class="explore-input"
+                        readonly
+                    >
+                    <input type="hidden" name="check_in" id="check_in" value="{{ filters.check_in }}">
+                    <input type="hidden" name="check_out" id="check_out" value="{{ filters.check_out }}">
                 </div>
 
                 <input type="hidden" name="q" value="{{ filters.q }}">
@@ -99,6 +104,8 @@
                 <input type="hidden" name="capacity" value="{{ filters.capacity }}">
                 <input type="hidden" name="listing_type" value="{{ filters.listing_type }}">
                 <input type="hidden" name="state" value="{{ filters.state }}">
+                <input type="hidden" name="check_in" value="{{ filters.check_in }}">
+                <input type="hidden" name="check_out" value="{{ filters.check_out }}">
             </form>
 
             <p class="explore-results-count">
@@ -176,5 +183,44 @@
         </section>
     </div>
 </div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const rangeInput = document.getElementById("availability_range");
+    const checkInInput = document.getElementById("check_in");
+    const checkOutInput = document.getElementById("check_out");
+
+    let defaultDates = [];
+    if (checkInInput.value) {
+        defaultDates.push(checkInInput.value);
+    }
+    if (checkOutInput.value) {
+        defaultDates.push(checkOutInput.value);
+    }
+
+    flatpickr(rangeInput, {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        defaultDate: defaultDates,
+        showMonths: 1,
+        disableMobile: true,
+        onChange: function(selectedDates, dateStr, instance) {
+            if (selectedDates.length === 2) {
+                checkInInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
+                checkOutInput.value = instance.formatDate(selectedDates[1], "Y-m-d");
+            } else if (selectedDates.length === 1) {
+                checkInInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
+                checkOutInput.value = "";
+            } else {
+                checkInInput.value = "";
+                checkOutInput.value = "";
+            }
+        }
+    });
+});
+</script>
 
 {% endblock %}
