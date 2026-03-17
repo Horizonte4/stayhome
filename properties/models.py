@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 from django.conf import settings
 
 
-
 class Property(models.Model):
     STATE_CHOICES = [
         ('available', 'Available'),
@@ -51,16 +50,14 @@ class Property(models.Model):
 
     objects = PropertyManager()
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
         return f"{self.title} — {self.city}"
 
-class Meta:
-    ordering = ['-created_at']
-    
-    
 
 class Booking(models.Model):
-
     property = models.ForeignKey("Property", on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
@@ -71,12 +68,68 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"{self.property} | {self.check_in} - {self.check_out}"
-    
+
+
 class Availability(models.Model):
-
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
-
     availability_dates = models.DateField()
 
     def __str__(self):
         return f"{self.property} | {self.availability_dates}"
+
+
+class SavedPropertyQuerySet(models.QuerySet):
+    def with_related(self):
+        return self.select_related('user', 'property_obj')
+
+    def favorites(self):
+        return self.with_related().filter(
+            property_obj__listing_type__in=['short_term', 'long_term']
+        )
+
+    def wishlist(self):
+        return self.with_related().filter(
+            property_obj__listing_type='sale'
+        )
+
+
+class SavedProperty(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='saved_properties',
+    )
+    property_obj = models.ForeignKey(
+        'properties.Property',
+        on_delete=models.CASCADE,
+        related_name='saved_by_users',
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = SavedPropertyQuerySet.as_manager()
+
+    class Meta:
+        ordering = ['-created_at']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'property_obj'],
+                name='unique_saved_property_per_user',
+            )
+        ]
+
+    def __str__(self):
+        return f'{self.user} saved {self.property_obj}'
+
+    @property
+    def category(self):
+        if self.property_obj.listing_type == 'sale':
+            return 'wishlist'
+        return 'favorite'
+
+    @property
+    def is_favorite(self):
+        return self.property_obj.listing_type in ['short_term', 'long_term']
+
+    @property
+    def is_wishlist(self):
+        return self.property_obj.listing_type == 'sale'
