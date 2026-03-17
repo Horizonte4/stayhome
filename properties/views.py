@@ -7,15 +7,16 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
 # Local apps
-from .models import Property, Booking
+from .models import Property, Booking, SavedProperty
 from .forms import PropertyForm
 from transactions.models import Booking
+
 
 # Crear Propiedad
 @login_required
@@ -40,6 +41,7 @@ def create_property(request):
 
     return render(request, 'properties/create.html', {'form': form})
 
+
 # Delete Property
 @login_required
 @require_http_methods(["GET", "POST"])
@@ -63,6 +65,7 @@ def delete_property(request, pk):
 
     # GET -> confirmación
     return render(request, "properties/delete_confirmation.html", {"property": prop})
+
 
 # Edit Property
 @login_required
@@ -125,7 +128,7 @@ def edit_calendar(request, pk):
                 request,
                 "Formato de fechas inválido: " + ", ".join(errors)
             )
-            
+
         else:
             unique_sorted = sorted(set(parsed_dates))
             prop.availability_dates = ",".join(unique_sorted)  # guardamos fechas bloqueadas
@@ -143,6 +146,7 @@ def edit_calendar(request, pk):
     }
 
     return render(request, "properties/edit_calendar.html", context)
+
 
 # List Properties
 def list_properties(request):
@@ -218,8 +222,16 @@ def list_properties(request):
     page = request.GET.get('page')
     properties = paginator.get_page(page)
 
+    saved_property_ids = set()
+    if request.user.is_authenticated:
+        saved_property_ids = set(
+            SavedProperty.objects.filter(user=request.user)
+            .values_list('property_obj_id', flat=True)
+        )
+
     context = {
         'properties': properties,
+        'saved_property_ids': saved_property_ids,
         'filters': {
             'q': q,
             'city': city,
@@ -234,6 +246,68 @@ def list_properties(request):
     }
 
     return render(request, 'properties/list.html', context)
+
+
+# Toggle save property
+@login_required
+@require_POST
+def toggle_saved_property(request, pk):
+    prop = get_object_or_404(Property, pk=pk, active_listing=True)
+
+    saved_property, created = SavedProperty.objects.get_or_create(
+        user=request.user,
+        property_obj=prop,
+    )
+
+    if created:
+        is_saved = True
+        action = 'added'
+    else:
+        saved_property.delete()
+        is_saved = False
+        action = 'removed'
+
+    category = 'wishlist' if prop.listing_type == 'sale' else 'favorites'
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'is_saved': is_saved,
+            'action': action,
+            'category': category,
+            'property_id': prop.pk,
+        })
+
+    next_url = request.POST.get('next')
+    if next_url:
+        return redirect(next_url)
+
+    return redirect('properties:property_detail', pk=prop.pk)
+
+
+@login_required
+def favorites_list(request):
+    saved_properties = (
+        SavedProperty.objects
+        .favorites()
+        .filter(user=request.user)
+    )
+
+    return render(request, 'properties/favorites_list.html', {
+        'saved_properties': saved_properties,
+    })
+
+
+@login_required
+def wishlist_list(request):
+    saved_properties = (
+        SavedProperty.objects
+        .wishlist()
+        .filter(user=request.user)
+    )
+
+    return render(request, 'properties/wishlist_list.html', {
+        'saved_properties': saved_properties,
+    })
 
 
 # Dias bloqueados por el owner para mostrar en el calendario de la propiedad
@@ -251,7 +325,8 @@ def get_blocked_dates(property):
 
     return blocked
 
-#Dias bloqueados porque ya fueron aprovadas por el owner
+
+# Dias bloqueados porque ya fueron aprovadas por el owner
 def get_reserved_dates(property):
 
     bookings = Booking.objects.filter(
@@ -271,6 +346,7 @@ def get_reserved_dates(property):
 
     return list(reserved)
 
+
 def property_detail(request, pk):
 
     property = get_object_or_404(Property, pk=pk, active_listing=True)
@@ -282,6 +358,13 @@ def property_detail(request, pk):
 
     blocked = get_blocked_dates(property)
     reserved = get_reserved_dates(property)
+
+    is_saved = False
+    if request.user.is_authenticated:
+        is_saved = SavedProperty.objects.filter(
+            user=request.user,
+            property_obj=property
+        ).exists()
 
     # -------- JSON FOR CALENDAR --------
     blocked_dates_json = json.dumps([
@@ -310,6 +393,7 @@ def property_detail(request, pk):
 
     context = {
         "property": property,
+        "is_saved": is_saved,
         "days": days,
         "month_label": today.strftime("%B %Y"),
         "blocked_dates_json": blocked_dates_json,

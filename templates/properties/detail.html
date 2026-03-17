@@ -50,13 +50,32 @@
             <small class="price-period">/mo</small>
         </p>
 
-        <p class="description">
+                <p class="description">
             {{ property.description|default:"Sin descripción" }}
         </p>
 
-        <p class="description">
-    {{ property.description|default:"Sin descripción" }}
-</p>
+        {% if user.is_authenticated %}
+          <form method="post" action="{% url 'properties:toggle_saved_property' property.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
+
+            <button type="submit" class="cta-btn">
+              {% if is_saved %}
+                Quitar de guardados
+              {% else %}
+                {% if property.listing_type == 'sale' %}
+                  Guardar en wishlist
+                {% else %}
+                  Guardar en favoritos
+                {% endif %}
+              {% endif %}
+            </button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
+            Inicia sesión para guardar esta propiedad
+          </a>
+        {% endif %}
 
 <!-- CONTACT OWNER -->
 <div class="contact-owner" style="margin-top:20px;">

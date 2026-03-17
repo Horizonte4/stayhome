@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Your Favorites{% endblock %}
+
+{% block content %}
+<div class="favorites-page">
+
+  <div class="favorites-header">
+      <h1>Your Favorites</h1>
+      <p>{{ saved_properties|length }} saved properties</p>
+  </div>
+
+  {% if saved_properties %}
+    <div class="favorites-grid">
+
+      {% for saved in saved_properties %}
+      <div class="favorite-card">
+
+        <div class="favorite-image-wrap">
+          {% if saved.property_obj.image %}
+            <img src="{{ saved.property_obj.image.url }}" class="favorite-image">
+          {% elif saved.property_obj.image_url %}
+            <img src="{{ saved.property_obj.image_url }}" class="favorite-image">
+          {% endif %}
+
+          <div class="favorite-badges">
+            {% if saved.property_obj.listing_type == "sale" %}
+              <span class="badge-light">For Sale</span>
+            {% else %}
+              <span class="badge-light">For Rent</span>
+            {% endif %}
+
+            <span class="badge-blue">Featured</span>
+          </div>
+        </div>
+
+        <div class="favorite-body">
+
+          <div class="favorite-title-row">
+            <h3>{{ saved.property_obj.title }}</h3>
+
+            <form method="post" action="{% url 'properties:toggle_saved_property' saved.property_obj.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button class="favorite-heart">♥</button>
+            </form>
+          </div>
+
+          <p class="favorite-location">
+            📍 {{ saved.property_obj.address|default:saved.property_obj.city }}
+          </p>
+
+          <div class="favorite-meta">
+            <span>🛏 {{ saved.property_obj.rooms }}</span>
+            <span>🛁 {{ saved.property_obj.bathrooms }}</span>
+            <span>📐 {{ saved.property_obj.square_meters|default:"--" }} m²</span>
+          </div>
+
+          <div class="favorite-footer">
+
+            <div class="favorite-price">
+              {% if saved.property_obj.listing_type == "short_term" %}
+                ${{ saved.property_obj.price }}/night
+              {% elif saved.property_obj.listing_type == "long_term" %}
+                ${{ saved.property_obj.price }}/mo
+              {% else %}
+                ${{ saved.property_obj.price }}
+              {% endif %}
+            </div>
+
+            <a href="{% url 'properties:property_detail' saved.property_obj.pk %}" class="details-btn">
+              View Details
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+  {% else %}
+    <p>No favorites yet.</p>
+  {% endif %}
+
+</div>
+{% endblock %}
