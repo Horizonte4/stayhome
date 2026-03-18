@@ -42,7 +42,7 @@ class Property(models.Model):
     square_meters = models.PositiveIntegerField(null=True, blank=True)
     capacity = models.PositiveSmallIntegerField(default=1)
     image = models.ImageField(upload_to='properties/', blank=True, null=True)
-    image_url = models.URLField(blank=True)
+    image_url = models.URLField(blank=True, max_length=1000)
     availability_dates = models.CharField(max_length=255, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

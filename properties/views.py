@@ -27,17 +27,18 @@ def create_property(request):
         return redirect('home')
 
     if request.method == 'POST':
-        form = PropertyForm(request.POST, request.FILES)
+        form = PropertyForm(request.POST, request.FILES, show_active_listing=False)
         if form.is_valid():
             property = form.save(commit=False)
             property.owner = owner
+            property.active_listing = True
             property.save()
             messages.success(request, 'Property created successfully.')
             return redirect('properties:list_properties')
         else:
             messages.error(request, 'Please correct the errors below to save the property.')
     else:
-        form = PropertyForm()
+        form = PropertyForm(show_active_listing=False)
 
     return render(request, 'properties/create.html', {'form': form})
 
