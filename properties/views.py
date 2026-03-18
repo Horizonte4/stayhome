@@ -1,6 +1,7 @@
 # Python
 import json
 from datetime import date, datetime, timedelta
+from urllib import request
 
 # Django
 from django.contrib import messages
@@ -11,6 +12,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
+from datetime import datetime
 
 # Local apps
 from .models import Property, Booking, SavedProperty
@@ -161,6 +163,8 @@ def list_properties(request):
     capacity = request.GET.get('capacity', '').strip()
     listing_type = request.GET.get('listing_type', '').strip()
     state = request.GET.get('state', '').strip()
+    check_in = request.GET.get('check_in', '').strip()
+    check_out = request.GET.get('check_out', '').strip()
 
     if q:
         qs = qs.filter(
@@ -218,6 +222,35 @@ def list_properties(request):
         except (ValueError, TypeError):
             pass
 
+    if check_in and check_out:
+        try:
+            start_date = datetime.strptime(check_in, "%Y-%m-%d").date()
+            end_date = datetime.strptime(check_out, "%Y-%m-%d").date()
+
+            if start_date < end_date:
+                available_ids = []
+
+                for prop in qs:
+                    blocked = get_blocked_dates(prop)
+                    reserved = set(get_reserved_dates(prop))
+
+                    is_available = True
+                    current = start_date
+
+                    while current < end_date:
+                        if current in blocked or current.strftime("%Y-%m-%d") in reserved:
+                            is_available = False
+                            break
+                        current += timedelta(days=1)
+
+                    if is_available:
+                        available_ids.append(prop.id)
+
+                qs = qs.filter(id__in=available_ids)
+
+        except (ValueError, TypeError):
+            pass
+
     paginator = Paginator(qs, 20)
     page = request.GET.get('page')
     properties = paginator.get_page(page)
@@ -242,6 +275,8 @@ def list_properties(request):
             'capacity': capacity,
             'listing_type': listing_type,
             'state': state,
+            'check_in': check_in,
+            'check_out': check_out,
         }
     }
 
