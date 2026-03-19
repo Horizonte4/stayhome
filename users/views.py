@@ -5,46 +5,28 @@ from django.shortcuts import render, redirect
 
 from properties.models import Property
 
+
 from .forms import RegisterForm, EditProfileForm
 from .models import Client, Owner
 
- #LAURA:
  # Aquí definimos las vistas para el home, login, registro, dashboard y edición de perfil.
- # La vista de home muestra las propiedades disponibles.???
  # La vista de login maneja la autenticación del usuario.
  # La vista de registro permite crear un nuevo usuario y asignarle un rol (cliente u owner).
  # La vista de dashboard muestra información relevante según el rol del usuario.
  # La vista de edición de perfil permite actualizar la información personal del usuario.
- 
-# HOME
-def home(request):
-    properties = Property.objects.available()
-    return render(request, "users/home.html", {'properties': properties})
+
 
 # LOGIN
 def login_view(request):
-    if request.method == 'GET':
-        return render(request, 'registration/login.html', {
-            'form': AuthenticationForm()
-        })
-    else:
-        form = AuthenticationForm(data=request.POST)
+    form = AuthenticationForm(data=request.POST or None)
 
-        print("FORM VALID:", form.is_valid())
-        print("ERRORS:", form.errors)
+    if request.method == "POST" and form.is_valid():
+        login(request, form.get_user())
+        return redirect("board")
 
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            print("LOGIN SUCCESS")
-            return redirect('board')
-        else:
-            print("LOGIN FAILED")
-            return render(request, 'registration/login.html', {
-                'form': form,
-                'error': 'Username and password do not match'
-            })
-
+    return render(request, "registration/login.html", {
+        "form": form,
+    })
 
 # REGISTRO
 def register_view(request):

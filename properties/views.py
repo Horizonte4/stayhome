@@ -410,7 +410,7 @@ def property_detail(request, pk):
     reserved_dates_json = json.dumps(reserved)
 
     # -------- AVAILABILITY --------
-    all_days_available = not property.availability_dates
+    all_days_available = not blocked and not reserved
 
     # -------- DAYS FOR MONTH VIEW --------
     days = []
@@ -435,5 +435,8 @@ def property_detail(request, pk):
         "reserved_dates_json": reserved_dates_json,
         "all_days_available": all_days_available,
     }
-
+    
+    print("blocked_dates_json:", blocked_dates_json)
+    print("reserved_dates_json:", reserved_dates_json)
+    print("all_days_available:", all_days_available)
     return render(request, "properties/detail.html", context)

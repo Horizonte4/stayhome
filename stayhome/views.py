@@ -5,4 +5,4 @@ from django.shortcuts import render
 # HOME
 def home(request):
     properties = Property.objects.available()
-    return render(request, "users/home.html", {'properties': properties})
+    return render(request, "home.html", {'properties': properties})
