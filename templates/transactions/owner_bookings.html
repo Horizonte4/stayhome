@@ -104,12 +104,12 @@ Booked {{ booking.created_at|date:"F j, Y" }}
 <div class="actions">
 
 <a class="approve-btn"
-href="{% url 'transactions:approve_booking' booking.id %}">
+href="{% url 'transactions:change_booking_status' booking.id 'approved' %}">
 Approve
 </a>
 
 <a class="reject-btn"
-href="{% url 'transactions:reject_booking' booking.id %}">
+href="{% url 'transactions:change_booking_status' booking.id 'rejected' %}">
 Reject
 </a>
 
@@ -241,7 +241,6 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 <div class="booking-card">
 
 <div class="booking-image">
-<img src="{{ booking.property.image.url }}">
 </div>
 
 <div class="booking-info">
