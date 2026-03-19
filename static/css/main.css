@@ -1888,13 +1888,6 @@ display:block;
     line-height: 1.35;
 }
 
-.explore-heart {
-    color: #94a3b8;
-    font-size: 1.1rem;
-    line-height: 1;
-    flex-shrink: 0;
-}
-
 .explore-card-location {
     margin: 0;
     color: #6b7280;
@@ -2110,4 +2103,114 @@ border:none;
 padding:10px 14px;
 border-radius:8px;
 cursor:pointer;
+}
+
+
+
+/* ════════════════════════════════════════
+   calendario filtros properties
+════════════════════════════════════════ */
+
+
+#availability_range {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 15px;
+    color: #111827;
+    cursor: pointer;
+}
+
+.flatpickr-calendar {
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    box-shadow: none;
+    padding: 10px 12px 12px;
+    font-family: inherit;
+}
+
+.flatpickr-months {
+    margin-bottom: 8px;
+}
+
+.flatpickr-current-month {
+    font-size: 16px;
+    font-weight: 500;
+    color: #111827;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    font-weight: 500;
+    color: #111827;
+}
+
+.flatpickr-weekday {
+    color: #737373;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.flatpickr-day {
+    border: none;
+    border-radius: 0;
+    height: 38px;
+    line-height: 38px;
+    max-width: 40px;
+    color: #2f2f2f;
+    font-weight: 400;
+}
+
+.flatpickr-day:hover {
+    background: #f3f4f6;
+}
+
+.flatpickr-day.today {
+    border: 1px solid #9ca3af;
+    border-radius: 999px;
+    background: #fff;
+    color: #111827;
+}
+
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected {
+    background: #60a5fa !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+}
+
+.flatpickr-day.inRange {
+    background: #e5e5e5 !important;
+    color: #2f2f2f !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.flatpickr-day.startRange {
+    border-radius: 999px 0 0 999px !important;
+}
+
+.flatpickr-day.endRange {
+    border-radius: 0 999px 999px 0 !important;
+}
+
+.flatpickr-day.startRange.endRange {
+    border-radius: 999px !important;
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: #cfcfcf !important;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+    padding: 4px;
+}
+
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+    background: transparent;
 }

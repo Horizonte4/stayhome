@@ -167,14 +167,15 @@
         <!-- CALENDARIO DE DISPONIBILIDAD -->
         <div class="field">
             <label>Blocked dates</label>
-            if your property is for sale do not add dates
             <input
                 id="availability-calendar"
                 name="availability_dates"
                 placeholder="Select dates to block"
+                value="{{ request.POST.availability_dates|default:'' }}"
             >
 
             <small style="color:#6b7280;">
+                If your property is for sale, do not add blocked dates.<br>
                 If empty, all dates will be available.
             </small>
 
