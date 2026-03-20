@@ -4,6 +4,8 @@ from django.contrib import messages
 from .models import Booking
 from .services import BookingService
 from .mixins import BookingOwnerMixin
+from .exceptions import PropertyPurchaseError
+from .purchases import can_access_inactive_property, purchase_property
 from properties.models import Property
 
 @login_required
@@ -24,6 +26,29 @@ def create_booking(request, property_id):
 
         BookingService.create_booking(property, request.user, check_in, check_out)
         return redirect("transactions:my_bookings")
+
+
+@login_required
+def buy_property(request, property_id):
+    property_obj = get_object_or_404(
+        Property.objects.select_related("owner__user"),
+        id=property_id,
+    )
+
+    if request.method != "POST":
+        return redirect("properties:property_detail", pk=property_obj.pk)
+
+    try:
+        purchase_property(property_obj=property_obj, buyer=request.user)
+    except PropertyPurchaseError as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(request, "Property purchased successfully.")
+
+    if can_access_inactive_property(request.user, property_obj):
+        return redirect("properties:property_detail", pk=property_obj.pk)
+
+    return redirect("properties:list_properties")
 
 
 @login_required

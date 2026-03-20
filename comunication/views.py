@@ -5,6 +5,7 @@ from django.db.models import OuterRef, Q, Subquery
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from transactions.models import Booking
+from transactions.purchases import has_sale_contract
 from .models import Conversation
 
 
@@ -32,7 +33,6 @@ def start_conversation(request, property_id):
     property_obj = get_object_or_404(
         Property.objects.select_related("owner__user"),
         pk=property_id,
-        active_listing=True,
     )
 
     if not property_obj.owner:
@@ -56,10 +56,12 @@ def start_conversation(request, property_id):
         status="approved"
     ).exists()
 
-    if not approved_booking:
+    purchased_property = has_sale_contract(property_obj, buyer=buyer_user)
+
+    if not approved_booking and not purchased_property:
         messages.error(
             request,
-            "You can only contact the owner after your booking has been approved."
+            "You can only contact the owner after an approved booking or a completed purchase."
         )
         return redirect("transactions:my_bookings")
 

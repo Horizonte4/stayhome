@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
@@ -17,7 +17,31 @@ from datetime import datetime
 # Local apps
 from .models import Property, Booking, SavedProperty
 from .forms import PropertyForm
-from transactions.models import Booking
+from transactions.models import Booking, Contract
+from transactions.purchases import can_access_inactive_property, can_contact_owner_for_property
+
+
+def _normalize_availability_dates(raw_dates):
+    raw_dates = (raw_dates or "").strip()
+    if not raw_dates:
+        return "", []
+
+    parsed_dates = []
+    errors = []
+    for part in raw_dates.split(","):
+        value = part.strip()
+        if not value:
+            continue
+        try:
+            datetime.strptime(value, "%Y-%m-%d")
+            parsed_dates.append(value)
+        except ValueError:
+            errors.append(value)
+
+    if errors:
+        return None, errors
+
+    return ",".join(sorted(set(parsed_dates))), []
 
 
 # Crear Propiedad
@@ -29,17 +53,29 @@ def create_property(request):
         return redirect('home')
 
     if request.method == 'POST':
-        form = PropertyForm(request.POST, request.FILES)
+        form = PropertyForm(request.POST, request.FILES, show_active_listing=False)
         if form.is_valid():
-            property = form.save(commit=False)
-            property.owner = owner
-            property.save()
-            messages.success(request, 'Property created successfully.')
-            return redirect('properties:list_properties')
+            blocked_dates, invalid_dates = _normalize_availability_dates(
+                request.POST.get("availability_dates", "")
+            )
+            if invalid_dates:
+                form.add_error(
+                    None,
+                    "Invalid blocked date format: " + ", ".join(invalid_dates)
+                )
+                messages.error(request, 'Please correct the errors below to save the property.')
+            else:
+                property = form.save(commit=False)
+                property.owner = owner
+                property.active_listing = True
+                property.availability_dates = blocked_dates
+                property.save()
+                messages.success(request, 'Property created successfully.')
+                return redirect('properties:list_properties')
         else:
             messages.error(request, 'Please correct the errors below to save the property.')
     else:
-        form = PropertyForm()
+        form = PropertyForm(show_active_listing=False)
 
     return render(request, 'properties/create.html', {'form': form})
 
@@ -106,34 +142,23 @@ def edit_calendar(request, pk):
         return HttpResponseForbidden("Forbidden")
 
     if request.method == "POST":
-        raw_dates = request.POST.get("availability_dates", "").strip()
-        if not raw_dates:
+        blocked_dates, invalid_dates = _normalize_availability_dates(
+            request.POST.get("availability_dates", "")
+        )
+        if blocked_dates == "":
             prop.availability_dates = ""  # sin fechas bloqueadas -> todo disponible
             prop.save()
             messages.success(request, "Calendario actualizado. Todos los días están disponibles.")
             return redirect("properties:property_detail", pk=prop.pk)
 
-        parsed_dates = []
-        errors = []
-        for part in raw_dates.split(","):
-            value = part.strip()
-            if not value:
-                continue
-            try:
-                datetime.strptime(value, "%Y-%m-%d")
-                parsed_dates.append(value)
-            except ValueError:
-                errors.append(value)
-
-        if errors:
+        if invalid_dates:
             messages.error(
                 request,
-                "Formato de fechas inválido: " + ", ".join(errors)
+                "Formato de fechas inválido: " + ", ".join(invalid_dates)
             )
 
         else:
-            unique_sorted = sorted(set(parsed_dates))
-            prop.availability_dates = ",".join(unique_sorted)  # guardamos fechas bloqueadas
+            prop.availability_dates = blocked_dates
             prop.save()
             messages.success(request, "Calendario actualizado. Las fechas seleccionadas quedaron bloqueadas.")
             return redirect("properties:property_detail", pk=prop.pk)
@@ -383,8 +408,13 @@ def get_reserved_dates(property):
 
 
 def property_detail(request, pk):
+    property = get_object_or_404(
+        Property.objects.select_related("owner__user"),
+        pk=pk,
+    )
 
-    property = get_object_or_404(Property, pk=pk, active_listing=True)
+    if not can_access_inactive_property(request.user, property):
+        raise Http404
 
     today = timezone.localdate()
 
@@ -395,11 +425,34 @@ def property_detail(request, pk):
     reserved = get_reserved_dates(property)
 
     is_saved = False
+    has_purchased_property = False
+    can_contact_owner = False
     if request.user.is_authenticated:
         is_saved = SavedProperty.objects.filter(
             user=request.user,
             property_obj=property
         ).exists()
+        has_purchased_property = Contract.objects.filter(
+            property=property,
+            tenant=request.user,
+            type="sale",
+        ).exists()
+        has_approved_booking = Booking.objects.filter(
+            property=property,
+            user=request.user,
+            status="approved",
+        ).exists()
+        can_contact_owner = has_approved_booking or can_contact_owner_for_property(request.user, property)
+
+    can_buy_property = (
+        property.listing_type == "sale"
+        and property.active_listing
+        and property.state == "available"
+        and request.user.is_authenticated
+        and property.owner
+        and request.user != property.owner.user
+        and not has_purchased_property
+    )
 
     # -------- JSON FOR CALENDAR --------
     blocked_dates_json = json.dumps([
@@ -434,9 +487,9 @@ def property_detail(request, pk):
         "blocked_dates_json": blocked_dates_json,
         "reserved_dates_json": reserved_dates_json,
         "all_days_available": all_days_available,
+        "can_contact_owner": can_contact_owner,
+        "has_purchased_property": has_purchased_property,
+        "can_buy_property": can_buy_property,
     }
-    
-    print("blocked_dates_json:", blocked_dates_json)
-    print("reserved_dates_json:", reserved_dates_json)
-    print("all_days_available:", all_days_available)
     return render(request, "properties/detail.html", context)
+

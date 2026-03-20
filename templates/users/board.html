@@ -118,6 +118,37 @@
 </div>
 {% endif %}
 
+{% if request.user.is_authenticated %}
+<div class="page" style="margin-top:32px;">
+    <div class="section-title">Mis compras</div>
+
+    {% if purchased_contracts %}
+    <div class="cards" style="margin-top:14px;">
+        {% for contract in purchased_contracts %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title" style="font-weight:700;">{{ contract.property.title }}</div>
+                    <div class="card-loc" style="color:#6b7280;">{{ contract.property.address|default:contract.property.city }}</div>
+                    <div class="card-meta" style="margin:8px 0; color:#374151;">
+                        Compra registrada · ${{ contract.total_value }} · {{ contract.created_at|date:"F j, Y" }}
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <a href="{% url 'properties:property_detail' pk=contract.property.pk %}" class="property-card-action-btn">Ver propiedad</a>
+                        <form method="post" action="{% url 'comunication:start_conversation' contract.property.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="property-card-action-btn property-card-action-btn-edit">Contactar propietario</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+        <p class="property-list-empty">Aqui apareceran tus propiedades cuando las compres.</p>
+    {% endif %}
+</div>
+{% endif %}
+
 {% if user.is_authenticated %}
 
 <form action="{% url 'logout' %}" method="post">
