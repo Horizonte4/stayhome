@@ -8,7 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import HttpResponseForbidden, JsonResponse
+from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
@@ -17,7 +17,8 @@ from datetime import datetime
 # Local apps
 from .models import Property, Booking, SavedProperty
 from .forms import PropertyForm
-from transactions.models import Booking
+from transactions.models import Booking, Contract
+from transactions.purchases import can_access_inactive_property, can_contact_owner_for_property
 
 
 def _normalize_availability_dates(raw_dates):
@@ -407,8 +408,13 @@ def get_reserved_dates(property):
 
 
 def property_detail(request, pk):
+    property = get_object_or_404(
+        Property.objects.select_related("owner__user"),
+        pk=pk,
+    )
 
-    property = get_object_or_404(Property, pk=pk, active_listing=True)
+    if not can_access_inactive_property(request.user, property):
+        raise Http404
 
     today = timezone.localdate()
 
@@ -419,11 +425,34 @@ def property_detail(request, pk):
     reserved = get_reserved_dates(property)
 
     is_saved = False
+    has_purchased_property = False
+    can_contact_owner = False
     if request.user.is_authenticated:
         is_saved = SavedProperty.objects.filter(
             user=request.user,
             property_obj=property
         ).exists()
+        has_purchased_property = Contract.objects.filter(
+            property=property,
+            tenant=request.user,
+            type="sale",
+        ).exists()
+        has_approved_booking = Booking.objects.filter(
+            property=property,
+            user=request.user,
+            status="approved",
+        ).exists()
+        can_contact_owner = has_approved_booking or can_contact_owner_for_property(request.user, property)
+
+    can_buy_property = (
+        property.listing_type == "sale"
+        and property.active_listing
+        and property.state == "available"
+        and request.user.is_authenticated
+        and property.owner
+        and request.user != property.owner.user
+        and not has_purchased_property
+    )
 
     # -------- JSON FOR CALENDAR --------
     blocked_dates_json = json.dumps([
@@ -458,6 +487,9 @@ def property_detail(request, pk):
         "blocked_dates_json": blocked_dates_json,
         "reserved_dates_json": reserved_dates_json,
         "all_days_available": all_days_available,
+        "can_contact_owner": can_contact_owner,
+        "has_purchased_property": has_purchased_property,
+        "can_buy_property": can_buy_property,
     }
     return render(request, "properties/detail.html", context)
 

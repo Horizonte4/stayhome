@@ -47,14 +47,18 @@
 
         <p class="price">
             ${{ property.price }}
+            {% if property.listing_type == 'sale' %}
+            <small class="price-period">sale price</small>
+            {% else %}
             <small class="price-period">/mo</small>
+            {% endif %}
         </p>
 
                 <p class="description">
             {{ property.description|default:"Sin descripción" }}
         </p>
 
-        {% if user.is_authenticated %}
+        {% if property.active_listing and user.is_authenticated %}
           <form method="post" action="{% url 'properties:toggle_saved_property' property.pk %}">
             {% csrf_token %}
             <input type="hidden" name="next" value="{{ request.path }}">
@@ -71,7 +75,7 @@
               {% endif %}
             </button>
           </form>
-        {% else %}
+        {% elif property.active_listing %}
           <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
             Inicia sesión para guardar esta propiedad
           </a>
@@ -119,6 +123,39 @@
 
 </div>
 
+{% if property.listing_type == 'sale' %}
+<div class="booking-card">
+
+    <div class="cal-header">
+        <div class="cal-title">Buy property</div>
+    </div>
+
+    <p class="sub" style="margin-top:10px;">
+        Final price: ${{ property.price }}
+    </p>
+
+    {% if has_purchased_property %}
+    <p class="sub" style="font-weight:700;">This property is in your purchase history.</p>
+    {% elif not property.active_listing %}
+    <p class="sub" style="font-weight:700;">This property is no longer available for purchase.</p>
+    {% elif not user.is_authenticated %}
+    <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
+        Login to buy this property
+    </a>
+    {% elif request.user == property.owner.user %}
+    <p class="sub" style="font-weight:700;">You are the owner of this property.</p>
+    {% elif can_buy_property %}
+    <form method="POST" action="{% url 'transactions:buy_property' property.id %}">
+        {% csrf_token %}
+        <button class="cta-btn" type="submit">
+            Buy property
+        </button>
+    </form>
+    {% else %}
+    <p class="sub" style="font-weight:700;">This property cannot be purchased right now.</p>
+    {% endif %}
+</div>
+{% else %}
 <!-- BOOKING CARD -->
 <div class="booking-card">
 
@@ -154,6 +191,7 @@
     </button>
 </form>
 </div>
+{% endif %}
 
 </section>
 
@@ -163,7 +201,9 @@
 const blockedDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
 const reservedDates = JSON.parse('{{ reserved_dates_json|escapejs }}');
 const allDaysAvailable = JSON.parse('{{ all_days_available|yesno:"true,false"|escapejs }}');
+const calendarElement = document.getElementById("calendar");
 
+if (calendarElement) {
 flatpickr("#calendar", {
 
     inline: true,
@@ -220,6 +260,7 @@ flatpickr("#calendar", {
     }
 
 });
+}
 
 </script>
 
