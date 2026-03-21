@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Booking
-from .services import BookingService
+from django.views.decorators.http import require_POST
+from .models import Booking, PurchaseRequest
+from .selectors import can_access_inactive_property, get_owner_purchase_requests
+from .services import BookingService, PurchaseRequestService
 from .mixins import BookingOwnerMixin
-from .exceptions import PropertyPurchaseError
-from .purchases import can_access_inactive_property, purchase_property
+from .exceptions import PropertyPurchaseError, PurchaseRequestError
 from properties.models import Property
 
 @login_required
@@ -29,21 +30,19 @@ def create_booking(request, property_id):
 
 
 @login_required
-def buy_property(request, property_id):
+@require_POST
+def create_purchase_request(request, property_id):
     property_obj = get_object_or_404(
         Property.objects.select_related("owner__user"),
         id=property_id,
     )
 
-    if request.method != "POST":
-        return redirect("properties:property_detail", pk=property_obj.pk)
-
     try:
-        purchase_property(property_obj=property_obj, buyer=request.user)
-    except PropertyPurchaseError as exc:
+        PurchaseRequestService.create_request(property_obj=property_obj, buyer=request.user)
+    except (PurchaseRequestError, PropertyPurchaseError) as exc:
         messages.error(request, str(exc))
     else:
-        messages.success(request, "Property purchased successfully.")
+        messages.success(request, "Purchase request sent successfully.")
 
     if can_access_inactive_property(request.user, property_obj):
         return redirect("properties:property_detail", pk=property_obj.pk)
@@ -62,6 +61,7 @@ def owner_bookings(request):
     if not hasattr(request.user, "owner"):
         return redirect("board")
     context = BookingService.get_owner_bookings(request.user.owner)
+    context["purchase_requests"] = get_owner_purchase_requests(request.user.owner)
     return render(request, "transactions/owner_bookings.html", context)
 
 
@@ -78,5 +78,41 @@ def change_booking_status(request, booking_id, new_status):
         BookingService.change_status(booking, new_status)
     except ValueError:
         messages.error(request, "Estado inválido.")
+
+    return redirect("transactions:owner_bookings")
+
+
+@login_required
+@require_POST
+def accept_purchase_request(request, request_id):
+    purchase_request = get_object_or_404(
+        PurchaseRequest.objects.select_related("property", "property__owner", "buyer"),
+        id=request_id,
+    )
+
+    try:
+        PurchaseRequestService.accept_request(purchase_request, request.user)
+    except (PurchaseRequestError, PropertyPurchaseError) as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(request, "Purchase request accepted successfully.")
+
+    return redirect("transactions:owner_bookings")
+
+
+@login_required
+@require_POST
+def reject_purchase_request(request, request_id):
+    purchase_request = get_object_or_404(
+        PurchaseRequest.objects.select_related("property", "property__owner", "buyer"),
+        id=request_id,
+    )
+
+    try:
+        PurchaseRequestService.reject_request(purchase_request, request.user)
+    except (PurchaseRequestError, PropertyPurchaseError) as exc:
+        messages.error(request, str(exc))
+    else:
+        messages.success(request, "Purchase request rejected successfully.")
 
     return redirect("transactions:owner_bookings")

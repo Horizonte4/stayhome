@@ -1,51 +1,39 @@
 {% extends 'base.html' %}
 
-{% block title %}Profile – StayHome{% endblock %}
+{% block title %}Profile - StayHome{% endblock %}
 
 {% block content %}
 <div class="page">
 
-    <!-- PROFILE HEADER -->
     <div class="card">
-
         <div class="card-body" style="text-align:center; padding:40px;">
-
-            <!-- Avatar -->
             <div class="card-img" style="border-radius:50%; width:120px; height:120px; margin:0 auto;">
                 {{ request.user.first_name|first }}{{ request.user.last_name|first }}
             </div>
 
-            <!-- Name -->
             <h2 class="section-title">
                 {{ request.user.first_name }} {{ request.user.last_name }}
             </h2>
 
-            <!-- Role -->
             <p class="card-loc">
                 {{ role|title }}
             </p>
 
-            <!-- Member Since -->
             <p class="section-sub">
                 Member since {{ request.user.date_joined|date:"F Y" }}
             </p>
 
-            <!-- EDIT PROFILE BUTTON -->
             <p class="auth-footer" style="margin-top:12px;">
-    <a href="{% url 'edit_profile' %}">Edit profile</a>
-</p>
-
+                <a href="{% url 'edit_profile' %}">Edit profile</a>
+            </p>
         </div>
-
     </div>
 
-    <!-- CONTACT SECTION -->
     <h3 class="section-title" style="margin-top:40px;">
         Contact Information
     </h3>
 
     <div class="cards">
-
         <div class="card">
             <div class="card-body">
                 <div class="card-title">Email</div>
@@ -81,9 +69,7 @@
                 </div>
             </div>
         </div>
-
     </div>
-
 </div>
 
 {% if request.user.is_authenticated and request.user.is_owner %}
@@ -118,50 +104,15 @@
 </div>
 {% endif %}
 
-{% if request.user.is_authenticated %}
-<div class="page" style="margin-top:32px;">
-    <div class="section-title">Mis compras</div>
-
-    {% if purchased_contracts %}
-    <div class="cards" style="margin-top:14px;">
-        {% for contract in purchased_contracts %}
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title" style="font-weight:700;">{{ contract.property.title }}</div>
-                    <div class="card-loc" style="color:#6b7280;">{{ contract.property.address|default:contract.property.city }}</div>
-                    <div class="card-meta" style="margin:8px 0; color:#374151;">
-                        Compra registrada · ${{ contract.total_value }} · {{ contract.created_at|date:"F j, Y" }}
-                    </div>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <a href="{% url 'properties:property_detail' pk=contract.property.pk %}" class="property-card-action-btn">Ver propiedad</a>
-                        <form method="post" action="{% url 'comunication:start_conversation' contract.property.pk %}">
-                            {% csrf_token %}
-                            <button type="submit" class="property-card-action-btn property-card-action-btn-edit">Contactar propietario</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-    {% else %}
-        <p class="property-list-empty">Aqui apareceran tus propiedades cuando las compres.</p>
-    {% endif %}
-</div>
-{% endif %}
-
 {% if user.is_authenticated %}
-
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
     <button type="submit" class="logout-link">
         Log out
     </button>
 </form>
-
 {% else %}
-
 <a href="{% url 'login' %}">Login</a>
-
 {% endif %}
 
 {% endblock %}

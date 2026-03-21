@@ -40,6 +40,13 @@ Past
 {% endif %}
 </div>
 
+<div class="tab" onclick="showTab(event,'purchase')">
+Purchase
+{% if purchase_requests %}
+<span class="badge">{{ purchase_requests|length }}</span>
+{% endif %}
+</div>
+
 </div>
 
 
@@ -269,6 +276,50 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 </div>
 
+<div id="purchase" class="tab-content" style="display:none;">
+
+{% for purchase_request in purchase_requests %}
+<div class="booking-card purchase-request-card">
+
+<div class="booking-image">
+<img src="{% if purchase_request.property.image %}{{ purchase_request.property.image.url }}{% elif purchase_request.property.image_url %}{{ purchase_request.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}">
+</div>
+
+<div class="booking-info purchase-request-info">
+<h3>{{ purchase_request.property.title }}</h3>
+<span class="status {% if purchase_request.status == 'pending' %}pending{% elif purchase_request.status == 'accepted' %}approved{% else %}rejected{% endif %}">
+{{ purchase_request.get_status_display }}
+</span>
+
+<p class="sub purchase-request-buyer">Client: {{ purchase_request.buyer.email }}</p>
+<p class="sub">Requested on {{ purchase_request.created_at|date:"F j, Y" }}</p>
+</div>
+
+<div class="booking-price purchase-request-price">
+<h2>${{ purchase_request.property.price }}</h2>
+<p class="sub">Sale price</p>
+{% if purchase_request.status == 'pending' %}
+<div class="actions">
+<form method="post" action="{% url 'transactions:accept_purchase_request' purchase_request.id %}">
+{% csrf_token %}
+<button type="submit" class="approve-btn">Accept</button>
+</form>
+
+<form method="post" action="{% url 'transactions:reject_purchase_request' purchase_request.id %}">
+{% csrf_token %}
+<button type="submit" class="reject-btn">Reject</button>
+</form>
+</div>
+{% endif %}
+</div>
+
+</div>
+{% empty %}
+<p>No purchase requests yet.</p>
+{% endfor %}
+
+</div>
+
 </section>
 
 
@@ -365,6 +416,27 @@ min-width:150px;
 
 .booking-price h2{
 margin:0;
+}
+
+.purchase-request-card{
+align-items:center;
+}
+
+.purchase-request-info h3{
+margin-bottom:8px;
+}
+
+.purchase-request-buyer{
+font-size:1.05rem;
+margin:10px 0 6px;
+}
+
+.purchase-request-price{
+min-width:160px;
+}
+
+.purchase-request-price h2{
+margin-bottom:4px;
 }
 
 /* ACTIONS */
