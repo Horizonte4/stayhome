@@ -4,7 +4,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 
 from properties.models import Property
-from transactions.models import Contract
 
 
 from .forms import RegisterForm, EditProfileForm
@@ -56,11 +55,6 @@ def register_view(request):
 @login_required
 def board(request):
     user = request.user
-    purchased_contracts = (
-        Contract.objects.filter(tenant=user, type='sale')
-        .select_related('property', 'property__owner', 'property__owner__user')
-        .order_by('-created_at')
-    )
 
     if hasattr(user, 'owner'):
         role = "Owner"
@@ -75,7 +69,6 @@ def board(request):
     return render(request, "users/board.html", {
         "role": role,
         "properties": my_properties,
-        "purchased_contracts": purchased_contracts,
     })
 
 # LOGOUT

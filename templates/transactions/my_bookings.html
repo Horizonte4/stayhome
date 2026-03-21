@@ -5,268 +5,206 @@
 <section class="container bookings-page">
 
 <h1>My Bookings</h1>
-<p class="sub">Manage your reservations</p>
+<p class="sub">Manage your reservations and purchased properties.</p>
 
-<!-- TABS -->
 <div class="booking-tabs">
+    <button class="tab active" onclick="showTab(event,'pending')">
+        Pending <span class="badge">{{ pending|length }}</span>
+    </button>
 
-<button class="tab active" onclick="showTab(event,'pending')">
-Pending <span class="badge">{{ pending|length }}</span>
-</button>
+    <button class="tab" onclick="showTab(event,'approved')">
+        Approved <span class="badge">{{ approved|length }}</span>
+    </button>
 
-<button class="tab" onclick="showTab(event,'approved')">
-Approved <span class="badge">{{ approved|length }}</span>
-</button>
+    <button class="tab" onclick="showTab(event,'rejected')">
+        Rejected <span class="badge">{{ rejected|length }}</span>
+    </button>
 
-<button class="tab" onclick="showTab(event,'rejected')">
-Rejected <span class="badge">{{ rejected|length }}</span>
-</button>
+    <button class="tab" onclick="showTab(event,'cancelled')">
+        Cancelled <span class="badge">{{ cancelled|length }}</span>
+    </button>
 
-<button class="tab" onclick="showTab(event,'cancelled')">
-Cancelled <span class="badge">{{ cancelled|length }}</span>
-</button>
-
+    <button class="tab" onclick="showTab(event,'purchase')">
+        Purchase <span class="badge">{{ purchased_contracts|length }}</span>
+    </button>
 </div>
-
-
-<!-- ===================== -->
-<!-- PENDING -->
-<!-- ===================== -->
 
 <div id="pending" class="tab-content">
-
 {% for booking in pending %}
+    <div class="booking-card">
+        <div class="booking-image">
+            <img src="{% if booking.property.image %}{{ booking.property.image.url }}{% elif booking.property.image_url %}{{ booking.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}">
+        </div>
 
-<div class="booking-card">
+        <div class="booking-main">
+            <h3>{{ booking.property.title }}</h3>
+            <span class="status pending">Pending</span>
 
-<div class="booking-image">
+            <div class="booking-details">
+                <div class="detail">
+                    <span>Check-in</span>
+                    <p>{{ booking.check_in|date:"F j, Y" }}</p>
+                </div>
 
-<img src="{% if booking.property.image %}
-{{ booking.property.image.url }}
-{% elif booking.property.image_url %}
-{{ booking.property.image_url }}
-{% else %}
-https://images.unsplash.com/photo-1505691938895-1758d7feb511
-{% endif %}">
+                <div class="detail">
+                    <span>Check-out</span>
+                    <p>{{ booking.check_out|date:"F j, Y" }}</p>
+                </div>
+            </div>
 
-</div>
+            <p class="guests">Guests capacity: {{ booking.property.capacity }}</p>
+            <p class="booking-date">Requested on {{ booking.created_at|date:"F j, Y" }}</p>
+        </div>
 
-<div class="booking-main">
-
-<h3>{{ booking.property.title }}</h3>
-
-<span class="status pending">Pending</span>
-
-<div class="booking-details">
-
-<div class="detail">
-<span>Check-in</span>
-<p>{{ booking.check_in|date:"F j, Y" }}</p>
-</div>
-
-<div class="detail">
-<span>Check-out</span>
-<p>{{ booking.check_out|date:"F j, Y" }}</p>
-</div>
-
-</div>
-
-<p class="guests">
-👥 {{ booking.property.capacity }} guests
-</p>
-
-<p class="booking-date">
-Requested on {{ booking.created_at|date:"F j, Y" }}
-</p>
-
-</div>
-
-<div class="booking-price">
-
-<h2>${{ booking.total_price }}</h2>
-<p>{{ booking.nights }} nights</p>
-
-</div>
-
-</div>
-
+        <div class="booking-price">
+            <h2>${{ booking.total_price }}</h2>
+            <p>{{ booking.nights }} nights</p>
+        </div>
+    </div>
 {% empty %}
-<p class="empty">You have no pending bookings.</p>
+    <p class="empty">You have no pending bookings.</p>
 {% endfor %}
-
 </div>
-
-
-<!-- ===================== -->
-<!-- APPROVED -->
-<!-- ===================== -->
 
 <div id="approved" class="tab-content" style="display:none;">
-
 {% for booking in approved %}
+    <div class="booking-card">
+        <div class="booking-main">
+            <h3>{{ booking.property.title }}</h3>
+            <span class="status approved">Approved</span>
 
-<div class="booking-card">
+            <div class="booking-details">
+                <div class="detail">
+                    <span>Check-in</span>
+                    <p>{{ booking.check_in|date:"F j, Y" }}</p>
+                </div>
 
+                <div class="detail">
+                    <span>Check-out</span>
+                    <p>{{ booking.check_out|date:"F j, Y" }}</p>
+                </div>
+            </div>
 
+            <p class="guests">Guests capacity: {{ booking.property.capacity }}</p>
 
-<div class="booking-main">
+            <div style="margin-top:12px;">
+                <form method="post" action="{% url 'comunication:start_conversation' booking.property.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="cta-btn">
+                        Contact Owner
+                    </button>
+                </form>
+            </div>
+        </div>
 
-<h3>{{ booking.property.title }}</h3>
-
-<span class="status approved">Approved</span>
-
-<div class="booking-details">
-
-<div class="detail">
-<span>Check-in</span>
-<p>{{ booking.check_in|date:"F j, Y" }}</p>
-</div>
-
-<div class="detail">
-<span>Check-out</span>
-<p>{{ booking.check_out|date:"F j, Y" }}</p>
-</div>
-
-</div>
-
-<p class="guests">
-👥 {{ booking.property.capacity }} guests
-</p>
-
-</div>
-
-<div class="booking-price">
-
-<h2>${{ booking.total_price }}</h2>
-<p>{{ booking.nights }} nights</p>
-
-</div>
-<div style="margin-top:12px;">
-    <form method="post" action="{% url 'comunication:start_conversation' booking.property.pk %}">
-        {% csrf_token %}
-        <button type="submit" class="cta-btn">
-            Contact Owner
-        </button>
-    </form>
-</div>
-</div>
-
-
-
+        <div class="booking-price">
+            <h2>${{ booking.total_price }}</h2>
+            <p>{{ booking.nights }} nights</p>
+        </div>
+    </div>
 {% empty %}
-<p class="empty">You have no approved bookings.</p>
+    <p class="empty">You have no approved bookings.</p>
 {% endfor %}
-
 </div>
-
-
-<!-- ===================== -->
-<!-- REJECTED -->
-<!-- ===================== -->
 
 <div id="rejected" class="tab-content" style="display:none;">
-
 {% for booking in rejected %}
+    <div class="booking-card">
+        <div class="booking-main">
+            <h3>{{ booking.property.title }}</h3>
+            <span class="status rejected">Rejected</span>
 
-<div class="booking-card">
+            <div class="booking-details">
+                <div class="detail">
+                    <span>Check-in</span>
+                    <p>{{ booking.check_in|date:"F j, Y" }}</p>
+                </div>
 
+                <div class="detail">
+                    <span>Check-out</span>
+                    <p>{{ booking.check_out|date:"F j, Y" }}</p>
+                </div>
+            </div>
+        </div>
 
-
-<div class="booking-main">
-
-<h3>{{ booking.property.title }}</h3>
-
-<span class="status rejected">Rejected</span>
-
-<div class="booking-details">
-
-<div class="detail">
-<span>Check-in</span>
-<p>{{ booking.check_in|date:"F j, Y" }}</p>
-</div>
-
-<div class="detail">
-<span>Check-out</span>
-<p>{{ booking.check_out|date:"F j, Y" }}</p>
-</div>
-
-</div>
-
-</div>
-
-<div class="booking-price">
-
-<h2>${{ booking.total_price }}</h2>
-
-</div>
-
-</div>
-
+        <div class="booking-price">
+            <h2>${{ booking.total_price }}</h2>
+        </div>
+    </div>
 {% empty %}
-<p class="empty">No rejected bookings.</p>
+    <p class="empty">No rejected bookings.</p>
 {% endfor %}
-
 </div>
-
-
-<!-- ===================== -->
-<!-- CANCELLED -->
-<!-- ===================== -->
 
 <div id="cancelled" class="tab-content" style="display:none;">
-
 {% for booking in cancelled %}
+    <div class="booking-card">
+        <div class="booking-main">
+            <h3>{{ booking.property.title }}</h3>
+            <span class="status cancelled">Cancelled</span>
 
-<div class="booking-card">
+            <div class="booking-details">
+                <div class="detail">
+                    <span>Check-in</span>
+                    <p>{{ booking.check_in|date:"F j, Y" }}</p>
+                </div>
 
-<div class="booking-image">
+                <div class="detail">
+                    <span>Check-out</span>
+                    <p>{{ booking.check_out|date:"F j, Y" }}</p>
+                </div>
+            </div>
+        </div>
 
-</div>
-
-<div class="booking-main">
-
-<h3>{{ booking.property.title }}</h3>
-
-<span class="status cancelled">Cancelled</span>
-
-<div class="booking-details">
-
-<div class="detail">
-<span>Check-in</span>
-<p>{{ booking.check_in|date:"F j, Y" }}</p>
-</div>
-
-<div class="detail">
-<span>Check-out</span>
-<p>{{ booking.check_out|date:"F j, Y" }}</p>
-</div>
-
-</div>
-
-</div>
-
-<div class="booking-price">
-
-<h2>${{ booking.total_price }}</h2>
-
-</div>
-
-</div>
-
+        <div class="booking-price">
+            <h2>${{ booking.total_price }}</h2>
+        </div>
+    </div>
 {% empty %}
-<p class="empty">No cancelled bookings.</p>
+    <p class="empty">No cancelled bookings.</p>
 {% endfor %}
+</div>
 
+<div id="purchase" class="tab-content" style="display:none;">
+    {% if purchased_contracts %}
+    <div class="purchased-grid">
+        {% for contract in purchased_contracts %}
+        <article class="purchase-card">
+            <div class="purchase-image">
+                <img src="{% if contract.property.image %}{{ contract.property.image.url }}{% elif contract.property.image_url %}{{ contract.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}">
+            </div>
+
+            <div class="purchase-card-body">
+                <h3>{{ contract.property.title }}</h3>
+                <span class="status approved">Accepted</span>
+
+                <p class="sub purchase-request-buyer">Owner: {{ contract.property.owner.user.first_name }} {{ contract.property.owner.user.last_name }}</p>
+                <p class="sub">Purchased on {{ contract.created_at|date:"F j, Y" }}</p>
+            </div>
+
+            <div class="booking-price purchase-request-price">
+                <h2>${{ contract.total_value }}</h2>
+                <p class="sub">Sale price</p>
+                <div class="purchase-actions">
+                    <a href="{% url 'properties:property_detail' pk=contract.property.pk %}" class="purchase-primary">View property</a>
+                    <form method="post" action="{% url 'comunication:start_conversation' contract.property.pk %}">
+                        {% csrf_token %}
+                        <button type="submit" class="purchase-secondary">Contact owner</button>
+                    </form>
+                </div>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">Here your purchased properties will appear.</p>
+    {% endif %}
 </div>
 
 </section>
 
-
-
 <script>
-
 function showTab(event,tab){
-
 const contents=document.querySelectorAll(".tab-content")
 const tabs=document.querySelectorAll(".tab")
 
@@ -274,25 +212,16 @@ contents.forEach(c=>c.style.display="none")
 tabs.forEach(t=>t.classList.remove("active"))
 
 document.getElementById(tab).style.display="block"
-
 event.target.classList.add("active")
-
 }
-
 </script>
 
-
 <style>
-
-/* PAGE */
-
 .bookings-page{
 max-width:1100px;
 margin:auto;
-padding:30px 0;
+padding:30px 0 60px;
 }
-
-/* TABS */
 
 .booking-tabs{
 display:flex;
@@ -327,8 +256,6 @@ font-size:12px;
 margin-left:6px;
 }
 
-/* CARD */
-
 .booking-card{
 display:flex;
 gap:20px;
@@ -340,16 +267,12 @@ margin-bottom:20px;
 background:white;
 }
 
-/* IMAGE */
-
 .booking-image img{
 width:220px;
 height:140px;
 object-fit:cover;
 border-radius:12px;
 }
-
-/* INFO */
 
 .booking-main{
 flex:1;
@@ -375,17 +298,6 @@ margin-top:8px;
 color:#6b7280;
 }
 
-/* MESSAGE */
-
-.booking-message{
-background:#f3f4f6;
-padding:12px;
-border-radius:10px;
-margin-top:10px;
-}
-
-/* STATUS */
-
 .status{
 font-size:13px;
 padding:4px 10px;
@@ -404,11 +316,15 @@ background:#dcfce7;
 color:#166534;
 }
 
-.past{
-background:#e5e7eb;
+.rejected{
+background:#fee2e2;
+color:#991b1b;
 }
 
-/* PRICE */
+.cancelled{
+background:#e5e7eb;
+color:#374151;
+}
 
 .booking-price{
 text-align:right;
@@ -419,26 +335,129 @@ min-width:120px;
 margin:0;
 }
 
-/* BUTTON */
-
-.contact-btn{
-background:#2563eb;
-color:white;
-border:none;
-padding:10px 16px;
-border-radius:8px;
-cursor:pointer;
-margin-top:12px;
+.purchased-grid{
+display:flex;
+flex-direction:column;
+gap:20px;
 }
 
-/* EMPTY */
+.purchase-card{
+display:flex;
+gap:20px;
+align-items:center;
+border:1px solid #dbe4f0;
+border-radius:20px;
+padding:18px;
+background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);
+box-shadow:0 10px 24px rgba(15,23,42,0.06);
+}
+
+.purchase-image{
+flex:0 0 260px;
+width:260px;
+}
+
+.purchase-image img{
+width:100%;
+height:160px;
+object-fit:cover;
+border-radius:14px;
+display:block;
+}
+
+.purchase-card-body{
+flex:1;
+display:flex;
+flex-direction:column;
+min-width:0;
+}
+
+.purchase-card h3{
+margin:0 0 8px;
+font-size:1.15rem;
+}
+
+.purchase-actions{
+display:flex;
+justify-content:flex-end;
+gap:10px;
+flex-wrap:wrap;
+margin-top:28px;
+}
+
+.purchase-primary,
+.purchase-secondary{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:10px 14px;
+border-radius:12px;
+font-weight:700;
+text-decoration:none;
+border:1px solid #cbd5e1;
+background:white;
+color:#0f172a;
+}
+
+.purchase-primary{
+background:#0f172a;
+border-color:#0f172a;
+color:white;
+}
+
+.purchase-secondary{
+cursor:pointer;
+}
 
 .empty{
-padding:20px;
 color:#6b7280;
 }
 
-</style>
+@media (max-width: 760px){
+.booking-tabs{
+flex-direction:column;
+border-radius:18px;
+}
 
+.booking-card{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.booking-image img{
+width:100%;
+height:200px;
+}
+
+.booking-details{
+gap:20px;
+flex-wrap:wrap;
+}
+
+.booking-price{
+text-align:left;
+}
+
+.purchase-meta{
+grid-template-columns:1fr;
+}
+
+.purchase-card{
+flex-direction:column;
+align-items:flex-start;
+}
+
+.purchase-image{
+flex:initial;
+width:100%;
+margin:0;
+}
+
+.purchase-image img{
+height:180px;
+border-radius:14px;
+}
+}
+</style>
 
 {% endblock %}

@@ -127,7 +127,7 @@
 <div class="booking-card">
 
     <div class="cal-header">
-        <div class="cal-title">Buy property</div>
+        <div class="cal-title">Purchase request</div>
     </div>
 
     <p class="sub" style="margin-top:10px;">
@@ -136,23 +136,35 @@
 
     {% if has_purchased_property %}
     <p class="sub" style="font-weight:700;">This property is in your purchase history.</p>
+    {% elif purchase_request and purchase_request.status == 'pending' %}
+    <p class="sub" style="font-weight:700;">Your purchase request is pending owner approval.</p>
+    {% elif purchase_request and purchase_request.status == 'accepted' %}
+    <p class="sub" style="font-weight:700;">Your purchase request was accepted.</p>
+    {% elif purchase_request and purchase_request.status == 'rejected' %}
+    <p class="sub" style="font-weight:700;">Your previous request was rejected. You can send a new one.</p>
+    <form method="POST" action="{% url 'transactions:create_purchase_request' property.id %}">
+        {% csrf_token %}
+        <button class="cta-btn" type="submit">
+            Send new request
+        </button>
+    </form>
     {% elif not property.active_listing %}
     <p class="sub" style="font-weight:700;">This property is no longer available for purchase.</p>
     {% elif not user.is_authenticated %}
     <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-        Login to buy this property
+        Login to request this property
     </a>
     {% elif request.user == property.owner.user %}
-    <p class="sub" style="font-weight:700;">You are the owner of this property.</p>
-    {% elif can_buy_property %}
-    <form method="POST" action="{% url 'transactions:buy_property' property.id %}">
+    <p class="sub" style="font-weight:700;">You cannot request the purchase of your own property.</p>
+    {% elif can_request_purchase %}
+    <form method="POST" action="{% url 'transactions:create_purchase_request' property.id %}">
         {% csrf_token %}
         <button class="cta-btn" type="submit">
-            Buy property
+            Request purchase
         </button>
     </form>
     {% else %}
-    <p class="sub" style="font-weight:700;">This property cannot be purchased right now.</p>
+    <p class="sub" style="font-weight:700;">This property cannot receive a purchase request right now.</p>
     {% endif %}
 </div>
 {% else %}

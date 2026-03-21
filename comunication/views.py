@@ -5,7 +5,7 @@ from django.db.models import OuterRef, Q, Subquery
 from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from transactions.models import Booking
-from transactions.purchases import has_sale_contract
+from transactions.selectors import has_sale_contract
 from .models import Conversation
 
 

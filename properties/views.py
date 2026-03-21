@@ -18,7 +18,11 @@ from datetime import datetime
 from .models import Property, Booking, SavedProperty
 from .forms import PropertyForm
 from transactions.models import Booking, Contract
-from transactions.purchases import can_access_inactive_property, can_contact_owner_for_property
+from transactions.selectors import (
+    can_access_inactive_property,
+    can_contact_owner_for_property,
+    get_purchase_request_for_user,
+)
 
 
 def _normalize_availability_dates(raw_dates):
@@ -426,6 +430,7 @@ def property_detail(request, pk):
 
     is_saved = False
     has_purchased_property = False
+    purchase_request = None
     can_contact_owner = False
     if request.user.is_authenticated:
         is_saved = SavedProperty.objects.filter(
@@ -442,9 +447,10 @@ def property_detail(request, pk):
             user=request.user,
             status="approved",
         ).exists()
+        purchase_request = get_purchase_request_for_user(property, request.user)
         can_contact_owner = has_approved_booking or can_contact_owner_for_property(request.user, property)
 
-    can_buy_property = (
+    can_request_purchase = (
         property.listing_type == "sale"
         and property.active_listing
         and property.state == "available"
@@ -452,6 +458,7 @@ def property_detail(request, pk):
         and property.owner
         and request.user != property.owner.user
         and not has_purchased_property
+        and (purchase_request is None or purchase_request.status == "rejected")
     )
 
     # -------- JSON FOR CALENDAR --------
@@ -489,7 +496,8 @@ def property_detail(request, pk):
         "all_days_available": all_days_available,
         "can_contact_owner": can_contact_owner,
         "has_purchased_property": has_purchased_property,
-        "can_buy_property": can_buy_property,
+        "purchase_request": purchase_request,
+        "can_request_purchase": can_request_purchase,
     }
     return render(request, "properties/detail.html", context)
 

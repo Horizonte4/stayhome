@@ -31,6 +31,46 @@ class Contract(TimeStampedModel, SoftDeleteModel):
 
 
 
+class PurchaseRequest(TimeStampedModel, SoftDeleteModel):
+    STATUS_PENDING = "pending"
+    STATUS_ACCEPTED = "accepted"
+    STATUS_REJECTED = "rejected"
+
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending"),
+        (STATUS_ACCEPTED, "Accepted"),
+        (STATUS_REJECTED, "Rejected"),
+    ]
+
+    property = models.ForeignKey(
+        "properties.Property",
+        on_delete=models.CASCADE,
+        related_name="purchase_requests",
+    )
+    buyer = models.ForeignKey(
+        "users.User",
+        on_delete=models.CASCADE,
+        related_name="purchase_requests",
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDING,
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["property", "buyer"],
+                name="unique_purchase_request_per_property_and_buyer",
+            ),
+        ]
+
+    def __str__(self):
+        return f"PurchaseRequest {self.id} - {self.property} - {self.status}"
+
+
 class Booking(models.Model):
 
     STATUS_CHOICES = [
