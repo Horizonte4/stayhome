@@ -32,6 +32,12 @@ class BookingService:
 
     @staticmethod
     def create_booking(property, user, check_in, check_out):
+        """
+        propietarios o pueden book sus propiedades
+        """
+        if property.owner.user_id == user.id:
+            raise ValueError("Owners cannot book their own properties.")
+        
         return Booking.objects.create(
             property=property,
             user=user,

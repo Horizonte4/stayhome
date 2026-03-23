@@ -31,6 +31,13 @@ def create_booking(request, property_id):
     if BookingService.has_conflict(property_obj, check_in, check_out):
         messages.error(request, "These dates are already booked.")
         return redirect("properties:property_detail", pk=property_obj.id)
+    
+    try:
+        BookingService.create_booking(property_obj, request.user, check_in, check_out)
+    except ValueError as e:
+        messages.error(request, str(e))
+        return redirect("properties:property_detail", pk=property_obj.id)
+
 
     BookingService.create_booking(property_obj, request.user, check_in, check_out)
     return redirect("transactions:my_bookings")
