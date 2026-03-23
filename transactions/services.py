@@ -54,8 +54,26 @@ class BookingService:
         VALID_STATUSES = {"approved", "rejected", "cancelled"}
         if new_status not in VALID_STATUSES:
             raise ValueError(f"invalid status: {new_status}")
-        booking.status = new_status
-        booking.save()
+    
+        if new_status == "approved":
+
+            booking.status = "approved"
+            booking.save()
+
+            '''eliminar otros pendientes de la misma propiedad'''
+            conflict_bookings = Booking.objects.filter(
+            property=booking.property,
+            status="pending",
+            check_in__lt=booking.check_out,
+            check_out__gt=booking.check_in
+            ).exclude(id=booking.id)
+            
+            conflict_bookings.update(status="rejected")
+
+        else:
+            booking.status = new_status
+            booking.save()
+
 
     @staticmethod
     def get_client_bookings(user):
