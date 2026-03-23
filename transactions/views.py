@@ -38,8 +38,6 @@ def create_booking(request, property_id):
         messages.error(request, str(e))
         return redirect("properties:property_detail", pk=property_obj.id)
 
-
-    BookingService.create_booking(property_obj, request.user, check_in, check_out)
     return redirect("transactions:my_bookings")
 
 
@@ -87,16 +85,22 @@ def change_booking_status(request, booking_id, new_status):
     """Cambia el estado de una reserva (approve/reject/cancel)."""
     booking = get_object_or_404(Booking, id=booking_id)
 
-    if not BookingOwnerMixin.is_booking_owner(request, booking):
-        messages.error(request, "No tienes permiso para esta acción.")
-        return redirect("transactions:owner_bookings")
+    is_owner = BookingOwnerMixin.is_booking_owner(request, booking)
+    is_client = booking.user == request.user and new_status == "cancelled"
+
+    if not is_owner and not is_client:
+        messages.error(request, "you are not allowed.")
+        return redirect("transactions:my_bookings")
 
     try:
         BookingService.change_status(booking, new_status)
-    except ValueError:
-        messages.error(request, "Estado inválido.")
+    except ValueError as e:
+        messages.error(request, str(e))  # ← mensaje real del error
 
-    return redirect("transactions:owner_bookings")
+    if is_owner:
+        return redirect("transactions:owner_bookings")
+
+    return redirect("transactions:my_bookings")
 
 
 @login_required

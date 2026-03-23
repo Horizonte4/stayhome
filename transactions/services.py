@@ -3,6 +3,7 @@
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
+from datetime import timedelta
 from .exceptions import (
     DuplicatePurchaseRequestError,
     OwnerCannotBuyOwnPropertyError,
@@ -52,28 +53,38 @@ class BookingService:
         OCP: abierto a nuevos estados sin modificar approve/reject por separado.
         """
         VALID_STATUSES = {"approved", "rejected", "cancelled"}
-        if new_status not in VALID_STATUSES:
-            raise ValueError(f"invalid status: {new_status}")
-    
-        if new_status == "approved":
 
+        if new_status not in VALID_STATUSES:
+            raise ValueError(f"Invalid status: {new_status}")
+
+        if new_status == "approved":
             booking.status = "approved"
             booking.save()
 
-            '''eliminar otros pendientes de la misma propiedad'''
-            conflict_bookings = Booking.objects.filter(
-            property=booking.property,
-            status="pending",
-            check_in__lt=booking.check_out,
-            check_out__gt=booking.check_in
-            ).exclude(id=booking.id)
-            
-            conflict_bookings.update(status="rejected")
+            Booking.objects.filter(
+                property=booking.property,
+                status="pending",
+                check_in__lt=booking.check_out,
+                check_out__gt=booking.check_in
+            ).exclude(id=booking.id).update(status="rejected")
+
+        elif new_status == "cancelled":
+            today = timezone.localdate()
+            limit_date = booking.check_in - timedelta(days=5)
+
+            if today > limit_date:
+                raise ValueError(
+                    "You can only cancel a booking at least 5 days before check-in."
+                )
+
+            booking.status = "cancelled"
+            booking.save()
 
         else:
             booking.status = new_status
             booking.save()
 
+        return booking
 
     @staticmethod
     def get_client_bookings(user):
