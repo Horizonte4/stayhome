@@ -1,31 +1,29 @@
-from django.db import models
+# Librerías externas
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.db import models
 
 
-
-#Aca definimos nuestros modelos de usuarios
-#la clase user crea un usuario personalizado
-#
-
-# CUSTOM USER MANAGER
 class UsuarioManager(BaseUserManager):
+    """Manager personalizado que usa email en lugar de username."""
+
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError("El usuario debe tener un email")
-
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password) 
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-
         return self.create_user(email, password, **extra_fields)
-    
+
+
 class RoleCheckerMixin:
+    """Mixin que agrega propiedades para verificar el rol del usuario."""
+
     @property
     def is_owner(self):
         return hasattr(self, "owner")
@@ -33,28 +31,25 @@ class RoleCheckerMixin:
     @property
     def is_client(self):
         return hasattr(self, "client")
-    
-    #@property
-    #def role(self):
+
+    @property
+    def role(self):
         if self.is_owner:
             return "owner"
         if self.is_client:
             return "client"
         return "unknown"
 
-    #def has_role(self, role_name): 
-        return getattr(self, f"is_{role_name}", False)
 
-# USUARIO PERSONALIZADO
-class User(RoleCheckerMixin,AbstractUser):
+class User(RoleCheckerMixin, AbstractUser):
+    """Usuario personalizado que usa email como identificador único."""
 
-    username = None 
+    username = None
     email = models.EmailField(unique=True)
-
     phone = models.CharField(max_length=15, blank=True, null=True)
     registration_date = models.DateTimeField(auto_now_add=True)
 
-    USERNAME_FIELD = "email"      
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
     objects = UsuarioManager()
@@ -62,24 +57,27 @@ class User(RoleCheckerMixin,AbstractUser):
     def __str__(self):
         return self.email
 
-# CLIENTE
+
 class Client(models.Model):
+    """Perfil de cliente asociado a un usuario."""
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        related_name='client'
+        related_name="client"
     )
 
     def __str__(self):
         return f"Client: {self.user.email}"
 
 
-# PROPIETARIO
 class Owner(models.Model):
+    """Perfil de propietario asociado a un usuario."""
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        related_name='owner'
+        related_name="owner"
     )
 
     def __str__(self):

@@ -57,19 +57,6 @@ class Property(models.Model):
         return f"{self.title} — {self.city}"
 
 
-class Booking(models.Model):
-    property = models.ForeignKey("Property", on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    check_in = models.DateField()
-    check_out = models.DateField()
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.property} | {self.check_in} - {self.check_out}"
-
-
 class Availability(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
     availability_dates = models.DateField()
