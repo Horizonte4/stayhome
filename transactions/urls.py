@@ -1,7 +1,5 @@
-# Librerías externas
 from django.urls import path
 
-# Archivos del proyecto
 from . import views
 
 app_name = "transactions"

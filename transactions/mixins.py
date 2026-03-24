@@ -1,4 +1,3 @@
-# Librerías externas
 from django.shortcuts import redirect
 
 
