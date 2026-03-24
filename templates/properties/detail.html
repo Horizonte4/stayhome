@@ -16,7 +16,6 @@
     <div class="media-card">
         <div class="hero-media"
              style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}');">
-
             <div class="pill-row">
                 <span class="pill pill-blue">{{ availability_label }}</span>
                 <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>

@@ -17,7 +17,10 @@ class PropertyForm(forms.ModelForm):
         required=False,
         max_length=1000,
         widget=forms.TextInput(
-            attrs={"class": "form-input", "placeholder": "https://..."}
+            attrs={
+                "class": "form-input",
+                "placeholder": "https://...",
+            }
         ),
     )
 
@@ -56,7 +59,7 @@ class PropertyForm(forms.ModelForm):
             "address": forms.TextInput(
                 attrs={
                     "class": "form-input",
-                    "placeholder": "search location",
+                    "placeholder": "Search location",
                     "autocomplete": "off",
                 }
             ),
@@ -64,15 +67,21 @@ class PropertyForm(forms.ModelForm):
             "latitude": forms.HiddenInput(),
             "longitude": forms.HiddenInput(),
             "price": forms.NumberInput(
-                attrs={"class": "form-input", "min": 0, "step": "0.01"}
+                attrs={
+                    "class": "form-input",
+                    "min": 0,
+                    "step": "0.01",
+                }
             ),
             "listing_type": forms.Select(attrs={"class": "form-input"}),
-            "rooms": forms.NumberInput(attrs={"class": "form-input", "min": 0}),
-            "bathrooms": forms.NumberInput(
-                attrs={"class": "form-input", "min": 0}
-            ),
+            "rooms": forms.NumberInput(attrs={"class": "form-input", "min": 1}),
+            "bathrooms": forms.NumberInput(attrs={"class": "form-input", "min": 1}),
             "square_meters": forms.NumberInput(
-                attrs={"class": "form-input", "min": 0, "step": 1}
+                attrs={
+                    "class": "form-input",
+                    "min": 0,
+                    "step": 1,
+                }
             ),
             "capacity": forms.NumberInput(attrs={"class": "form-input", "min": 1}),
             "image": forms.ClearableFileInput(attrs={"class": "form-input"}),
@@ -94,7 +103,8 @@ class PropertyForm(forms.ModelForm):
             "capacity",
         ]
         for field_name in required_fields:
-            self.fields[field_name].required = True
+            if field_name in self.fields:
+                self.fields[field_name].required = True
 
     def _build_remote_image_name(self, image_url, content_type=""):
         parsed_url = urlparse(image_url)
@@ -126,9 +136,7 @@ class PropertyForm(forms.ModelForm):
                 image_bytes = response.read()
                 content_type = response.headers.get("Content-Type", "")
         except Exception as exc:
-            raise ValidationError(
-                "Could not download the image from that URL."
-            ) from exc
+            raise ValidationError("Could not download the image from that URL.") from exc
 
         if not image_bytes:
             raise ValidationError("The image URL returned an empty file.")
@@ -148,9 +156,7 @@ class PropertyForm(forms.ModelForm):
         try:
             validator(image_url)
         except ValidationError as exc:
-            raise forms.ValidationError(
-                "Enter a valid http or https URL."
-            ) from exc
+            raise forms.ValidationError("Enter a valid http or https URL.") from exc
 
         return image_url
 
@@ -160,24 +166,25 @@ class PropertyForm(forms.ModelForm):
         for field_name in ["price", "rooms", "bathrooms", "capacity"]:
             value = cleaned_data.get(field_name)
             if value is not None and value <= 0:
-                self.add_error(field_name, "Must be greater than zero.")
+                self.add_error(field_name, "This value must be greater than zero.")
 
         square_meters = cleaned_data.get("square_meters")
         if square_meters is not None and square_meters < 0:
-            self.add_error("square_meters", "Cannot be negative.")
+            self.add_error("square_meters", "This value cannot be negative.")
 
         image = cleaned_data.get("image")
         image_url = cleaned_data.get("image_url")
         if not image and not image_url:
-            self.add_error("image", "Upload an image or provide a URL.")
-            self.add_error("image_url", "Upload an image or provide a URL.")
+            error_message = "Upload an image or provide an image URL."
+            self.add_error("image", error_message)
+            self.add_error("image_url", error_message)
 
         if not image and image_url:
             try:
                 cleaned_data["image"] = self._download_image_from_url(image_url)
                 cleaned_data["image_url"] = ""
             except ValidationError as exc:
-                self.add_error("image_url", exc)
+                self.add_error("image_url", str(exc))
 
         latitude = cleaned_data.get("latitude")
         longitude = cleaned_data.get("longitude")
@@ -187,13 +194,13 @@ class PropertyForm(forms.ModelForm):
         if address and (latitude is None or longitude is None):
             self.add_error(
                 "address",
-                "Debes seleccionar una ubicacion valida en el mapa.",
+                "You must select a valid location on the map.",
             )
 
         if address and not city:
             self.add_error(
                 "address",
-                "No se pudo detectar la ciudad. Selecciona una ubicacion valida.",
+                "City could not be detected. Please select a valid location.",
             )
 
         return cleaned_data

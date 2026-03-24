@@ -7,7 +7,7 @@ from django.utils import timezone
 
 class PropertyQuerySet(models.QuerySet):
     def with_owner(self):
-        return self.select_related("owner__user")
+        return self.select_related("owner", "owner__user")
 
     def available(self, start_date=None, end_date=None):
         from transactions.models import Booking, Contract
@@ -18,11 +18,11 @@ class PropertyQuerySet(models.QuerySet):
 
         sold_contracts = Contract.objects.filter(
             property_id=OuterRef("pk"),
-            type="sale",
+            type=Contract.TYPE_SALE,
         )
         approved_booking_conflicts = Booking.objects.filter(
             property_id=OuterRef("pk"),
-            status="approved",
+            status=Booking.STATUS_APPROVED,
             check_in__lt=end_date,
             check_out__gt=start_date,
         )

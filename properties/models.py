@@ -25,18 +25,8 @@ class Property(models.Model):
     description = models.TextField(blank=True)
     address = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=100)
-    latitude = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        null=True,
-        blank=True,
-    )
-    longitude = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        null=True,
-        blank=True,
-    )
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     price = models.DecimalField(max_digits=12, decimal_places=2)
     listing_type = models.CharField(
         max_length=20,
@@ -76,7 +66,7 @@ class Property(models.Model):
     def has_sale_contract(self):
         from transactions.models import Contract
 
-        return Contract.objects.filter(property=self, type="sale").exists()
+        return Contract.objects.filter(property=self, type=Contract.TYPE_SALE).exists()
 
     def has_approved_booking_overlap(self, start_date, end_date):
         if self.listing_type == "sale":

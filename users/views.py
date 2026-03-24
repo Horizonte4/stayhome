@@ -11,11 +11,11 @@ from .models import Client, Owner
 
 
 def login_view(request):
-    """Autentica al usuario y redirige al dashboard."""
     form = AuthenticationForm(data=request.POST or None)
     if request.method == "POST" and form.is_valid():
         login(request, form.get_user())
-        return redirect("board")
+        next_url = request.GET.get("next") or request.POST.get("next")
+        return redirect(next_url or "home")
     return render(request, "registration/login.html", {"form": form})
 
 
