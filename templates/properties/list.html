@@ -20,9 +20,15 @@
                     <label>Property Type</label>
                     <select name="listing_type" class="explore-select">
                         <option value="">All Types</option>
-                        <option value="short_term" {% if filters.listing_type == 'short_term' %}selected{% endif %}>Short-term rental</option>
-                        <option value="long_term" {% if filters.listing_type == 'long_term' %}selected{% endif %}>Long-term rental</option>
-                        <option value="sale" {% if filters.listing_type == 'sale' %}selected{% endif %}>Sale</option>
+                        <option value="short_term" {% if filters.listing_type == "short_term" %}selected{% endif %}>
+                            Short-term rental
+                        </option>
+                        <option value="long_term" {% if filters.listing_type == "long_term" %}selected{% endif %}>
+                            Long-term rental
+                        </option>
+                        <option value="sale" {% if filters.listing_type == "sale" %}selected{% endif %}>
+                            Sale
+                        </option>
                     </select>
                 </div>
 
@@ -30,9 +36,15 @@
                     <label>Category</label>
                     <select name="state" class="explore-select">
                         <option value="">All Categories</option>
-                        <option value="available" {% if filters.state == 'available' %}selected{% endif %}>Available</option>
-                        <option value="occupied" {% if filters.state == 'occupied' %}selected{% endif %}>Occupied</option>
-                        <option value="reserved" {% if filters.state == 'reserved' %}selected{% endif %}>Reserved</option>
+                        <option value="available" {% if filters.state == "available" %}selected{% endif %}>
+                            Available
+                        </option>
+                        <option value="occupied" {% if filters.state == "occupied" %}selected{% endif %}>
+                            Occupied
+                        </option>
+                        <option value="reserved" {% if filters.state == "reserved" %}selected{% endif %}>
+                            Reserved
+                        </option>
                     </select>
                 </div>
 
@@ -40,27 +52,49 @@
                     <label>Bedrooms</label>
                     <select name="rooms" class="explore-select">
                         <option value="">Any</option>
-                        <option value="1" {% if filters.rooms == '1' %}selected{% endif %}>1</option>
-                        <option value="2" {% if filters.rooms == '2' %}selected{% endif %}>2</option>
-                        <option value="3" {% if filters.rooms == '3' %}selected{% endif %}>3</option>
-                        <option value="4" {% if filters.rooms == '4' %}selected{% endif %}>4</option>
-                        <option value="5" {% if filters.rooms == '5' %}selected{% endif %}>5+</option>
+                        <option value="1" {% if filters.rooms == "1" %}selected{% endif %}>1</option>
+                        <option value="2" {% if filters.rooms == "2" %}selected{% endif %}>2</option>
+                        <option value="3" {% if filters.rooms == "3" %}selected{% endif %}>3</option>
+                        <option value="4" {% if filters.rooms == "4" %}selected{% endif %}>4</option>
+                        <option value="5" {% if filters.rooms == "5" %}selected{% endif %}>5+</option>
                     </select>
                 </div>
 
                 <div class="explore-filter-group">
                     <label>Location</label>
-                    <input type="text" name="city" placeholder="Search location" value="{{ filters.city }}" class="explore-input">
+                    <input
+                        type="text"
+                        name="city"
+                        placeholder="Search location"
+                        value="{{ filters.city }}"
+                        class="explore-input"
+                    >
                 </div>
 
                 <div class="explore-filter-group">
                     <label>Bathrooms</label>
-                    <input type="number" name="bathrooms" placeholder="Bathrooms" value="{{ filters.bathrooms }}" class="explore-input">
+                    <input
+                        type="number"
+                        name="bathrooms"
+                        min="1"
+                        step="1"
+                        placeholder="Bathrooms"
+                        value="{{ filters.bathrooms }}"
+                        class="explore-input"
+                    >
                 </div>
 
                 <div class="explore-filter-group">
                     <label>Guests</label>
-                    <input type="number" name="capacity" placeholder="Min guests" value="{{ filters.capacity }}" class="explore-input">
+                    <input
+                        type="number"
+                        name="capacity"
+                        min="1"
+                        step="1"
+                        placeholder="Min guests"
+                        value="{{ filters.capacity }}"
+                        class="explore-input"
+                    >
                 </div>
 
                 <div class="explore-filter-group">
@@ -72,15 +106,32 @@
                         class="explore-input"
                         readonly
                     >
-                    <input type="hidden" name="check_in" id="check_in" value="{{ filters.check_in }}">
-                    <input type="hidden" name="check_out" id="check_out" value="{{ filters.check_out }}">
+                    <input
+                        type="hidden"
+                        id="check_in"
+                        name="check_in"
+                        value="{{ filters.check_in }}"
+                    >
+                    <input
+                        type="hidden"
+                        id="check_out"
+                        name="check_out"
+                        value="{{ filters.check_out }}"
+                    >
                 </div>
 
                 <input type="hidden" name="q" value="{{ filters.q }}">
 
                 <div class="explore-filter-actions">
-                    <button type="submit" class="explore-filter-btn">Apply Filters</button>
-                    <a href="{% url 'properties:list_properties' %}" class="explore-clear-btn">✕ Clear Filters</a>
+                    <button type="submit" class="explore-filter-btn">
+                        Apply Filters
+                    </button>
+                    <a
+                        href="{% url 'properties:list_properties' %}"
+                        class="explore-clear-btn"
+                    >
+                        ✕ Clear Filters
+                    </a>
                 </div>
             </form>
         </aside>
@@ -118,17 +169,31 @@
                         <div class="explore-card">
                             <div class="explore-card-image-wrap">
                                 {% if property.image %}
-                                    <img src="{{ property.image.url }}" alt="{{ property.title }}" class="explore-card-image">
+                                    <img
+                                        src="{{ property.image.url }}"
+                                        alt="{{ property.title }}"
+                                        class="explore-card-image"
+                                    >
                                 {% elif property.image_url %}
-                                    <img src="{{ property.image_url }}" alt="{{ property.title }}" class="explore-card-image">
+                                    <img
+                                        src="{{ property.image_url }}"
+                                        alt="{{ property.title }}"
+                                        class="explore-card-image"
+                                    >
                                 {% else %}
-                                    <div class="property-card-image-placeholder">No image available</div>
+                                    <div class="property-card-image-placeholder">
+                                        No image available
+                                    </div>
                                 {% endif %}
 
                                 <div class="explore-card-badges">
-                                    <span class="explore-badge">{{ property.get_listing_type_display }}</span>
-                                    {% if property.state == 'available' %}
-                                        <span class="explore-badge explore-badge-featured">Featured</span>
+                                    <span class="explore-badge">
+                                        {{ property.get_listing_type_display }}
+                                    </span>
+                                    {% if property.state == "available" %}
+                                        <span class="explore-badge explore-badge-featured">
+                                            Featured
+                                        </span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -152,25 +217,45 @@
                                     <div>
                                         <div class="explore-card-price">
                                             ${{ property.price }}
-                                            {% if property.listing_type == 'short_term' %}
+                                            {% if property.listing_type == "short_term" %}
                                                 /night
-                                            {% elif property.listing_type == 'long_term' %}
+                                            {% elif property.listing_type == "long_term" %}
                                                 /mo
                                             {% endif %}
                                         </div>
-                                        <div class="explore-card-owner">{{ property.capacity }} guests · {{ property.get_state_display }}</div>
+                                        <div class="explore-card-owner">
+                                            {{ property.capacity }} guests · {{ property.get_state_display }}
+                                        </div>
                                     </div>
 
-                                    <a href="{% url 'properties:property_detail' pk=property.pk %}" class="explore-details-btn">
+                                    <a
+                                        href="{% url 'properties:property_detail' pk=property.pk %}"
+                                        class="explore-details-btn"
+                                    >
                                         View Details
                                     </a>
                                 </div>
 
                                 {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
                                     <div class="property-card-actions">
-                                        <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">Edit</a>
-                                        <a href="{% url 'properties:edit_calendar' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">Edit calendar</a>
-                                        <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">Delete</a>
+                                        <a
+                                            href="{% url 'properties:edit_property' pk=property.pk %}"
+                                            class="property-card-action-btn property-card-action-btn-edit"
+                                        >
+                                            Edit
+                                        </a>
+                                        <a
+                                            href="{% url 'properties:edit_calendar' pk=property.pk %}"
+                                            class="property-card-action-btn property-card-action-btn-edit"
+                                        >
+                                            Edit calendar
+                                        </a>
+                                        <a
+                                            href="{% url 'properties:delete_property' pk=property.pk %}"
+                                            class="property-card-action-btn property-card-action-btn-delete"
+                                        >
+                                            Delete
+                                        </a>
                                     </div>
                                 {% endif %}
                             </div>
@@ -178,13 +263,18 @@
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="property-list-empty">No properties found with the selected filters.</p>
+                <p class="property-list-empty">
+                    No properties found with the selected filters.
+                </p>
             {% endif %}
         </section>
     </div>
 </div>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
@@ -192,6 +282,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const rangeInput = document.getElementById("availability_range");
     const checkInInput = document.getElementById("check_in");
     const checkOutInput = document.getElementById("check_out");
+
+    if (!rangeInput || !checkInInput || !checkOutInput) {
+        return;
+    }
 
     let defaultDates = [];
     if (checkInInput.value) {
@@ -207,12 +301,21 @@ document.addEventListener("DOMContentLoaded", function () {
         defaultDate: defaultDates,
         showMonths: 1,
         disableMobile: true,
-        onChange: function(selectedDates, dateStr, instance) {
+        onChange: function (selectedDates, dateStr, instance) {
             if (selectedDates.length === 2) {
-                checkInInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
-                checkOutInput.value = instance.formatDate(selectedDates[1], "Y-m-d");
+                checkInInput.value = instance.formatDate(
+                    selectedDates[0],
+                    "Y-m-d"
+                );
+                checkOutInput.value = instance.formatDate(
+                    selectedDates[1],
+                    "Y-m-d"
+                );
             } else if (selectedDates.length === 1) {
-                checkInInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
+                checkInInput.value = instance.formatDate(
+                    selectedDates[0],
+                    "Y-m-d"
+                );
                 checkOutInput.value = "";
             } else {
                 checkInInput.value = "";
@@ -222,5 +325,4 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-
 {% endblock %}

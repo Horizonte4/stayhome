@@ -1,39 +1,35 @@
-from django.db import models
-from django.utils import timezone
 from datetime import timedelta
 
+from django.db import models
+from django.utils import timezone
+
+
 class PropertyManager(models.Manager):
-    """
-    Manager personalizado para Propiedad.
-    Hereda de models.Manager para tener todos los métodos base (all, filter, get, etc.)
-    """
+    def get_queryset(self):
+        return super().get_queryset()
+
+    def active(self):
+        return self.get_queryset().filter(active_listing=True)
+
     def available(self):
-        """
-        Retorna solo propiedades disponibles y con publicación activa.
-        Es como hacer: Property.objects.filter(status='available', is_active=True)
-        Pero encapsulado en un método reutilizable.
-        """
-        return self.filter(state__iexact='available', active_listing=True)
+        return self.active().filter(state="available")
 
     def in_city(self, city):
-        """
-        Filtra propiedades disponibles por ciudad.
-        Usa 'iexact' para que no importe mayúsculas/minúsculas.
-        """
+        if not city:
+            return self.available()
         return self.available().filter(city__iexact=city)
 
-    def by_price_range(self, min_price, max_price):
-        """
-        Filtra propiedades disponibles por rango de precio.
-        __gte = mayor o igual (>=)
-        __lte = menor o igual (<=)
-        """
-        return self.available().filter(price__gte=min_price, price__lte=max_price)
+    def by_price_range(self, min_price=None, max_price=None):
+        queryset = self.available()
+
+        if min_price is not None:
+            queryset = queryset.filter(price__gte=min_price)
+
+        if max_price is not None:
+            queryset = queryset.filter(price__lte=max_price)
+
+        return queryset
 
     def recent(self, days=7):
-        """
-        Propiedades publicadas en los últimos X días.
-        Por defecto, filtra las propiedades de los últimos 7 días.
-        """
-        fecha_limite = timezone.now() - timedelta(days=days)
-        return self.available().filter(created_at__gte=fecha_limite)
+        limit_date = timezone.now() - timedelta(days=days)
+        return self.available().filter(created_at__gte=limit_date)
