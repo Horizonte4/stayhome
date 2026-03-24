@@ -1,0 +1,284 @@
+/* ════════════════════════════════════════
+   StayHome — home.css
+   Hero, search bar, featured cards, stats
+════════════════════════════════════════ */
+
+.home-hero {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+  padding: 80px 60px;
+  border-radius: 24px;
+  color: white;
+  margin-bottom: 70px;
+}
+
+.home-hero-content {
+  max-width: 650px;
+}
+
+.home-hero-title {
+  font-size: clamp(2.4rem, 4vw, 3rem);
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 18px;
+}
+
+.home-hero-text {
+  font-size: 1.05rem;
+  color: #dbeafe;
+  margin-bottom: 36px;
+  line-height: 1.6;
+}
+
+.home-search-bar {
+  background: white;
+  padding: 12px;
+  border-radius: 14px;
+  display: flex;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.home-search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 14px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  font-size: 0.95rem;
+}
+
+.home-search-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-search-btn:hover {
+  background: #1d4ed8;
+}
+
+.hero {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  text-align: center;
+  padding: 120px 20px 80px;
+  border-radius: 0 0 40px 40px;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.hero-sub {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 40px;
+}
+
+.search-bar {
+  background: white;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.search-bar input,
+.search-bar select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  flex: 1;
+}
+
+.search-bar button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  padding: 60px 20px;
+  text-align: center;
+  background: #f8fafc;
+}
+
+.stats h2 {
+  font-size: 2rem;
+  color: #1e40af;
+}
+
+.featured {
+  padding: 60px 20px;
+}
+
+.featured-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.view-all {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.property-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 22px;
+}
+
+.featured-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-media {
+  position: relative;
+  padding-top: 62%;
+  background-size: cover;
+  background-position: center;
+}
+
+.like-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  display: grid;
+  place-items: center;
+  color: #111827;
+}
+
+.featured-body {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.featured-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.featured-owner {
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.featured-address {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6b7280;
+  font-size: 0.94rem;
+  margin: 0;
+}
+
+.featured-desc {
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.meta-row {
+  display: flex;
+  gap: 18px;
+  color: #4b5563;
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex-wrap: wrap;
+}
+
+.meta-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  gap: 12px;
+}
+
+.price-tag {
+  color: #1d4ed8;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.price-tag small {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.ghost-btn {
+  border: 1px solid #d1d5db;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #0f172a;
+  font-weight: 700;
+  background: #f8fafc;
+  text-decoration: none;
+}
+
+.ghost-btn:hover {
+  background: #eef2f7;
+}
+
+.no-properties {
+  text-align: center;
+  padding: 60px;
+  border-radius: 16px;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+@media (max-width: 768px) {
+  .home-hero {
+    padding: 48px 24px;
+  }
+
+  .home-search-bar {
+    flex-direction: column;
+  }
+
+  .home-search-btn {
+    width: 100%;
+  }
+}

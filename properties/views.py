@@ -15,7 +15,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 from datetime import datetime
 
 # Local apps
-from .models import Property, Booking, SavedProperty
+from .models import Property, SavedProperty
 from .forms import PropertyForm
 from transactions.models import Booking, Contract
 from transactions.selectors import (

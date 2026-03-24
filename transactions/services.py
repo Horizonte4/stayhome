@@ -3,6 +3,7 @@
 from django.db import transaction
 from django.db.models import Q
 from django.utils import timezone
+from datetime import timedelta
 from .exceptions import (
     DuplicatePurchaseRequestError,
     OwnerCannotBuyOwnPropertyError,
@@ -32,6 +33,12 @@ class BookingService:
 
     @staticmethod
     def create_booking(property, user, check_in, check_out):
+        """
+        propietarios o pueden book sus propiedades
+        """
+        if property.owner.user_id == user.id:
+            raise ValueError("Owners cannot book their own properties.")
+        
         return Booking.objects.create(
             property=property,
             user=user,
@@ -46,10 +53,38 @@ class BookingService:
         OCP: abierto a nuevos estados sin modificar approve/reject por separado.
         """
         VALID_STATUSES = {"approved", "rejected", "cancelled"}
+
         if new_status not in VALID_STATUSES:
-            raise ValueError(f"invalid status: {new_status}")
-        booking.status = new_status
-        booking.save()
+            raise ValueError(f"Invalid status: {new_status}")
+
+        if new_status == "approved":
+            booking.status = "approved"
+            booking.save()
+
+            Booking.objects.filter(
+                property=booking.property,
+                status="pending",
+                check_in__lt=booking.check_out,
+                check_out__gt=booking.check_in
+            ).exclude(id=booking.id).update(status="rejected")
+
+        elif new_status == "cancelled":
+            today = timezone.localdate()
+            limit_date = booking.check_in - timedelta(days=5)
+
+            if today > limit_date:
+                raise ValueError(
+                    "You can only cancel a booking at least 5 days before check-in."
+                )
+
+            booking.status = "cancelled"
+            booking.save()
+
+        else:
+            booking.status = new_status
+            booking.save()
+
+        return booking
 
     @staticmethod
     def get_client_bookings(user):

@@ -1,0 +1,418 @@
+/* ════════════════════════════════════════
+   StayHome — components.css
+   CTA section, delete confirmation,
+   favorites, wishlist, alerts
+════════════════════════════════════════ */
+
+/* ── CTA SECTION ── */
+.cta-section {
+  margin-top: 80px;
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+  border-radius: 24px 24px 0 0;
+  padding: 72px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before,
+.cta-section::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.cta-section::before {
+  width: 400px;
+  height: 400px;
+  top: -160px;
+  left: -80px;
+}
+
+.cta-section::after {
+  width: 300px;
+  height: 300px;
+  bottom: -100px;
+  right: -60px;
+}
+
+.cta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #bfdbfe;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(8px);
+}
+
+.cta-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  max-width: 600px;
+  margin: 0 auto 16px;
+  letter-spacing: -0.5px;
+}
+
+.cta-sub {
+  font-size: 1rem;
+  color: #bfdbfe;
+  max-width: 480px;
+  margin: 0 auto 40px;
+  line-height: 1.6;
+}
+
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cta-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: #ffffff;
+  color: #1d4ed8;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.cta-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+
+.cta-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
+
+.cta-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+.cta-stats {
+  margin-top: 48px;
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.cta-stat-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.cta-stat-label {
+  font-size: 0.8rem;
+  color: #93c5fd;
+  margin-top: 2px;
+}
+
+/* ── DELETE CONFIRMATION ── */
+.delete-confirmation-wrapper {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 0 16px;
+}
+
+.delete-confirmation-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+  text-align: center;
+}
+
+.delete-confirmation-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: #fee2e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.delete-confirmation-title {
+  margin-bottom: 12px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.delete-confirmation-text {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: #4b5563;
+}
+
+.delete-confirmation-warning {
+  margin-bottom: 28px;
+  font-size: 0.95rem;
+  color: #9ca3af;
+}
+
+.delete-confirmation-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.delete-confirmation-btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.delete-confirmation-btn-danger {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.delete-confirmation-btn-danger:hover {
+  background: #b91c1c;
+}
+
+.delete-confirmation-btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.delete-confirmation-btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+/* ── FAVORITES & WISHLIST ── */
+.favorites-page {
+  max-width: 1100px;
+  margin: auto;
+  padding: 30px 0 60px;
+}
+
+.favorites-header {
+  margin-bottom: 30px;
+}
+
+.favorites-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.favorite-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  transition: transform 0.2s;
+}
+
+.favorite-card:hover {
+  transform: translateY(-4px);
+}
+
+.favorite-image-wrap {
+  position: relative;
+}
+
+.favorite-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+.favorite-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  gap: 6px;
+}
+
+.badge-type {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.badge-type.sale {
+  background: #0f172a;
+  color: white;
+}
+
+.badge-type.rent {
+  background: white;
+  color: #0f172a;
+  border: 1px solid #e5e7eb;
+}
+
+.heart-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #e5e7eb;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+}
+
+.heart-btn:hover {
+  background: #fee2e2;
+}
+
+.favorite-body {
+  padding: 16px;
+}
+
+.favorite-body h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.favorite-location {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.favorite-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.favorite-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.favorite-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.favorite-price span {
+  font-size: 13px;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.details-btn {
+  padding: 8px 16px;
+  background: #0f172a;
+  color: white;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.details-btn:hover {
+  background: #1e293b;
+}
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 0;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── ALERTS ── */
+.alert {
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 16px auto;
+  font-weight: 500;
+  max-width: 1100px;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+@media (max-width: 760px) {
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
+}
