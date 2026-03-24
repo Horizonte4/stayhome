@@ -124,3 +124,30 @@ body {
 .tab-content.active {
   display: block;
 }
+
+.messages-container {
+  max-width: 900px;
+  margin: 16px auto 0;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.message-error   { background: #ef4444; color: #ffffff; }
+.message-success { background: #22c55e; color: #ffffff; }
+.message-warning { background: #eab308; color: #ffffff; }
+.message-info    { background: #3b82f6; color: #ffffff; }
+
+.messages-container {
+    position: relative;
+    z-index: 999;
+}
+

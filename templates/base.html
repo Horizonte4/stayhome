@@ -166,10 +166,15 @@
 
 </nav>
 
-
-
 <!-- PAGE -->
 <main class="page">
+   {% if messages %}
+     {% for message in messages %}
+       <div class="message message-{{ message.tags }}">
+         {{ message }}
+       </div>
+     {% endfor %}
+   {% endif %}
    {% block content %}{% endblock %}
 </main>
 

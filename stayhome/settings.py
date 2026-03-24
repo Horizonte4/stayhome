@@ -63,6 +63,8 @@ TEMPLATES = [
     },
 ]
 
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
+
 WSGI_APPLICATION = "stayhome.wsgi.application"
 
 DATABASES = {
