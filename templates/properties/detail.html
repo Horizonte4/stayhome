@@ -26,7 +26,7 @@
             <span class="pill pill-blue">{{ property.get_state_display }}</span>
             <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
 
-            {% if property.active_publication %}
+            {% if property.active_listing %}
             <span class="pill pill-dark">Active</span>
             {% endif %}
         </div>
@@ -55,7 +55,7 @@
         </p>
 
                 <p class="description">
-            {{ property.description|default:"Sin descripción" }}
+            {{ property.description|default:"no description" }}
         </p>
 
         {% if property.active_listing and user.is_authenticated %}
@@ -65,19 +65,19 @@
 
             <button type="submit" class="cta-btn">
               {% if is_saved %}
-                Quitar de guardados
+                Remove from saved
               {% else %}
                 {% if property.listing_type == 'sale' %}
-                  Guardar en wishlist
+                  Save to wishlist
                 {% else %}
-                  Guardar en favoritos
+                  Save to favorites
                 {% endif %}
               {% endif %}
             </button>
           </form>
         {% elif property.active_listing %}
           <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-            Inicia sesión para guardar esta propiedad
+            Log in to save this property
           </a>
         {% endif %}
 
@@ -103,7 +103,7 @@
 </div>
 
         <div class="specs">
-            <span>🛏 {{ property.bedrooms }} beds</span>
+            <span>🛏 {{ property.rooms }} rooms</span>
             <span>🛁 {{ property.bathrooms }} baths</span>
             <span>📐 {{ property.square_meters|default:"--" }} m²</span>
             <span>👥 {{ property.capacity }} guests</span>
@@ -124,7 +124,7 @@
 </div>
 
 {% if property.listing_type == 'sale' %}
-<div class="booking-card">
+<div class="detail-booking-card">
 
     <div class="cal-header">
         <div class="cal-title">Purchase request</div>
@@ -169,7 +169,7 @@
 </div>
 {% else %}
 <!-- BOOKING CARD -->
-<div class="booking-card">
+<div class="detail-booking-card">
 
     <div class="cal-header">
         <div class="cal-title">Reserve property</div>
