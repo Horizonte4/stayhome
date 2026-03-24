@@ -2,11 +2,11 @@
 from django.contrib.auth import login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 
 # Archivos del proyecto
 from properties.models import Property
-from .forms import RegisterForm, EditProfileForm
+from .forms import EditProfileForm, RegisterForm
 from .models import Client, Owner
 
 
@@ -40,7 +40,7 @@ def board(request):
     role = user.role  # usa el mixin que ya definimos en el modelo
 
     my_properties = (
-        Property.objects.filter(owner=user.owner)
+        Property.objects.with_owner().filter(owner=user.owner)
         if role == "owner"
         else Property.objects.none()
     )

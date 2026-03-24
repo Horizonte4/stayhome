@@ -1,39 +1,57 @@
-from django.db import models
-from django.utils import timezone
 from datetime import timedelta
 
-class PropertyManager(models.Manager):
-    """
-    Manager personalizado para Propiedad.
-    Hereda de models.Manager para tener todos los métodos base (all, filter, get, etc.)
-    """
-    def available(self):
-        """
-        Retorna solo propiedades disponibles y con publicación activa.
-        Es como hacer: Property.objects.filter(status='available', is_active=True)
-        Pero encapsulado en un método reutilizable.
-        """
-        return self.filter(state__iexact='available', active_listing=True)
+from django.db import models
+from django.db.models import Exists, OuterRef
+from django.utils import timezone
 
-    def in_city(self, city):
-        """
-        Filtra propiedades disponibles por ciudad.
-        Usa 'iexact' para que no importe mayúsculas/minúsculas.
-        """
-        return self.available().filter(city__iexact=city)
 
-    def by_price_range(self, min_price, max_price):
-        """
-        Filtra propiedades disponibles por rango de precio.
-        __gte = mayor o igual (>=)
-        __lte = menor o igual (<=)
-        """
-        return self.available().filter(price__gte=min_price, price__lte=max_price)
+class PropertyQuerySet(models.QuerySet):
+    def with_owner(self):
+        return self.select_related("owner__user")
 
-    def recent(self, days=7):
-        """
-        Propiedades publicadas en los últimos X días.
-        Por defecto, filtra las propiedades de los últimos 7 días.
-        """
-        fecha_limite = timezone.now() - timedelta(days=days)
-        return self.available().filter(created_at__gte=fecha_limite)
+    def available(self, start_date=None, end_date=None):
+        from transactions.models import Booking, Contract
+
+        if start_date is None or end_date is None:
+            start_date = timezone.localdate()
+            end_date = start_date + timedelta(days=1)
+
+        sold_contracts = Contract.objects.filter(
+            property_id=OuterRef("pk"),
+            type="sale",
+        )
+        approved_booking_conflicts = Booking.objects.filter(
+            property_id=OuterRef("pk"),
+            status="approved",
+            check_in__lt=end_date,
+            check_out__gt=start_date,
+        )
+
+        return (
+            self.annotate(
+                has_sale_contract_flag=Exists(sold_contracts),
+                has_booking_conflict_flag=Exists(approved_booking_conflicts),
+            )
+            .filter(has_sale_contract_flag=False)
+            .exclude(
+                listing_type__in=["short_term", "long_term"],
+                has_booking_conflict_flag=True,
+            )
+        )
+
+    def in_city(self, city, start_date=None, end_date=None):
+        return self.available(start_date, end_date).filter(city__iexact=city)
+
+    def by_price_range(self, min_price, max_price, start_date=None, end_date=None):
+        return self.available(start_date, end_date).filter(
+            price__gte=min_price,
+            price__lte=max_price,
+        )
+
+    def recent(self, days=7, start_date=None, end_date=None):
+        limit_date = timezone.now() - timedelta(days=days)
+        return self.available(start_date, end_date).filter(created_at__gte=limit_date)
+
+
+class PropertyManager(models.Manager.from_queryset(PropertyQuerySet)):
+    pass

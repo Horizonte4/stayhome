@@ -1,312 +1,251 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %}Property Details{% endblock %}
 
 {% block content %}
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-<!-- FLATPICKR -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <a href="{% url 'properties:list_properties' %}" class="back-link">
-    ← Back to Properties
+    &larr; Back to Properties
 </a>
 
 <section class="detail-wrap">
+    <div class="media-card">
+        <div class="hero-media"
+             style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}');">
 
-<!-- PROPERTY MEDIA -->
-<div class="media-card">
-
-    <div class="hero-media"
-         style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}');">
-
-        <div class="pill-row">
-            <span class="pill pill-blue">{{ property.get_state_display }}</span>
-            <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
-
-            {% if property.active_publication %}
-            <span class="pill pill-dark">Active</span>
-            {% endif %}
+            <div class="pill-row">
+                <span class="pill pill-blue">{{ availability_label }}</span>
+                <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
+            </div>
         </div>
 
+        <div class="media-body">
+            <h1 class="title">{{ property.title }}</h1>
+
+            <p class="owner">
+                Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}
+            </p>
+
+            <p class="sub">
+                {{ property.address|default:property.city }}
+            </p>
+
+            <p class="price">
+                ${{ property.price }}
+                {% if property.listing_type == 'sale' %}
+                <small class="price-period">sale price</small>
+                {% else %}
+                <small class="price-period">/mo</small>
+                {% endif %}
+            </p>
+
+            <p class="description">
+                {{ property.description|default:"No description provided." }}
+            </p>
+
+            {% if user.is_authenticated and not has_sale_contract %}
+            <form method="post" action="{% url 'properties:toggle_saved_property' property.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+
+                <button type="submit" class="cta-btn">
+                    {% if is_saved %}
+                        Remove from saved
+                    {% else %}
+                        {% if property.listing_type == 'sale' %}
+                            Save to wishlist
+                        {% else %}
+                            Save to favorites
+                        {% endif %}
+                    {% endif %}
+                </button>
+            </form>
+            {% elif not user.is_authenticated and not has_sale_contract %}
+            <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
+                Log in to save this property
+            </a>
+            {% endif %}
+
+            <div class="contact-owner" style="margin-top:20px;">
+                {% if request.user.is_authenticated and request.user != property.owner.user and can_contact_owner %}
+                <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="cta-btn">
+                        Contact Owner
+                    </button>
+                </form>
+                {% elif not request.user.is_authenticated and property.listing_type == 'sale' and not has_sale_contract %}
+                <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}" class="cta-btn">
+                    Log in to contact owner
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="specs">
+                <span>&#128719; {{ property.rooms }} rooms</span>
+                <span>&#128703; {{ property.bathrooms }} baths</span>
+                <span>&#128208; {{ property.square_meters|default:"--" }} m2</span>
+                <span>&#128101; {{ property.capacity }} guests</span>
+                <span>&#128197; {{ property.availability_dates|default:"All dates available" }}</span>
+            </div>
+
+            {% if property.latitude and property.longitude %}
+            <section class="location-section">
+                <h2 class="location-section-title">Where is it located?</h2>
+                <div id="detail-map"></div>
+            </section>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="media-body">
+    {% if property.listing_type == 'sale' %}
+    <div class="booking-card">
+        <div class="cal-header">
+            <div class="cal-title">Sale details</div>
+        </div>
 
-        <h1 class="title">{{ property.title }}</h1>
-
-        <p class="owner">
-            Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}
+        <p class="sub" style="margin-top:10px;">
+            Final price: ${{ property.price }}
         </p>
 
-        <p class="sub">
-            {{ property.address|default:property.city }}
-        </p>
-
-        <p class="price">
-            ${{ property.price }}
-            {% if property.listing_type == 'sale' %}
-            <small class="price-period">sale price</small>
-            {% else %}
-            <small class="price-period">/mo</small>
-            {% endif %}
-        </p>
-
-                <p class="description">
-            {{ property.description|default:"Sin descripción" }}
-        </p>
-
-        {% if property.active_listing and user.is_authenticated %}
-          <form method="post" action="{% url 'properties:toggle_saved_property' property.pk %}">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.path }}">
-
-            <button type="submit" class="cta-btn">
-              {% if is_saved %}
-                Quitar de guardados
-              {% else %}
-                {% if property.listing_type == 'sale' %}
-                  Guardar en wishlist
-                {% else %}
-                  Guardar en favoritos
-                {% endif %}
-              {% endif %}
-            </button>
-          </form>
-        {% elif property.active_listing %}
-          <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-            Inicia sesión para guardar esta propiedad
-          </a>
-        {% endif %}
-
-<!-- CONTACT OWNER -->
-<div class="contact-owner" style="margin-top:20px;">
-
-{% if request.user.is_authenticated and request.user != property.owner.user %}
-    {% if can_contact_owner %}
+        {% if has_purchased_property %}
+        <p class="sub" style="font-weight:700;">This property is already part of your purchase history.</p>
+        {% elif has_sale_contract %}
+        <p class="sub" style="font-weight:700;">This property has already been sold.</p>
+        {% elif not user.is_authenticated %}
+        <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
+            Log in to contact the owner
+        </a>
+        {% elif request.user == property.owner.user %}
+        <p class="sub" style="font-weight:700;">You are the owner of this property.</p>
+        {% elif can_contact_owner %}
         <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
             {% csrf_token %}
-            <button type="submit" class="cta-btn">
-                Contact Owner
+            <button class="cta-btn" type="submit">
+                Contact owner about this property
             </button>
         </form>
-    {% endif %}
-
-{% elif not request.user.is_authenticated %}
-    <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}" class="cta-btn">
-        Login to contact owner
-    </a>
-{% endif %}
-
-</div>
-
-        <div class="specs">
-            <span>🛏 {{ property.bedrooms }} beds</span>
-            <span>🛁 {{ property.bathrooms }} baths</span>
-            <span>📐 {{ property.square_meters|default:"--" }} m²</span>
-            <span>👥 {{ property.capacity }} guests</span>
-            <span>📅 {{ property.availability_dates|default:"Todos los días disponibles" }}</span>
-        </div>
-
-        {% if property.latitude and property.longitude %}
-        <section class="location-section">
-            <h2 class="location-section-title">where will you go</h2>
-            <p class="location-section-text">
-            </p>
-            <div id="detail-map"></div>
-        </section>
+        {% else %}
+        <p class="sub" style="font-weight:700;">This property is available, but you need to log in to contact the owner.</p>
         {% endif %}
-
     </div>
-
-</div>
-
-{% if property.listing_type == 'sale' %}
-<div class="booking-card">
-
-    <div class="cal-header">
-        <div class="cal-title">Purchase request</div>
-    </div>
-
-    <p class="sub" style="margin-top:10px;">
-        Final price: ${{ property.price }}
-    </p>
-
-    {% if has_purchased_property %}
-    <p class="sub" style="font-weight:700;">This property is in your purchase history.</p>
-    {% elif purchase_request and purchase_request.status == 'pending' %}
-    <p class="sub" style="font-weight:700;">Your purchase request is pending owner approval.</p>
-    {% elif purchase_request and purchase_request.status == 'accepted' %}
-    <p class="sub" style="font-weight:700;">Your purchase request was accepted.</p>
-    {% elif purchase_request and purchase_request.status == 'rejected' %}
-    <p class="sub" style="font-weight:700;">Your previous request was rejected. You can send a new one.</p>
-    <form method="POST" action="{% url 'transactions:create_purchase_request' property.id %}">
-        {% csrf_token %}
-        <button class="cta-btn" type="submit">
-            Send new request
-        </button>
-    </form>
-    {% elif not property.active_listing %}
-    <p class="sub" style="font-weight:700;">This property is no longer available for purchase.</p>
-    {% elif not user.is_authenticated %}
-    <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-        Login to request this property
-    </a>
-    {% elif request.user == property.owner.user %}
-    <p class="sub" style="font-weight:700;">You cannot request the purchase of your own property.</p>
-    {% elif can_request_purchase %}
-    <form method="POST" action="{% url 'transactions:create_purchase_request' property.id %}">
-        {% csrf_token %}
-        <button class="cta-btn" type="submit">
-            Request purchase
-        </button>
-    </form>
     {% else %}
-    <p class="sub" style="font-weight:700;">This property cannot receive a purchase request right now.</p>
-    {% endif %}
-</div>
-{% else %}
-<!-- BOOKING CARD -->
-<div class="booking-card">
+    <div class="booking-card">
+        <div class="cal-header">
+            <div class="cal-title">Reserve property</div>
 
-    <div class="cal-header">
-        <div class="cal-title">Reserve property</div>
-
-        <div class="legend">
-            <span class="dot" style="background:#22c55e;"></span> available
-            <span class="dot" style="background:#ef4444;"></span> unavailable
+            <div class="legend">
+                <span class="dot detail-dot-available"></span> available
+                <span class="dot detail-dot-occupied"></span> unavailable
+            </div>
         </div>
+
+        <form method="POST" action="{% url 'transactions:create_booking' property.id %}">
+            {% csrf_token %}
+
+            <input id="calendar" type="text">
+            <p class="sub" style="margin-top:10px;">
+                Green days are available. Red days are unavailable.
+            </p>
+
+            <p class="sub" style="margin:4px 0 10px 0; font-weight:700;">
+                Capacity: {{ property.capacity }} guests
+            </p>
+
+            <input type="hidden" name="check_in" id="check_in" required>
+            <input type="hidden" name="check_out" id="check_out" required>
+
+            <button class="cta-btn" type="submit">
+                Request booking
+            </button>
+
+            {% if messages %}
+                {% for message in messages %}
+                <p style="color:red; margin-top:10px;">
+                    {{ message }}
+                </p>
+                {% endfor %}
+            {% endif %}
+        </form>
     </div>
-
-    <!-- BOOKING FORM -->
-    <form method="POST" action="{% url 'transactions:create_booking' property.id %}">
-    {% csrf_token %}
-
-    <!-- CALENDAR -->
-    <input id="calendar" type="text">
-    <p class="sub" style="margin-top:10px;">
-        Green days are available. Red days are unavailable.
-    </p>
-
-    <p class="sub" style="margin:4px 0 10px 0; font-weight:700;">
-        Capacity: {{ property.capacity }} guests
-    </p>
-
-    <!-- hidden inputs enviados al backend -->
-    <input type="hidden" name="check_in" id="check_in" required>
-    <input type="hidden" name="check_out" id="check_out" required>
-
-    <button class="cta-btn" type="submit">
-        Request booking
-    </button>
-    {% if messages %}
-  {% for message in messages %}
-    <p style="color:red; margin-top:10px;">
-      {{ message }}
-    </p>
-  {% endfor %}
-{% endif %}
-</form>
-</div>
-{% endif %}
-
+    {% endif %}
 </section>
 
-<!-- CALENDAR SCRIPT -->
 <script>
-
 const blockedDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
 const reservedDates = JSON.parse('{{ reserved_dates_json|escapejs }}');
 const allDaysAvailable = JSON.parse('{{ all_days_available|yesno:"true,false"|escapejs }}');
 const calendarElement = document.getElementById("calendar");
 
 if (calendarElement) {
-flatpickr("#calendar", {
+    flatpickr("#calendar", {
+        inline: true,
+        mode: "range",
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        disable: allDaysAvailable ? [] : [
+            function (date) {
+                const currentDate = date.toISOString().split("T")[0];
+                return blockedDates.includes(currentDate) || reservedDates.includes(currentDate);
+            }
+        ],
+        onDayCreate: function (dObj, dStr, fp, dayElem) {
+            const currentDate = dayElem.dateObj.toISOString().split("T")[0];
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-    inline: true,
-    mode: "range",
-    minDate: "today",
-    dateFormat: "Y-m-d",
+            const isPast = dayElem.dateObj < today;
+            const isBlocked = blockedDates.includes(currentDate);
+            const isReserved = reservedDates.includes(currentDate);
 
-    disable: allDaysAvailable ? [] : [
-        function(date){
-
-            const d = date.toISOString().split('T')[0];
-
-            return blockedDates.includes(d) || reservedDates.includes(d);
-
+            if (isPast) {
+                dayElem.style.background = "#e5e7eb";
+                dayElem.style.color = "#6b7280";
+            } else if (allDaysAvailable || (!isBlocked && !isReserved)) {
+                dayElem.style.background = "#22c55e";
+                dayElem.style.color = "white";
+            } else {
+                dayElem.style.background = "#ef4444";
+                dayElem.style.color = "white";
+            }
+        },
+        onChange: function (selectedDates) {
+            if (selectedDates.length === 2) {
+                document.getElementById("check_in").value = selectedDates[0].toISOString().split("T")[0];
+                document.getElementById("check_out").value = selectedDates[1].toISOString().split("T")[0];
+            }
         }
-    ],
-
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
-
-        const date = dayElem.dateObj.toISOString().split('T')[0];
-
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const isPast = dayElem.dateObj < today;
-
-        const isBlocked = blockedDates.includes(date);
-        const isReserved = reservedDates.includes(date);
-
-        if (isPast) {
-            dayElem.style.background = "#e5e7eb"; // gray
-            dayElem.style.color = "#6b7280";
-        } else if (allDaysAvailable || (!isBlocked && !isReserved)) {
-            dayElem.style.background = "#22c55e";
-            dayElem.style.color = "white";
-        } else {
-            dayElem.style.background = "#ef4444";
-            dayElem.style.color = "white";
-        }
-
-    },
-
-    onChange: function(selectedDates, dateStr, instance) {
-
-        if (selectedDates.length === 2) {
-
-            const checkIn = selectedDates[0].toISOString().split('T')[0];
-            const checkOut = selectedDates[1].toISOString().split('T')[0];
-
-            document.getElementById("check_in").value = checkIn;
-            document.getElementById("check_out").value = checkOut;
-
-        }
-
-    }
-
-});
+    });
 }
-
 </script>
-
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 {% if property.latitude and property.longitude %}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const lat = parseFloat("{{ property.latitude|default:'0' }}");
-        const lng = parseFloat("{{ property.longitude|default:'0' }}");
+document.addEventListener("DOMContentLoaded", function () {
+    const lat = parseFloat("{{ property.latitude|default:'0' }}");
+    const lng = parseFloat("{{ property.longitude|default:'0' }}");
 
-        const map = L.map('detail-map').setView([lat, lng], 16);
+    const map = L.map("detail-map").setView([lat, lng], 16);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
 
-        L.marker([lat, lng]).addTo(map)
-            .bindPopup("{{ property.address|default:property.city|escapejs }}")
-            .openPopup();
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup("{{ property.address|default:property.city|escapejs }}")
+        .openPopup();
 
-        setTimeout(function () {
-            map.invalidateSize();
-        }, 200);
-    });
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 200);
+});
 </script>
 {% endif %}
 

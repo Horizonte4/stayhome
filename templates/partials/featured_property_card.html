@@ -1,0 +1,37 @@
+<article class="featured-card">
+    <div class="featured-media" style="background-image:url('{{ cover }}');">
+        <div class="pill-row">
+            <span class="pill">{{ property.availability_label }}</span>
+            <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
+        </div>
+    </div>
+
+    <div class="featured-body">
+        <h3 class="featured-title">{{ property.title }}</h3>
+        <p class="featured-owner">{{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
+        <p class="featured-address">
+            <span aria-hidden="true">&#x1F4CD;</span>
+            {{ property.address|default:property.city }}
+        </p>
+        <p class="featured-desc">{{ property.description|default:"Sin descripcion"|truncatewords:18 }}</p>
+
+        <div class="meta-row">
+            <span class="meta-chip">&#128719; {{ property.rooms }} rooms</span>
+            <span class="meta-chip">&#128703; {{ property.bathrooms }} baths</span>
+            <span class="meta-chip">&#128208; {{ property.square_meters|default:"--" }} m2</span>
+            <span class="meta-chip">&#128101; {{ property.capacity }} guests</span>
+        </div>
+
+        <div class="card-footer">
+            <div class="price-tag">
+                ${{ property.price|floatformat:0 }}
+                {% if property.listing_type == "sale" %}
+                <small>sale</small>
+                {% else %}
+                <small>/mo</small>
+                {% endif %}
+            </div>
+            <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
+        </div>
+    </div>
+</article>

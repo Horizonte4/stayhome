@@ -1,503 +1,395 @@
-# Python
 import json
-from datetime import date, datetime, timedelta
-from urllib import request
+from datetime import datetime
 
-# Django
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import Http404, HttpResponseForbidden, JsonResponse
-from django.shortcuts import render, get_object_or_404, redirect
-from django.utils import timezone
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
-from datetime import datetime
 
-# Local apps
-from .models import Property, SavedProperty
-from .forms import PropertyForm
 from transactions.models import Booking, Contract
-from transactions.selectors import (
-    can_access_inactive_property,
-    can_contact_owner_for_property,
-    get_purchase_request_for_user,
+from transactions.selectors import can_access_property
+
+from .forms import PropertyForm
+from .models import Property, SavedProperty
+from .services import (
+    build_calendar_payload,
+    filter_properties_by_availability,
+    normalize_availability_dates,
 )
 
 
-def _normalize_availability_dates(raw_dates):
-    raw_dates = (raw_dates or "").strip()
-    if not raw_dates:
-        return "", []
+def _parse_date_range(request):
+    check_in = request.GET.get("check_in", "").strip()
+    check_out = request.GET.get("check_out", "").strip()
 
-    parsed_dates = []
-    errors = []
-    for part in raw_dates.split(","):
-        value = part.strip()
-        if not value:
-            continue
-        try:
-            datetime.strptime(value, "%Y-%m-%d")
-            parsed_dates.append(value)
-        except ValueError:
-            errors.append(value)
+    if not check_in or not check_out:
+        return None, None
 
-    if errors:
-        return None, errors
+    try:
+        start_date = datetime.strptime(check_in, "%Y-%m-%d").date()
+        end_date = datetime.strptime(check_out, "%Y-%m-%d").date()
+    except ValueError:
+        return None, None
 
-    return ",".join(sorted(set(parsed_dates))), []
+    if start_date >= end_date:
+        return None, None
+
+    return start_date, end_date
 
 
-# Crear Propiedad
 @login_required
 def create_property(request):
-    owner = getattr(request.user, 'owner', None)
+    owner = getattr(request.user, "owner", None)
     if not owner:
-        messages.error(request, 'Only property owners can create properties.')
-        return redirect('home')
+        messages.error(request, "Only property owners can create properties.")
+        return redirect("home")
 
-    if request.method == 'POST':
-        form = PropertyForm(request.POST, request.FILES, show_active_listing=False)
+    if request.method == "POST":
+        form = PropertyForm(request.POST, request.FILES)
         if form.is_valid():
-            blocked_dates, invalid_dates = _normalize_availability_dates(
+            blocked_dates, invalid_dates = normalize_availability_dates(
                 request.POST.get("availability_dates", "")
             )
             if invalid_dates:
                 form.add_error(
                     None,
-                    "Invalid blocked date format: " + ", ".join(invalid_dates)
+                    "Invalid blocked date format: " + ", ".join(invalid_dates),
                 )
-                messages.error(request, 'Please correct the errors below to save the property.')
+                messages.error(
+                    request,
+                    "Please correct the errors below to save the property.",
+                )
             else:
-                property = form.save(commit=False)
-                property.owner = owner
-                property.active_listing = True
-                property.availability_dates = blocked_dates
-                property.save()
-                messages.success(request, 'Property created successfully.')
-                return redirect('properties:list_properties')
+                property_obj = form.save(commit=False)
+                property_obj.owner = owner
+                property_obj.availability_dates = blocked_dates
+                property_obj.save()
+                messages.success(request, "Property created successfully.")
+                return redirect("properties:list_properties")
         else:
-            messages.error(request, 'Please correct the errors below to save the property.')
+            messages.error(
+                request,
+                "Please correct the errors below to save the property.",
+            )
     else:
-        form = PropertyForm(show_active_listing=False)
+        form = PropertyForm()
 
-    return render(request, 'properties/create.html', {'form': form})
+    return render(request, "properties/create.html", {"form": form})
 
 
-# Delete Property
 @login_required
 @require_http_methods(["GET", "POST"])
 def delete_property(request, pk):
-    prop = get_object_or_404(Property, pk=pk)
-
-    # Solo owners pueden borrar
+    property_obj = get_object_or_404(Property, pk=pk)
     owner = getattr(request.user, "owner", None)
+
     if not owner:
         messages.error(request, "You do not have permission to delete properties.")
         return HttpResponseForbidden("Forbidden")
 
-    # Solo puede borrar sus propiedades
-    if prop.owner_id != owner.id:
+    if property_obj.owner_id != owner.id:
         return HttpResponseForbidden("You cannot delete a property that is not yours.")
 
     if request.method == "POST":
-        prop.delete()
+        property_obj.delete()
         messages.success(request, "Property deleted successfully.")
         return redirect("properties:list_properties")
 
-    # GET -> confirmación
-    return render(request, "properties/delete_confirmation.html", {"property": prop})
+    return render(
+        request,
+        "properties/delete_confirmation.html",
+        {"property": property_obj},
+    )
 
 
-# Edit Property
 @login_required
 def edit_property(request, pk):
-    prop = get_object_or_404(Property, pk=pk)
-
-    # Solo owners pueden editar
+    property_obj = get_object_or_404(Property, pk=pk)
     owner = getattr(request.user, "owner", None)
+
     if not owner:
         messages.error(request, "You do not have permission to edit properties.")
         return HttpResponseForbidden("Forbidden")
 
-    # Solo puede editar sus propiedades
-    if prop.owner_id != owner.id:
+    if property_obj.owner_id != owner.id:
         return HttpResponseForbidden("You cannot edit a property that is not yours.")
 
     if request.method == "POST":
-        form = PropertyForm(request.POST, request.FILES, instance=prop)
+        form = PropertyForm(request.POST, request.FILES, instance=property_obj)
         if form.is_valid():
-            form.save()
+            updated_property = form.save(commit=False)
+            updated_property.availability_dates = property_obj.availability_dates
+            updated_property.save()
             messages.success(request, "Property updated successfully.")
             return redirect("properties:list_properties")
     else:
-        form = PropertyForm(instance=prop)
+        form = PropertyForm(instance=property_obj)
 
-    return render(request, "properties/edit.html", {"form": form, "property": prop})
+    return render(
+        request,
+        "properties/edit.html",
+        {"form": form, "property": property_obj},
+    )
 
 
 @login_required
 def edit_calendar(request, pk):
-    prop = get_object_or_404(Property, pk=pk)
-
+    property_obj = get_object_or_404(Property, pk=pk)
     owner = getattr(request.user, "owner", None)
-    if not owner or prop.owner_id != owner.id:
+
+    if not owner or property_obj.owner_id != owner.id:
         messages.error(request, "You do not have permission to edit this calendar.")
         return HttpResponseForbidden("Forbidden")
 
     if request.method == "POST":
-        blocked_dates, invalid_dates = _normalize_availability_dates(
+        blocked_dates, invalid_dates = normalize_availability_dates(
             request.POST.get("availability_dates", "")
         )
+
         if blocked_dates == "":
-            prop.availability_dates = ""  # sin fechas bloqueadas -> todo disponible
-            prop.save()
-            messages.success(request, "Calendario actualizado. Todos los días están disponibles.")
-            return redirect("properties:property_detail", pk=prop.pk)
+            property_obj.availability_dates = ""
+            property_obj.save(update_fields=["availability_dates"])
+            messages.success(
+                request,
+                "Calendar updated. All dates are available.",
+            )
+            return redirect("properties:property_detail", pk=property_obj.pk)
 
         if invalid_dates:
             messages.error(
                 request,
-                "Formato de fechas inválido: " + ", ".join(invalid_dates)
+                "Invalid date format: " + ", ".join(invalid_dates),
             )
-
         else:
-            prop.availability_dates = blocked_dates
-            prop.save()
-            messages.success(request, "Calendario actualizado. Las fechas seleccionadas quedaron bloqueadas.")
-            return redirect("properties:property_detail", pk=prop.pk)
+            property_obj.availability_dates = blocked_dates
+            property_obj.save(update_fields=["availability_dates"])
+            messages.success(
+                request,
+                "Calendar updated. Selected dates are now blocked.",
+            )
+            return redirect("properties:property_detail", pk=property_obj.pk)
 
     blocked_dates = []
-    if prop.availability_dates:
-        blocked_dates = [d.strip() for d in prop.availability_dates.split(",") if d.strip()]
+    if property_obj.availability_dates:
+        blocked_dates = [
+            value.strip()
+            for value in property_obj.availability_dates.split(",")
+            if value.strip()
+        ]
 
-    context = {
-        "property": prop,
-        "blocked_dates_json": json.dumps(blocked_dates),
-    }
+    return render(
+        request,
+        "properties/edit_calendar.html",
+        {
+            "property": property_obj,
+            "blocked_dates_json": json.dumps(blocked_dates),
+        },
+    )
 
-    return render(request, "properties/edit_calendar.html", context)
 
-
-# List Properties
 def list_properties(request):
-    qs = Property.objects.available().select_related('owner__user')
+    start_date, end_date = _parse_date_range(request)
+    queryset = Property.objects.with_owner()
 
-    q = request.GET.get('q', '').strip()
-    city = request.GET.get('city', '').strip()
-    min_price = request.GET.get('min_price', '').strip()
-    max_price = request.GET.get('max_price', '').strip()
-    rooms = request.GET.get('rooms', '').strip()
-    bathrooms = request.GET.get('bathrooms', '').strip()
-    capacity = request.GET.get('capacity', '').strip()
-    listing_type = request.GET.get('listing_type', '').strip()
-    state = request.GET.get('state', '').strip()
-    check_in = request.GET.get('check_in', '').strip()
-    check_out = request.GET.get('check_out', '').strip()
+    query = request.GET.get("q", "").strip()
+    city = request.GET.get("city", "").strip()
+    min_price = request.GET.get("min_price", "").strip()
+    max_price = request.GET.get("max_price", "").strip()
+    rooms = request.GET.get("rooms", "").strip()
+    bathrooms = request.GET.get("bathrooms", "").strip()
+    capacity = request.GET.get("capacity", "").strip()
+    listing_type = request.GET.get("listing_type", "").strip()
 
-    if q:
-        qs = qs.filter(
-            Q(title__icontains=q) |
-            Q(description__icontains=q) |
-            Q(address__icontains=q) |
-            Q(city__icontains=q) |
-            Q(owner__user__first_name__icontains=q) |
-            Q(owner__user__last_name__icontains=q) |
-            Q(rooms__icontains=q) |
-            Q(bathrooms__icontains=q) |
-            Q(capacity__icontains=q) |
-            Q(price__icontains=q)
+    if query:
+        queryset = queryset.filter(
+            Q(title__icontains=query)
+            | Q(description__icontains=query)
+            | Q(address__icontains=query)
+            | Q(city__icontains=query)
+            | Q(owner__user__first_name__icontains=query)
+            | Q(owner__user__last_name__icontains=query)
         )
 
     if city:
-        qs = qs.filter(
-            Q(city__icontains=city) |
-            Q(address__icontains=city)
-        )
+        queryset = queryset.filter(Q(city__icontains=city) | Q(address__icontains=city))
 
     if listing_type:
-        qs = qs.filter(listing_type=listing_type)
-
-    if state:
-        qs = qs.filter(state=state)
+        queryset = queryset.filter(listing_type=listing_type)
 
     if rooms:
         try:
-            qs = qs.filter(rooms=int(rooms))
-        except (ValueError, TypeError):
+            queryset = queryset.filter(rooms=int(rooms))
+        except (TypeError, ValueError):
             pass
 
     if bathrooms:
         try:
-            qs = qs.filter(bathrooms=int(bathrooms))
-        except (ValueError, TypeError):
+            queryset = queryset.filter(bathrooms=int(bathrooms))
+        except (TypeError, ValueError):
             pass
 
     if capacity:
         try:
-            qs = qs.filter(capacity__gte=int(capacity))
-        except (ValueError, TypeError):
+            queryset = queryset.filter(capacity__gte=int(capacity))
+        except (TypeError, ValueError):
             pass
 
     if min_price:
         try:
-            qs = qs.filter(price__gte=float(min_price))
-        except (ValueError, TypeError):
+            queryset = queryset.filter(price__gte=float(min_price))
+        except (TypeError, ValueError):
             pass
 
     if max_price:
         try:
-            qs = qs.filter(price__lte=float(max_price))
-        except (ValueError, TypeError):
+            queryset = queryset.filter(price__lte=float(max_price))
+        except (TypeError, ValueError):
             pass
 
-    if check_in and check_out:
-        try:
-            start_date = datetime.strptime(check_in, "%Y-%m-%d").date()
-            end_date = datetime.strptime(check_out, "%Y-%m-%d").date()
+    queryset = queryset.available(start_date, end_date)
+    queryset = filter_properties_by_availability(queryset, start_date, end_date)
 
-            if start_date < end_date:
-                available_ids = []
-
-                for prop in qs:
-                    blocked = get_blocked_dates(prop)
-                    reserved = set(get_reserved_dates(prop))
-
-                    is_available = True
-                    current = start_date
-
-                    while current < end_date:
-                        if current in blocked or current.strftime("%Y-%m-%d") in reserved:
-                            is_available = False
-                            break
-                        current += timedelta(days=1)
-
-                    if is_available:
-                        available_ids.append(prop.id)
-
-                qs = qs.filter(id__in=available_ids)
-
-        except (ValueError, TypeError):
-            pass
-
-    paginator = Paginator(qs, 20)
-    page = request.GET.get('page')
+    paginator = Paginator(queryset, 20)
+    page = request.GET.get("page")
     properties = paginator.get_page(page)
 
     saved_property_ids = set()
     if request.user.is_authenticated:
         saved_property_ids = set(
-            SavedProperty.objects.filter(user=request.user)
-            .values_list('property_obj_id', flat=True)
+            SavedProperty.objects.filter(user=request.user).values_list(
+                "property_obj_id",
+                flat=True,
+            )
         )
 
     context = {
-        'properties': properties,
-        'saved_property_ids': saved_property_ids,
-        'filters': {
-            'q': q,
-            'city': city,
-            'min_price': min_price,
-            'max_price': max_price,
-            'rooms': rooms,
-            'bathrooms': bathrooms,
-            'capacity': capacity,
-            'listing_type': listing_type,
-            'state': state,
-            'check_in': check_in,
-            'check_out': check_out,
-        }
+        "properties": properties,
+        "saved_property_ids": saved_property_ids,
+        "filters": {
+            "q": query,
+            "city": city,
+            "min_price": min_price,
+            "max_price": max_price,
+            "rooms": rooms,
+            "bathrooms": bathrooms,
+            "capacity": capacity,
+            "listing_type": listing_type,
+            "check_in": request.GET.get("check_in", "").strip(),
+            "check_out": request.GET.get("check_out", "").strip(),
+        },
     }
+    return render(request, "properties/list.html", context)
 
-    return render(request, 'properties/list.html', context)
 
-
-# Toggle save property
 @login_required
 @require_POST
 def toggle_saved_property(request, pk):
-    prop = get_object_or_404(Property, pk=pk, active_listing=True)
+    property_obj = get_object_or_404(Property, pk=pk)
+
+    if not can_access_property(request.user, property_obj):
+        raise Http404
 
     saved_property, created = SavedProperty.objects.get_or_create(
         user=request.user,
-        property_obj=prop,
+        property_obj=property_obj,
     )
 
     if created:
         is_saved = True
-        action = 'added'
+        action = "added"
     else:
         saved_property.delete()
         is_saved = False
-        action = 'removed'
+        action = "removed"
 
-    category = 'wishlist' if prop.listing_type == 'sale' else 'favorites'
+    category = "wishlist" if property_obj.listing_type == "sale" else "favorites"
 
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({
-            'is_saved': is_saved,
-            'action': action,
-            'category': category,
-            'property_id': prop.pk,
-        })
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse(
+            {
+                "is_saved": is_saved,
+                "action": action,
+                "category": category,
+                "property_id": property_obj.pk,
+            }
+        )
 
-    next_url = request.POST.get('next')
+    next_url = request.POST.get("next")
     if next_url:
         return redirect(next_url)
 
-    return redirect('properties:property_detail', pk=prop.pk)
+    return redirect("properties:property_detail", pk=property_obj.pk)
 
 
 @login_required
 def favorites_list(request):
-    saved_properties = (
-        SavedProperty.objects
-        .favorites()
-        .filter(user=request.user)
+    saved_properties = SavedProperty.objects.favorites().filter(user=request.user)
+    return render(
+        request,
+        "properties/favorites_list.html",
+        {"saved_properties": saved_properties},
     )
-
-    return render(request, 'properties/favorites_list.html', {
-        'saved_properties': saved_properties,
-    })
 
 
 @login_required
 def wishlist_list(request):
-    saved_properties = (
-        SavedProperty.objects
-        .wishlist()
-        .filter(user=request.user)
+    saved_properties = SavedProperty.objects.wishlist().filter(user=request.user)
+    return render(
+        request,
+        "properties/wishlist_list.html",
+        {"saved_properties": saved_properties},
     )
-
-    return render(request, 'properties/wishlist_list.html', {
-        'saved_properties': saved_properties,
-    })
-
-
-# Dias bloqueados por el owner para mostrar en el calendario de la propiedad
-def get_blocked_dates(property):
-
-    if not property.availability_dates:
-        return set()
-
-    dates = property.availability_dates.split(",")
-
-    blocked = {
-        datetime.strptime(d.strip(), "%Y-%m-%d").date()
-        for d in dates if d.strip()
-    }
-
-    return blocked
-
-
-# Dias bloqueados porque ya fueron aprovadas por el owner
-def get_reserved_dates(property):
-
-    bookings = Booking.objects.filter(
-        property=property,
-        status="approved"
-    )
-
-    reserved = set()
-
-    for booking in bookings:
-
-        current = booking.check_in
-
-        while current <= booking.check_out:
-            reserved.add(current.strftime("%Y-%m-%d"))
-            current += timedelta(days=1)
-
-    return list(reserved)
 
 
 def property_detail(request, pk):
-    property = get_object_or_404(
-        Property.objects.select_related("owner__user"),
+    property_obj = get_object_or_404(
+        Property.objects.with_owner(),
         pk=pk,
     )
 
-    if not can_access_inactive_property(request.user, property):
+    if not can_access_property(request.user, property_obj):
         raise Http404
 
-    today = timezone.localdate()
-
-    start_month = today.replace(day=1)
-    end_month = (start_month + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-
-    blocked = get_blocked_dates(property)
-    reserved = get_reserved_dates(property)
-
+    calendar_payload = build_calendar_payload(property_obj)
     is_saved = False
     has_purchased_property = False
-    purchase_request = None
     can_contact_owner = False
+
     if request.user.is_authenticated:
         is_saved = SavedProperty.objects.filter(
             user=request.user,
-            property_obj=property
+            property_obj=property_obj,
         ).exists()
         has_purchased_property = Contract.objects.filter(
-            property=property,
+            property=property_obj,
             tenant=request.user,
             type="sale",
         ).exists()
         has_approved_booking = Booking.objects.filter(
-            property=property,
+            property=property_obj,
             user=request.user,
             status="approved",
         ).exists()
-        purchase_request = get_purchase_request_for_user(property, request.user)
-        can_contact_owner = has_approved_booking or can_contact_owner_for_property(request.user, property)
-
-    can_request_purchase = (
-        property.listing_type == "sale"
-        and property.active_listing
-        and property.state == "available"
-        and request.user.is_authenticated
-        and property.owner
-        and request.user != property.owner.user
-        and not has_purchased_property
-        and (purchase_request is None or purchase_request.status == "rejected")
-    )
-
-    # -------- JSON FOR CALENDAR --------
-    blocked_dates_json = json.dumps([
-        d.strftime("%Y-%m-%d") if hasattr(d, "strftime") else d
-        for d in blocked
-    ])
-
-    reserved_dates_json = json.dumps(reserved)
-
-    # -------- AVAILABILITY --------
-    all_days_available = not blocked and not reserved
-
-    # -------- DAYS FOR MONTH VIEW --------
-    days = []
-    current = start_month
-
-    while current <= end_month:
-
-        days.append({
-            "date": current,
-            "is_available": all_days_available or (current not in blocked and current.strftime("%Y-%m-%d") not in reserved),
-            "is_today": current == today
-        })
-
-        current += timedelta(days=1)
+        can_contact_owner = (
+            property_obj.owner is not None
+            and request.user != property_obj.owner.user
+            and (
+                property_obj.listing_type == "sale"
+                or has_approved_booking
+                or has_purchased_property
+            )
+        )
 
     context = {
-        "property": property,
+        "property": property_obj,
         "is_saved": is_saved,
-        "days": days,
-        "month_label": today.strftime("%B %Y"),
-        "blocked_dates_json": blocked_dates_json,
-        "reserved_dates_json": reserved_dates_json,
-        "all_days_available": all_days_available,
+        "availability_label": property_obj.availability_label,
+        "has_sale_contract": property_obj.has_sale_contract(),
         "can_contact_owner": can_contact_owner,
         "has_purchased_property": has_purchased_property,
-        "purchase_request": purchase_request,
-        "can_request_purchase": can_request_purchase,
+        **calendar_payload,
     }
     return render(request, "properties/detail.html", context)
-

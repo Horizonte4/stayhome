@@ -27,16 +27,6 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Category</label>
-                    <select name="state" class="explore-select">
-                        <option value="">All Categories</option>
-                        <option value="available" {% if filters.state == 'available' %}selected{% endif %}>Available</option>
-                        <option value="occupied" {% if filters.state == 'occupied' %}selected{% endif %}>Occupied</option>
-                        <option value="reserved" {% if filters.state == 'reserved' %}selected{% endif %}>Reserved</option>
-                    </select>
-                </div>
-
-                <div class="explore-filter-group">
                     <label>Bedrooms</label>
                     <select name="rooms" class="explore-select">
                         <option value="">Any</option>
@@ -80,14 +70,14 @@
 
                 <div class="explore-filter-actions">
                     <button type="submit" class="explore-filter-btn">Apply Filters</button>
-                    <a href="{% url 'properties:list_properties' %}" class="explore-clear-btn">✕ Clear Filters</a>
+                    <a href="{% url 'properties:list_properties' %}" class="explore-clear-btn">Clear Filters</a>
                 </div>
             </form>
         </aside>
 
         <section class="explore-main">
             <form method="get" class="explore-search-bar">
-                <span class="explore-search-icon">⌕</span>
+                <span class="explore-search-icon">&#8981;</span>
                 <input
                     type="text"
                     name="q"
@@ -103,7 +93,6 @@
                 <input type="hidden" name="bathrooms" value="{{ filters.bathrooms }}">
                 <input type="hidden" name="capacity" value="{{ filters.capacity }}">
                 <input type="hidden" name="listing_type" value="{{ filters.listing_type }}">
-                <input type="hidden" name="state" value="{{ filters.state }}">
                 <input type="hidden" name="check_in" value="{{ filters.check_in }}">
                 <input type="hidden" name="check_out" value="{{ filters.check_out }}">
             </form>
@@ -127,9 +116,7 @@
 
                                 <div class="explore-card-badges">
                                     <span class="explore-badge">{{ property.get_listing_type_display }}</span>
-                                    {% if property.state == 'available' %}
-                                        <span class="explore-badge explore-badge-featured">Featured</span>
-                                    {% endif %}
+                                    <span class="explore-badge explore-badge-featured">{{ property.availability_label }}</span>
                                 </div>
                             </div>
 
@@ -139,13 +126,13 @@
                                 </div>
 
                                 <p class="explore-card-location">
-                                    📍 {{ property.address|default:property.city }}
+                                    &#128205; {{ property.address|default:property.city }}
                                 </p>
 
                                 <div class="explore-card-meta">
-                                    <span>🛏 {{ property.rooms }}</span>
-                                    <span>🛁 {{ property.bathrooms }}</span>
-                                    <span>📐 {{ property.square_meters|default:"--" }} m²</span>
+                                    <span>&#128719; {{ property.rooms }}</span>
+                                    <span>&#128703; {{ property.bathrooms }}</span>
+                                    <span>&#128208; {{ property.square_meters|default:"--" }} m2</span>
                                 </div>
 
                                 <div class="explore-card-footer">
@@ -158,7 +145,7 @@
                                                 /mo
                                             {% endif %}
                                         </div>
-                                        <div class="explore-card-owner">{{ property.capacity }} guests · {{ property.get_state_display }}</div>
+                                        <div class="explore-card-owner">{{ property.capacity }} guests · {{ property.availability_label }}</div>
                                     </div>
 
                                     <a href="{% url 'properties:property_detail' pk=property.pk %}" class="explore-details-btn">
@@ -193,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkInInput = document.getElementById("check_in");
     const checkOutInput = document.getElementById("check_out");
 
-    let defaultDates = [];
+    const defaultDates = [];
     if (checkInInput.value) {
         defaultDates.push(checkInInput.value);
     }
@@ -207,7 +194,7 @@ document.addEventListener("DOMContentLoaded", function () {
         defaultDate: defaultDates,
         showMonths: 1,
         disableMobile: true,
-        onChange: function(selectedDates, dateStr, instance) {
+        onChange: function (selectedDates, dateStr, instance) {
             if (selectedDates.length === 2) {
                 checkInInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
                 checkOutInput.value = instance.formatDate(selectedDates[1], "Y-m-d");

@@ -9,8 +9,8 @@
 
 
 <div class="form-card">
-    <div class="form-title">Create Property Listing</div>
-    <div class="form-sub">Añade fotos desde tu PC o usa una URL. Completa los datos para que luzca profesional.</div>
+    <div class="form-title">Create Property </div>
+    <div class="form-sub">Fill in the fields and upload your property to start receiving bookings!</div>
 
     {% if messages %}
         <div style="background:#ecfeff; border:1px solid #67e8f9; color:#0f172a; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
@@ -72,12 +72,6 @@
             </div>
 
             <div class="field">
-                <label>Status</label>
-                {{ form.state }}
-                {{ form.state.errors }}
-            </div>
-
-            <div class="field">
                 <label>Listing type</label>
                 {{ form.listing_type }}
                 {{ form.listing_type.errors }}
@@ -116,7 +110,7 @@
             </div>
 
             <div class="field">
-                <label>Main photo URL (optional)</label>
+                <label>Main photo URL</label>
                 {{ form.image_url }}
                 {{ form.image_url.errors }}
             </div>
@@ -150,17 +144,12 @@
 <script src="{% static 'js/property_location.js' %}"></script>
 
 <script>
-    const fp = flatpickr("#availability-calendar", {
+    flatpickr("#availability-calendar", {
         mode: "multiple",
         dateFormat: "Y-m-d",
         altInput: true,
         altFormat: "F j, Y",
         minDate: "today"
-    });
-
-    const clearBtn = document.getElementById("clear-dates");
-    clearBtn.addEventListener("click", function() {
-        fp.clear();
     });
 </script>
 

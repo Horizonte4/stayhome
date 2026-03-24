@@ -2,8 +2,6 @@
 {% block title %}Home | StayHome{% endblock %}
 
 {% block content %}
-
-<!-- HERO -->
 <section class="home-hero">
     <div class="home-hero-content">
         <h1 class="home-hero-title">
@@ -30,7 +28,6 @@
     </div>
 </section>
 
-<!-- FEATURED SECTION -->
 <section>
     <h2 class="section-title">Featured Properties</h2>
     <p class="section-sub">See what owners are listing right now.</p>
@@ -39,105 +36,15 @@
         {% for property in properties %}
             {% if property.image %}
                 {% with cover=property.image.url %}
-                    <article class="featured-card">
-                        <div class="featured-media" style="background-image:url('{{ cover }}');">
-                            <div class="pill-row">
-                                <span class="pill">{{ property.get_state_display }}</span>
-                                <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">Featured</span>{% endif %}
-                            </div>
-                        </div>
-
-                        <div class="featured-body">
-                            <h3 class="featured-title">{{ property.title }}</h3>
-                            <p class="featured-owner">{{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
-                            <p class="featured-address">
-                                <span aria-hidden="true">&#x1F4CD;</span>
-                                {{ property.address|default:property.city }}
-                            </p>
-                            <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
-
-                            <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} beds</span>
-                                <span class="meta-chip">🛁 {{ property.bathrooms }} baths</span>
-                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m²</span>
-                                <span class="meta-chip">👥 {{ property.capacity }} guests</span>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
-                            </div>
-                        </div>
-                    </article>
+                    {% include "partials/featured_property_card.html" %}
                 {% endwith %}
             {% elif property.image_url %}
                 {% with cover=property.image_url %}
-                    <article class="featured-card">
-                        <div class="featured-media" style="background-image:url('{{ cover }}');">
-                            <div class="pill-row">
-                                <span class="pill">{{ property.get_state_display }}</span>
-                                <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">Featured</span>{% endif %}
-                            </div>
-                        </div>
-
-                        <div class="featured-body">
-                            <h3 class="featured-title">{{ property.title }}</h3>
-                            <p class="featured-owner">{{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
-                            <p class="featured-address">
-                                <span aria-hidden="true">&#x1F4CD;</span>
-                                {{ property.address|default:property.city }}
-                            </p>
-                            <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
-
-                            <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} beds</span>
-                                <span class="meta-chip">🛁 {{ property.bathrooms }} baths</span>
-                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m²</span>
-                                <span class="meta-chip">👥 {{ property.capacity }} guests</span>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
-                            </div>
-                        </div>
-                    </article>
+                    {% include "partials/featured_property_card.html" %}
                 {% endwith %}
             {% else %}
-                {% with portada="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80" %}
-                    <article class="featured-card">
-                        <div class="featured-media" style="background-image:url('{{ portada }}');">
-                            <div class="pill-row">
-                                <span class="pill">{{ property.get_state_display }}</span>
-                                <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">Featured</span>{% endif %}
-                            </div>
-                        </div>
-
-                        <div class="featured-body">
-                            <h3 class="featured-title">{{ property.title }}</h3>
-                            <p class="featured-owner">{{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
-                            <p class="featured-address">
-                                <span aria-hidden="true">&#x1F4CD;</span>
-                                {{ property.address|default:property.city }}
-                            </p>
-                            <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
-
-                            <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} beds</span>
-                                <span class="meta-chip">🛁 {{ property.bathrooms }} baths</span>
-                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m²</span>
-                                <span class="meta-chip">👥 {{ property.capacity }} guests</span>
-                            </div>
-
-                            <div class="card-footer">
-                                <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
-                            </div>
-                        </div>
-                    </article>
+                {% with cover="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80" %}
+                    {% include "partials/featured_property_card.html" %}
                 {% endwith %}
             {% endif %}
         {% empty %}
@@ -145,5 +52,4 @@
         {% endfor %}
     </div>
 </section>
-
 {% endblock %}

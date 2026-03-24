@@ -47,12 +47,6 @@
             </div>
 
             <div class="field">
-                <label>Status</label>
-                {{ form.state }}
-                {{ form.state.errors }}
-            </div>
-
-            <div class="field">
                 <label>Listing Type</label>
                 {{ form.listing_type }}
                 {{ form.listing_type.errors }}
@@ -97,11 +91,9 @@
             </div>
         </div>
 
-        <div class="pill-checkbox">
-            {{ form.active_listing }}
-            <span>Active Listing</span>
-            {{ form.active_listing.errors }}
-        </div>
+        <p class="section-sub" style="margin-bottom:0;">
+            Availability is now managed from bookings and the blocked dates calendar.
+        </p>
         
 
         <div class="submit-bar">

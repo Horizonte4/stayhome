@@ -1,97 +1,75 @@
-# Librerías estándar
-# (ninguna)
-
-# Librerías externas
 from django.conf import settings
 from django.db import models
 
-# Archivos del proyecto
-from core.models import TimeStampedModel, SoftDeleteModel
+from core.models import SoftDeleteModel, TimeStampedModel
 from properties.models import Property
 
 
-class RentalApplication(TimeStampedModel, SoftDeleteModel):
-    """Solicitud de arrendamiento de un cliente para una propiedad."""
-
-    applicant = models.ForeignKey(
-        "users.User",
-        on_delete=models.CASCADE,
-        related_name="applications"
-    )
-    property = models.ForeignKey(
-        "properties.Property",
-        on_delete=models.CASCADE,
-        related_name="applications"
-    )
-    status = models.CharField(max_length=30, default="pending")
-    desired_start_date = models.DateField(null=True, blank=True)
-    desired_end_date = models.DateField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Application {self.id} - {self.property}"
-
-
 class Contract(TimeStampedModel, SoftDeleteModel):
-    """Contrato generado a partir de una solicitud o compra."""
+    TYPE_RENTAL = "rental"
+    TYPE_SALE = "sale"
 
-    application = models.OneToOneField(
-        RentalApplication,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="contract"
+    TYPE_CHOICES = (
+        (TYPE_RENTAL, "Rental"),
+        (TYPE_SALE, "Sale"),
     )
+
     property = models.ForeignKey(
         "properties.Property",
         on_delete=models.CASCADE,
-        related_name="contracts"
+        related_name="contracts",
     )
     tenant = models.ForeignKey(
-        "users.User",
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="contracts"
+        related_name="contracts",
     )
-    type = models.CharField(
-        max_length=20,
-        choices=(("rental", "Rental"), ("sale", "Sale"))
-    )
+    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     status = models.CharField(max_length=30, default="pending_signature")
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     monthly_value = models.DecimalField(
-        max_digits=12, decimal_places=2, null=True, blank=True
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
     )
     total_value = models.DecimalField(
-        max_digits=12, decimal_places=2, null=True, blank=True
+        max_digits=12,
+        decimal_places=2,
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
-        return f"Contract {self.id} - {self.type} - {self.property}"
+        return f"Contract {self.pk} - {self.type} - {self.property}"
 
 
-class PurchaseRequest(TimeStampedModel, SoftDeleteModel):
-    """Solicitud de compra enviada por un cliente al propietario."""
-
+class Booking(TimeStampedModel):
     STATUS_PENDING = "pending"
-    STATUS_ACCEPTED = "accepted"
+    STATUS_APPROVED = "approved"
     STATUS_REJECTED = "rejected"
+    STATUS_CANCELLED = "cancelled"
 
     STATUS_CHOICES = [
         (STATUS_PENDING, "Pending"),
-        (STATUS_ACCEPTED, "Accepted"),
+        (STATUS_APPROVED, "Approved"),
         (STATUS_REJECTED, "Rejected"),
+        (STATUS_CANCELLED, "Cancelled"),
     ]
 
     property = models.ForeignKey(
-        "properties.Property",
+        Property,
         on_delete=models.CASCADE,
-        related_name="purchase_requests",
+        related_name="bookings",
     )
-    buyer = models.ForeignKey(
-        "users.User",
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name="purchase_requests",
+        related_name="bookings",
     )
+    check_in = models.DateField()
+    check_out = models.DateField()
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
@@ -100,50 +78,12 @@ class PurchaseRequest(TimeStampedModel, SoftDeleteModel):
 
     class Meta:
         ordering = ["-created_at"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["property", "buyer"],
-                name="unique_purchase_request_per_property_and_buyer",
-            ),
-        ]
-
-    def __str__(self):
-        return f"PurchaseRequest {self.id} - {self.property} - {self.status}"
-
-
-class Booking(TimeStampedModel):
-    """Reserva de una propiedad por un cliente."""
-
-    STATUS_CHOICES = [
-        ("pending", "Pending"),
-        ("approved", "Approved"),
-        ("rejected", "Rejected"),
-        ("cancelled", "Cancelled"),
-    ]
-
-    property = models.ForeignKey(
-        Property,
-        on_delete=models.CASCADE,
-        related_name="bookings"
-    )
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="bookings"
-    )
-    check_in = models.DateField()
-    check_out = models.DateField()
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="pending"
-    )
-
-    class Meta:
-        ordering = ["-created_at"]
 
     def nights(self):
         return (self.check_out - self.check_in).days
 
+    def total_price(self):
+        return self.nights() * self.property.price
+
     def __str__(self):
-        return f"{self.user} - {self.property} ({self.check_in} → {self.check_out})"
+        return f"{self.user} - {self.property} ({self.check_in} -> {self.check_out})"
