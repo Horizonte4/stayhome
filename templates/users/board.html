@@ -99,7 +99,7 @@
         {% endfor %}
     </div>
     {% else %}
-        <p class="property-list-empty"> {% trans " you dont have properties yet. list one to star. %}</p>
+        <p class="property-list-empty"> {% trans " you dont have properties yet. list one to start." %}</p>
     {% endif %}
 </div>
 {% endif %}
@@ -108,7 +108,7 @@
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
     <button type="submit" class="logout-link">
-        {% trans "Log out" }
+        {% trans "Log out" %}
     </button>
 </form>
 {% else %}

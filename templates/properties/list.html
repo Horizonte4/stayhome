@@ -67,7 +67,7 @@
                     <input
                         type="text"
                         name="city"
-                        placeholder="Search location"
+                        placeholder="{% trans 'Search location' %}"
                         value="{{ filters.city }}"
                         class="explore-input"
                     >
@@ -80,7 +80,7 @@
                         name="bathrooms"
                         min="1"
                         step="1"
-                        placeholder="Bathrooms"
+                        placeholder="{% trans 'Bathrooms' %}"
                         value="{{ filters.bathrooms }}"
                         class="explore-input"
                     >
@@ -93,7 +93,7 @@
                         name="capacity"
                         min="1"
                         step="1"
-                        placeholder="Min guests"
+                        placeholder="{% trans 'Min guests' %}"
                         value="{{ filters.capacity }}"
                         class="explore-input"
                     >
@@ -104,7 +104,7 @@
                     <input
                         type="text"
                         id="availability_range"
-                        placeholder="Select date range"
+                        placeholder="{% trans 'Select date range' %}"
                         class="explore-input"
                         readonly
                     >
@@ -144,11 +144,10 @@
                 <input
                     type="text"
                     name="q"
-                    placeholder="Search by title, location, or city..."
+                    placeholder="{% trans 'Search by title, location, or city...' %}"
                     value="{{ filters.q }}"
                     class="explore-search-input"
                 >
-
                 <input type="hidden" name="city" value="{{ filters.city }}">
                 <input type="hidden" name="min_price" value="{{ filters.min_price }}">
                 <input type="hidden" name="max_price" value="{{ filters.max_price }}">
@@ -222,13 +221,15 @@
                                         <div class="explore-card-price">
                                             ${{ property.price }}
                                             {% if property.listing_type == "short_term" %}
-                                                /night
+                                                {% trans "/night" %}
                                             {% elif property.listing_type == "long_term" %}
-                                                /mo
+                                                {% trans "/mo" %}
                                             {% endif %}
                                         </div>
                                         <div class="explore-card-owner">
-                                            {{ property.capacity }} guests · {{ property.get_state_display }}
+                                            {% blocktrans with capacity=property.capacity state=property.get_state_display %}
+                                                {{ capacity }} guests · {{ state }}
+                                            {% endblocktrans %}
                                         </div>
                                     </div>
 

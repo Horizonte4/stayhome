@@ -26,7 +26,7 @@
             <input
                 type="text"
                 name="q"
-                placeholder="Search by property, owner, city, address..."
+                placeholder="{% trans 'Search by property, owner, city, address...' %}"
                 class="home-search-input"
             >
 
@@ -65,7 +65,7 @@
                             <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
 
                             <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} {% trans "beds"%}/span>
+                                <span class="meta-chip">🛏 {{ property.rooms }} {% trans "beds"%} <span>
                                 <span class="meta-chip">🛁 {{ property.bathrooms }} {% trans "baths" %} </span>
                                 <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m² </span>
                                 <span class="meta-chip">👥 {{ property.capacity }}  {% trans "guests" %} </span>
@@ -99,10 +99,10 @@
                             <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
 
                             <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} {% trans "beds" %}</span>
-                                <span class="meta-chip">🛁 {{ property.bathrooms }} {% trans "baths" %}</span>
-                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m²</span>
-                                <span class="meta-chip">👥 {{ property.capacity }} {% trans "guests" %}</span>
+                                <span class="meta-chip">🛏 {{ property.rooms }} {% trans "beds" %} </span>
+                                <span class="meta-chip">🛁 {{ property.bathrooms }} {% trans "baths" %} </span>
+                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m² </span>
+                                <span class="meta-chip">👥 {{ property.capacity }} {% trans "guests" %} </span>
                             </div>
 
                             <div class="card-footer">

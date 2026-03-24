@@ -5,8 +5,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StayHome\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-24 19:22+0000\n"
-"PO-Revision-Date: 2026-03-24 19:22+0000\n"
+"POT-Creation-Date: 2026-03-24 19:49+0000\n"
+"PO-Revision-Date: 2026-03-24 19:49+0000\n"
 "Last-Translator: StayHome\n"
 "Language-Team: Spanish\n"
 "Language: es\n"
@@ -119,8 +119,8 @@ msgid ""
 "Join thousands of satisfied users who found their dream properties through "
 "StayHome."
 msgstr ""
-"Únete a miles de usuarios satisfechos que encontraron su propiedad ideal "
-"en StayHome."
+"Únete a miles de usuarios satisfechos que encontraron su propiedad ideal en "
+"StayHome."
 
 #: templates/base.html:213
 msgid "🔍 Browse Properties"
@@ -175,6 +175,10 @@ msgstr ""
 "                Conéctate directamente con los propietarios.\n"
 "            "
 
+#: templates/home.html:29
+msgid "Search by property, owner, city, address..."
+msgstr "Buscar por propiedad, propietario, ciudad, dirección..."
+
 #: templates/home.html:34
 msgid "Search"
 msgstr "Buscar"
@@ -188,7 +192,7 @@ msgid "See what owners are listing right now"
 msgstr "Mira lo que los propietarios están publicando ahora"
 
 #: templates/home.html:54 templates/home.html:88 templates/home.html:122
-#: templates/properties/list.html:199
+#: templates/properties/list.html:198
 msgid "Featured"
 msgstr "Destacado"
 
@@ -205,7 +209,7 @@ msgid "guests"
 msgstr "huéspedes"
 
 #: templates/home.html:76 templates/home.html:110 templates/home.html:144
-#: templates/properties/list.html:239
+#: templates/properties/list.html:240
 msgid "View Details"
 msgstr "Ver detalles"
 
@@ -213,9 +217,17 @@ msgstr "Ver detalles"
 msgid "No available properties"
 msgstr "No hay propiedades disponibles"
 
-#: templates/properties/create.html:12
+#: templates/properties/create.html:3 templates/properties/create.html:12
 msgid "Create Property Listing"
 msgstr "Crear publicación de propiedad"
+
+#: templates/properties/create.html:13
+msgid ""
+"Add photos from your PC or use a URL. Complete the details to make it look "
+"professional."
+msgstr ""
+"Añade fotos desde tu PC o usa una URL. Completa los datos para que luzca "
+"profesional."
 
 #: templates/properties/create.html:35 templates/properties/edit.html:17
 msgid "Title"
@@ -250,13 +262,13 @@ msgid "Rooms"
 msgstr "Habitaciones"
 
 #: templates/properties/create.html:93 templates/properties/edit.html:68
-#: templates/properties/list.html:77
+#: templates/properties/list.html:77 templates/properties/list.html:83
 msgid "Bathrooms"
 msgstr "Baños"
 
-#: templates/properties/create.html:99 templates/properties/edit.html:74
-msgid "Area "
-msgstr "Área "
+#: templates/properties/create.html:99
+msgid "Area"
+msgstr "Área"
 
 #: templates/properties/create.html:105
 #: templates/transactions/my_bookings.html:55
@@ -265,16 +277,28 @@ msgid "Guests capacity"
 msgstr "Capacidad de huéspedes"
 
 #: templates/properties/create.html:113
-msgid "Main photo "
-msgstr "Foto principal "
+msgid "Main photo"
+msgstr "Foto principal"
+
+#: templates/properties/create.html:113
+msgid "upload"
+msgstr "subir archivo"
 
 #: templates/properties/create.html:119
-msgid "Main photo URL "
-msgstr "URL de foto principal "
+msgid "Main photo URL"
+msgstr "URL de foto principal"
+
+#: templates/properties/create.html:119
+msgid "optional"
+msgstr "opcional"
 
 #: templates/properties/create.html:127
 msgid "Blocked dates"
 msgstr "Fechas bloqueadas"
+
+#: templates/properties/create.html:131
+msgid "Select dates to block"
+msgstr "Selecciona las fechas a bloquear"
 
 #: templates/properties/create.html:136
 msgid "If your property is for sale, do not add blocked dates."
@@ -364,6 +388,10 @@ msgstr "Editar propiedad"
 msgid "Listing Type"
 msgstr "Tipo de publicación"
 
+#: templates/properties/edit.html:74
+msgid "Area "
+msgstr "Área"
+
 #: templates/properties/edit.html:80
 msgid "Guests Capacity"
 msgstr "Capacidad de huéspedes"
@@ -408,39 +436,65 @@ msgstr "Guardar calendario"
 msgid "Liberar todos los d"
 msgstr "Liberar todos los días"
 
-#: templates/properties/favorites_list.html:9
+#: templates/properties/favorites_list.html:3
+#: templates/properties/favorites_list.html:8
 msgid "Your Favorites"
 msgstr "Tus favoritos"
 
-#: templates/properties/favorites_list.html:25
+#: templates/properties/favorites_list.html:10
+#, python-format
+msgid ""
+"\n"
+"            %(count)s saved properties\n"
+"        "
+msgstr ""
+"\n"
+"            %(count)s propiedades guardadas\n"
+"        "
+
+#: templates/properties/favorites_list.html:26
 #: templates/properties/wishlist_list.html:24
 msgid "For Sale"
 msgstr "En venta"
 
-#: templates/properties/favorites_list.html:27
+#: templates/properties/favorites_list.html:28
 msgid "For Rent"
 msgstr "En arriendo"
 
-#: templates/properties/favorites_list.html:47
+#: templates/properties/favorites_list.html:35
+msgid "Remove from favorites"
+msgstr "Quitar de favoritos"
+
+#: templates/properties/favorites_list.html:44
 #: templates/properties/wishlist_list.html:43
 msgid "bed"
 msgstr "habitación"
 
-#: templates/properties/favorites_list.html:48
+#: templates/properties/favorites_list.html:45
 #: templates/properties/wishlist_list.html:44
 msgid "bath"
 msgstr "baño"
 
-#: templates/properties/favorites_list.html:63
+#: templates/properties/favorites_list.html:51
+#: templates/properties/list.html:224
+msgid "/night"
+msgstr "/noche"
+
+#: templates/properties/favorites_list.html:53
+#: templates/properties/list.html:226
+msgid "/mo"
+msgstr "/mes"
+
+#: templates/properties/favorites_list.html:59
 #: templates/properties/wishlist_list.html:53
 msgid "View details"
 msgstr "Ver detalles"
 
-#: templates/properties/favorites_list.html:73
+#: templates/properties/favorites_list.html:67
 msgid "You haven t saved any properties yet."
 msgstr "Aún no has guardado ninguna propiedad."
 
-#: templates/properties/favorites_list.html:74
+#: templates/properties/favorites_list.html:68
 #: templates/properties/wishlist_list.html:64
 msgid "Browse properties"
 msgstr "Explorar propiedades"
@@ -516,13 +570,25 @@ msgstr "Cualquiera"
 msgid "Location"
 msgstr "Ubicación"
 
+#: templates/properties/list.html:70
+msgid "Search location"
+msgstr "Buscar ubicación"
+
 #: templates/properties/list.html:90
 msgid "Guests"
 msgstr "Huéspedes"
 
+#: templates/properties/list.html:96
+msgid "Min guests"
+msgstr "Mínimo de huéspedes"
+
 #: templates/properties/list.html:103
 msgid "Availability"
 msgstr "Disponibilidad"
+
+#: templates/properties/list.html:107
+msgid "Select date range"
+msgstr "Selecciona un rango de fechas"
 
 #: templates/properties/list.html:129
 msgid "Apply Filters"
@@ -532,7 +598,11 @@ msgstr "Aplicar filtros"
 msgid "✕ Clear Filters"
 msgstr "✕ Limpiar filtros"
 
-#: templates/properties/list.html:165
+#: templates/properties/list.html:147
+msgid "Search by title, location, or city..."
+msgstr "Buscar por título, ubicación o ciudad..."
+
+#: templates/properties/list.html:164
 #, python-format
 msgid ""
 "\n"
@@ -543,23 +613,36 @@ msgstr ""
 "                    Mostrando %(shown)s de %(total)s propiedades\n"
 "                "
 
-#: templates/properties/list.html:189
+#: templates/properties/list.html:188
 msgid "No image available"
 msgstr "Sin imagen disponible"
 
-#: templates/properties/list.html:249
+#: templates/properties/list.html:230
+#, python-format
+msgid ""
+"\n"
+"                                                %(capacity)s guests · "
+"%(state)s\n"
+"                                            "
+msgstr ""
+"\n"
+"                                                %(capacity)s huéspedes · "
+"%(state)s\n"
+"                                            "
+
+#: templates/properties/list.html:250
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/properties/list.html:255
+#: templates/properties/list.html:256
 msgid "Edit calendar"
 msgstr "Editar calendario"
 
-#: templates/properties/list.html:261
+#: templates/properties/list.html:262
 msgid "Delete"
 msgstr "Eliminar"
 
-#: templates/properties/list.html:271
+#: templates/properties/list.html:272
 msgid "No properties found with the selected filters."
 msgstr "No se encontraron propiedades con los filtros seleccionados."
 
@@ -788,7 +871,7 @@ msgstr "Cliente"
 
 #: templates/transactions/owner_bookings.html:197
 msgid "cancell"
-msgstr "cancelar"
+msgstr "Cancelar"
 
 #: templates/transactions/owner_bookings.html:208
 msgid "No upcoming reservations"
@@ -845,6 +928,14 @@ msgstr "Editar calendario"
 #: templates/users/board.html:95
 msgid "Ver"
 msgstr "Ver"
+
+#: templates/users/board.html:102
+msgid " you dont have properties yet. list one to start."
+msgstr "Aún no tienes propiedades. Publica una para empezar."
+
+#: templates/users/board.html:111
+msgid "Log out"
+msgstr "Cerrar sesión"
 
 #: templates/users/edit_profile.html:7
 msgid "Edit Profile"
