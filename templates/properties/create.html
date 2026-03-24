@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 {% block title %}Crear Propiedad{% endblock %}
 
 {% block content %}
@@ -9,7 +9,7 @@
 
 
 <div class="form-card">
-    <div class="form-title">Create Property Listing</div>
+    <div class="form-title">{% trans "Create Property Listing" %}</div>
     <div class="form-sub">Añade fotos desde tu PC o usa una URL. Completa los datos para que luzca profesional.</div>
 
     {% if messages %}
@@ -32,20 +32,20 @@
         {% csrf_token %}
 
         <div class="field">
-            <label>Title</label>
+            <label>{% trans "Title" %}</label>
             {{ form.title }}
             {{ form.title.errors }}
         </div>
 
         <div class="field">
-            <label>Description</label>
+            <label>{% trans "Description" %}</label>
             {{ form.description }}
             {{ form.description.errors }}
         </div>
 
         <div class="form-grid two-col">
             <div class="field">
-                <label>Address</label>
+                <label>{% trans "Address" %}</label>
                 {{ form.address }}
                 {{ form.address.errors }}
 
@@ -59,50 +59,50 @@
             </div>
 
             <div class="field" style="display:none;">
-                <label>City</label>
+                <label>{% trans "City" %}</label>
                 {{ form.city.errors }}
             </div>
         </div>
 
         <div class="form-grid three-col">
             <div class="field">
-                <label>Price</label>
+                <label>{% trans "Price" %}</label>
                 {{ form.price }}
                 {{ form.price.errors }}
             </div>
 
             <div class="field">
-                <label>Status</label>
+                <label>{% trans "Status" %}</label>
                 {{ form.state }}
                 {{ form.state.errors }}
             </div>
 
             <div class="field">
-                <label>Listing type</label>
+                <label>{% trans "Listing type" %}</label>
                 {{ form.listing_type }}
                 {{ form.listing_type.errors }}
             </div>
 
             <div class="field">
-                <label>Rooms</label>
+                <label>{% trans "Rooms" %}</label>
                 {{ form.rooms }}
                 {{ form.rooms.errors }}
             </div>
 
             <div class="field">
-                <label>Bathrooms</label>
+                <label>{% trans "Bathrooms" %}</label>
                 {{ form.bathrooms }}
                 {{ form.bathrooms.errors }}
             </div>
 
             <div class="field">
-                <label>Area (m²)</label>
+                <label>{% trans "Area " %}(m²)</label>
                 {{ form.square_meters }}
                 {{ form.square_meters.errors }}
             </div>
 
             <div class="field">
-                <label>Guests capacity</label>
+                <label>{% trans "Guests capacity" %}</label>
                 {{ form.capacity }}
                 {{ form.capacity.errors }}
             </div>
@@ -110,13 +110,13 @@
 
         <div class="form-grid two-col">
             <div class="field">
-                <label>Main photo (upload)</label>
+                <label>{% trans "Main photo " %}(upload)</label>
                 {{ form.image }}
                 {{ form.image.errors }}
             </div>
 
             <div class="field">
-                <label>Main photo URL (optional)</label>
+                <label>{% trans "Main photo URL " %}(optional)</label>
                 {{ form.image_url }}
                 {{ form.image_url.errors }}
             </div>
@@ -124,7 +124,7 @@
 
         <!-- CALENDARIO DE DISPONIBILIDAD -->
         <div class="field">
-            <label>Blocked dates</label>
+            <label>{% trans "Blocked dates" %}</label>
             <input
                 id="availability-calendar"
                 name="availability_dates"
@@ -140,7 +140,7 @@
         </div>
 
         <div class="submit-bar">
-            <button type="submit" class="btn-list">Save listing</button>
+            <button type="submit" class="btn-list">{% trans "Save listing" %}</button>
         </div>
     </form>
 </div>

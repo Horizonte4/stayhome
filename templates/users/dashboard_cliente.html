@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Dashboard Cliente</h2>
-<p>Bienvenido {{ request.user.username }}</p>
+<h2>{% trans "Dashboard Cliente" %}</h2>
+<p>{% trans "Bienvenido " %}{{ request.user.username }}</p>
 {% endblock %}

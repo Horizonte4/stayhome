@@ -24,7 +24,7 @@
             </p>
 
             <p class="auth-footer" style="margin-top:12px;">
-                <a href="{% url 'edit_profile' %}">Edit profile</a>
+                <a href="{% url 'edit_profile' %}">{% trans "Edit profile" %}</a>
             </p>
         </div>
     </div>
@@ -36,7 +36,7 @@
     <div class="cards">
         <div class="card">
             <div class="card-body">
-                <div class="card-title">Email</div>
+                <div class="card-title">{% trans "Email" %}</div>
                 <div class="card-loc">
                     {{ request.user.email }}
                 </div>
@@ -45,7 +45,7 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="card-title">Phone</div>
+                <div class="card-title">{% trans "Phone" %}</div>
                 <div class="card-loc">
                     {{ request.user.phone|default:"Not provided" }}
                 </div>
@@ -54,7 +54,7 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="card-title">Location</div>
+                <div class="card-title">{% trans "Location" %}</div>
                 <div class="card-loc">
                     Colombia
                 </div>
@@ -63,7 +63,7 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="card-title">Joined</div>
+                <div class="card-title">{% trans "Joined" %}</div>
                 <div class="card-loc">
                     {{ request.user.date_joined|date:"F Y" }}
                 </div>
@@ -75,8 +75,8 @@
 {% if request.user.is_authenticated and request.user.is_owner %}
 <div class="page" style="margin-top:32px;">
     <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
-        <span>Mis propiedades</span>
-        <a href="{% url 'properties:create_property' %}" class="btn-list" style="padding:10px 14px;">Crear propiedad</a>
+        <span>{% trans "Mis propiedades" %}</span>
+        <a href="{% url 'properties:create_property' %}" class="btn-list" style="padding:10px 14px;">{% trans "Crear propiedad" %}</a>
     </div>
 
     {% if properties %}
@@ -90,9 +90,9 @@
                         {{ prop.get_listing_type_display }} · {{ prop.get_state_display }} · ${{ prop.price }}
                     </div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <a href="{% url 'properties:edit_property' pk=prop.pk %}" class="property-card-action-btn property-card-action-btn-edit">Editar propiedad</a>
-                        <a href="{% url 'properties:edit_calendar' pk=prop.pk %}" class="property-card-action-btn property-card-action-btn-edit">Editar calendario</a>
-                        <a href="{% url 'properties:property_detail' pk=prop.pk %}" class="property-card-action-btn">Ver</a>
+                        <a href="{% url 'properties:edit_property' pk=prop.pk %}" class="property-card-action-btn property-card-action-btn-edit">{% trans "Editar propiedad" %}</a>
+                        <a href="{% url 'properties:edit_calendar' pk=prop.pk %}" class="property-card-action-btn property-card-action-btn-edit">{% trans "Editar calendario" %}</a>
+                        <a href="{% url 'properties:property_detail' pk=prop.pk %}" class="property-card-action-btn">{% trans "Ver" %}</a>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
     </button>
 </form>
 {% else %}
-<a href="{% url 'login' %}">Login</a>
+<a href="{% url 'login' %}">{% trans "Login" %}</a>
 {% endif %}
 
 {% endblock %}

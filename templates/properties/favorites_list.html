@@ -6,7 +6,7 @@
 <section class="container favorites-page">
 
     <div class="favorites-header">
-        <h1>Your Favorites</h1>
+        <h1>{% trans "Your Favorites" %}</h1>
         <p class="sub">{{ saved_properties|length }} saved properties</p>
     </div>
 
@@ -22,9 +22,9 @@
 
                 <div class="favorite-badges">
                     {% if saved.property_obj.listing_type == "sale" %}
-                        <span class="badge-type sale">For Sale</span>
+                        <span class="badge-type sale">{% trans "For Sale" %}</span>
                     {% else %}
-                        <span class="badge-type rent">For Rent</span>
+                        <span class="badge-type rent">{% trans "For Rent" %}</span>
                     {% endif %}
                 </div>
 
@@ -60,7 +60,7 @@
                         {% endif %}
                     </div>
                     <a href="{% url 'properties:property_detail' saved.property_obj.pk %}"
-                       class="details-btn">View details</a>
+                       class="details-btn">{% trans "View details" %}</a>
                 </div>
             </div>
 
@@ -70,8 +70,8 @@
 
     {% else %}
     <div class="empty-state">
-        <p>You haven't saved any properties yet.</p>
-        <a href="{% url 'properties:list_properties' %}" class="details-btn">Browse properties</a>
+        <p>{% trans "You haven" %}'t saved any properties yet.</p>
+        <a href="{% url 'properties:list_properties' %}" class="details-btn">{% trans "Browse properties" %}</a>
     </div>
     {% endif %}
 

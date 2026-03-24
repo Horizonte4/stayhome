@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block title %}Inbox | StayHome{% endblock %}
 {% block nav_messages %}active{% endblock %}
@@ -8,7 +8,7 @@
 
 <section class="container inbox-container">
 
-<h1 class="inbox-title">Messages</h1>
+<h1 class="inbox-title">{% trans "Messages" %}</h1>
 
 {% if conversation_rows %}
 
@@ -58,7 +58,7 @@
             {% if row.last_message %}
                 {{ row.last_message|truncatechars:80 }}
             {% else %}
-                <em>No messages yet</em>
+                <em>{% trans "No messages yet" %}</em>
             {% endif %}
 
         </p>
@@ -84,8 +84,8 @@
 <div class="empty-inbox">
 
 
-<h3>No conversations yet</h3>
-<p>Your messages with property owners or guests will appear here.</p>
+<h3>{% trans "No conversations yet" %}</h3>
+<p>{% trans "Your messages with property owners or guests will appear here" %}.</p>
 
 
 </div>
@@ -93,5 +93,6 @@
 {% endif %}
 
 </section>
+
 {% endblock %}
 

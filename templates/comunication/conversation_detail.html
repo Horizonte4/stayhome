@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static i18n %}
 
 {% block title %}Messages | StayHome{% endblock %}
 {% block nav_messages %}active{% endblock %}
@@ -11,7 +11,7 @@
 <!-- SIDEBAR -->
 <div class="messages-sidebar">
 
-<h2 class="messages-title">Messages</h2>
+<h2 class="messages-title">{% trans "Messages" %}</h2>
 
 {% for row in conversation_rows %}
 

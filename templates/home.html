@@ -32,8 +32,8 @@
 
 <!-- FEATURED SECTION -->
 <section>
-    <h2 class="section-title">Featured Properties</h2>
-    <p class="section-sub">See what owners are listing right now.</p>
+    <h2 class="section-title">{% trans "Featured Properties" %}</h2>
+    <p class="section-sub">{% trans "See what owners are listing right now" %}.</p>
 
     <div class="property-grid">
         {% for property in properties %}
@@ -44,7 +44,7 @@
                             <div class="pill-row">
                                 <span class="pill">{{ property.get_state_display }}</span>
                                 <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">Featured</span>{% endif %}
+                                {% if property.is_available %}<span class="pill pill-featured">{% trans "Featured" %}</span>{% endif %}
                             </div>
                         </div>
 
@@ -66,7 +66,7 @@
 
                             <div class="card-footer">
                                 <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
+                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">{% trans "View Details" %}</a>
                             </div>
                         </div>
                     </article>
@@ -78,7 +78,7 @@
                             <div class="pill-row">
                                 <span class="pill">{{ property.get_state_display }}</span>
                                 <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">Featured</span>{% endif %}
+                                {% if property.is_available %}<span class="pill pill-featured">{% trans "Featured" %}</span>{% endif %}
                             </div>
                         </div>
 
@@ -100,7 +100,7 @@
 
                             <div class="card-footer">
                                 <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
+                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">{% trans "View Details" %}</a>
                             </div>
                         </div>
                     </article>
@@ -112,7 +112,7 @@
                             <div class="pill-row">
                                 <span class="pill">{{ property.get_state_display }}</span>
                                 <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">Featured</span>{% endif %}
+                                {% if property.is_available %}<span class="pill pill-featured">{% trans "Featured" %}</span>{% endif %}
                             </div>
                         </div>
 
@@ -134,14 +134,14 @@
 
                             <div class="card-footer">
                                 <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
+                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">{% trans "View Details" %}</a>
                             </div>
                         </div>
                     </article>
                 {% endwith %}
             {% endif %}
         {% empty %}
-            <p>No available properties.</p>
+            <p>{% trans "No available properties" %}.</p>
         {% endfor %}
     </div>
 </section>

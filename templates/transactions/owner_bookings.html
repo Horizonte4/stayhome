@@ -4,8 +4,8 @@
 
 <section class="container">
 
-<h1>My properties reservations</h1>
-<p class="sub">Manage your reservations</p>
+<h1>{% trans "My properties reservations" %}</h1>
+<p class="sub">{% trans "Manage your reservations" %}</p>
 
 
 <!-- TABS -->
@@ -76,17 +76,17 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 <h3>{{ booking.property.title }}</h3>
 
-<span class="status pending">Pending</span>
+<span class="status pending">{% trans "Pending" %}</span>
 
 <div class="booking-dates">
 
 <div>
-<strong>Check-in</strong>
+<strong>{% trans "Check" %}-in</strong>
 <p>{{ booking.check_in|date:"F j, Y" }}</p>
 </div>
 
 <div>
-<strong>Check-out</strong>
+<strong>{% trans "Check" %}-out</strong>
 <p>{{ booking.check_out|date:"F j, Y" }}</p>
 </div>
 
@@ -129,7 +129,7 @@ Reject
 {% empty %}
 
 <div class="empty-state">
-<p>You don't have pending reservations.</p>
+<p>{% trans "You don" %}'t have pending reservations.</p>
 </div>
 
 {% endfor %}
@@ -164,19 +164,19 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 <h3>{{ booking.property.title }}</h3>
 
-<span class="status approved">Approved</span>
+<span class="status approved">{% trans "Approved" %}</span>
 
-<p class="sub">Client: {{ booking.user.email }}</p>
+<p class="sub">{% trans "Client" %}: {{ booking.user.email }}</p>
 
 <div class="booking-dates">
 
 <div>
-<strong>Check-in</strong>
+<strong>{% trans "Check" %}-in</strong>
 <p>{{ booking.check_in }}</p>
 </div>
 
 <div>
-<strong>Check-out</strong>
+<strong>{% trans "Check" %}-out</strong>
 <p>{{ booking.check_out }}</p>
 </div>
 
@@ -205,7 +205,7 @@ cancell
 </div>
 
 {% empty %}
-<p>No upcoming reservations.</p>
+<p>{% trans "No upcoming reservations" %}.</p>
 {% endfor %}
 
 </div>
@@ -226,7 +226,7 @@ cancell
 
 <h3>{{ booking.property.title }}</h3>
 
-<span class="status rejected">rejected</span>
+<span class="status rejected">{% trans "rejected" %}</span>
 
 <p class="sub">
 {{ booking.check_in }} → {{ booking.check_out }}
@@ -237,7 +237,7 @@ cancell
 </div>
 
 {% empty %}
-<p>No cancelled reservations.</p>
+<p>{% trans "No cancelled reservations" %}.</p>
 {% endfor %}
 
 </div>
@@ -261,7 +261,7 @@ cancell
 
 <h3>{{ booking.property.title }}</h3>
 
-<span class="status past">Finished</span>
+<span class="status past">{% trans "Finished" %}</span>
 
 <p class="sub">
 {{ booking.check_in }} → {{ booking.check_out }}
@@ -278,7 +278,7 @@ cancell
 </div>
 
 {% empty %}
-<p>No past reservations.</p>
+<p>{% trans "No past reservations" %}.</p>
 {% endfor %}
 
 </div>
@@ -298,23 +298,23 @@ cancell
 {{ purchase_request.get_status_display }}
 </span>
 
-<p class="sub purchase-request-buyer">Client: {{ purchase_request.buyer.email }}</p>
-<p class="sub">Requested on {{ purchase_request.created_at|date:"F j, Y" }}</p>
+<p class="sub purchase-request-buyer">{% trans "Client" %}: {{ purchase_request.buyer.email }}</p>
+<p class="sub">{% trans "Requested on " %}{{ purchase_request.created_at|date:"F j, Y" }}</p>
 </div>
 
 <div class="booking-price purchase-request-price">
 <h2>${{ purchase_request.property.price }}</h2>
-<p class="sub">Sale price</p>
+<p class="sub">{% trans "Sale price" %}</p>
 {% if purchase_request.status == 'pending' %}
 <div class="actions">
 <form method="post" action="{% url 'transactions:accept_purchase_request' purchase_request.id %}">
 {% csrf_token %}
-<button type="submit" class="approve-btn">Accept</button>
+<button type="submit" class="approve-btn">{% trans "Accept" %}</button>
 </form>
 
 <form method="post" action="{% url 'transactions:reject_purchase_request' purchase_request.id %}">
 {% csrf_token %}
-<button type="submit" class="reject-btn">Reject</button>
+<button type="submit" class="reject-btn">{% trans "Reject" %}</button>
 </form>
 </div>
 {% endif %}
@@ -322,7 +322,7 @@ cancell
 
 </div>
 {% empty %}
-<p>No purchase requests yet.</p>
+<p>{% trans "No purchase requests yet" %}.</p>
 {% endfor %}
 
 </div>

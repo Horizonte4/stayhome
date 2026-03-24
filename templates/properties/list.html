@@ -5,7 +5,7 @@
 {% block content %}
 <div class="explore-page">
     <div class="explore-header">
-        <h1 class="explore-title">Explore Properties</h1>
+        <h1 class="explore-title">{% trans "Explore Properties" %}</h1>
         <p class="explore-subtitle">
             Browse through {{ properties.paginator.count|default:properties|length }} available properties
         </p>
@@ -14,12 +14,12 @@
     <div class="explore-layout">
         <aside class="explore-sidebar">
             <form method="get" class="explore-filter-card">
-                <h3 class="explore-filter-title">Filters</h3>
+                <h3 class="explore-filter-title">{% trans "Filters" %}</h3>
 
                 <div class="explore-filter-group">
-                    <label>Property Type</label>
+                    <label>{% trans "Property Type" %}</label>
                     <select name="listing_type" class="explore-select">
-                        <option value="">All Types</option>
+                        <option value="">{% trans "All Types" %}</option>
                         <option value="short_term" {% if filters.listing_type == "short_term" %}selected{% endif %}>
                             Short-term rental
                         </option>
@@ -33,9 +33,9 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Category</label>
+                    <label>{% trans "Category" %}</label>
                     <select name="state" class="explore-select">
-                        <option value="">All Categories</option>
+                        <option value="">{% trans "All Categories" %}</option>
                         <option value="available" {% if filters.state == "available" %}selected{% endif %}>
                             Available
                         </option>
@@ -49,9 +49,9 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Bedrooms</label>
+                    <label>{% trans "Bedrooms" %}</label>
                     <select name="rooms" class="explore-select">
-                        <option value="">Any</option>
+                        <option value="">{% trans "Any" %}</option>
                         <option value="1" {% if filters.rooms == "1" %}selected{% endif %}>1</option>
                         <option value="2" {% if filters.rooms == "2" %}selected{% endif %}>2</option>
                         <option value="3" {% if filters.rooms == "3" %}selected{% endif %}>3</option>
@@ -61,7 +61,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Location</label>
+                    <label>{% trans "Location" %}</label>
                     <input
                         type="text"
                         name="city"
@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Bathrooms</label>
+                    <label>{% trans "Bathrooms" %}</label>
                     <input
                         type="number"
                         name="bathrooms"
@@ -85,7 +85,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Guests</label>
+                    <label>{% trans "Guests" %}</label>
                     <input
                         type="number"
                         name="capacity"
@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Availability</label>
+                    <label>{% trans "Availability" %}</label>
                     <input
                         type="text"
                         id="availability_range"
