@@ -11,7 +11,7 @@
 <!-- SIDEBAR -->
 <div class="messages-sidebar">
 
-<h2 class="messages-title">{% trans "Messages" %}</h2>
+<h2 class="messages-title"> {% trans "Messages" %} </h2>
 
 {% for row in conversation_rows %}
 
@@ -82,7 +82,7 @@
 </strong>
 
 <p class="chat-property">
-About: {{ conversation.property.title }}
+{% trans "About:" %} {{ conversation.property.title }}
 </p>
 
 </div>
@@ -90,7 +90,7 @@ About: {{ conversation.property.title }}
 </div>
 
 <a href="{% url 'properties:property_detail' conversation.property.pk %}">
-View property
+{% trans "View property" %}
 </a>
 
 </header>

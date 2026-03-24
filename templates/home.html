@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 {% block title %}Home | StayHome{% endblock %}
-
+{% load static i18n %}
 {% block content %}
 
 <!-- HERO -->
 <section class="home-hero">
     <div class="home-hero-content">
         <h1 class="home-hero-title">
-            Find Your Perfect Home
+           {% trans "Find Your Perfect Home" %}
         </h1>
 
         <p class="home-hero-text">
-            Discover properties for rent, sale, or short-term stays.
-            Connect directly with owners.
+
+            {% blocktrans %}
+                Discover properties for rent, sale, or short-term stays.
+            {% endblocktrans %}
+
+            {% blocktrans %}
+                Connect directly with owners.
+            {% endblocktrans %}
+
         </p>
 
         <form method="get" action="{% url 'properties:list_properties' %}" class="home-search-bar">
@@ -24,7 +31,7 @@
             >
 
             <button type="submit" class="home-search-btn">
-                Search
+               {% trans "Search" %}
             </button>
         </form>
     </div>
@@ -32,8 +39,8 @@
 
 <!-- FEATURED SECTION -->
 <section>
-    <h2 class="section-title">{% trans "Featured Properties" %}</h2>
-    <p class="section-sub">{% trans "See what owners are listing right now" %}.</p>
+    <h2 class="section-title"> {% trans "Featured Properties" %} </h2>
+    <p class="section-sub"> {% trans "See what owners are listing right now" %}.</p>
 
     <div class="property-grid">
         {% for property in properties %}
@@ -44,7 +51,7 @@
                             <div class="pill-row">
                                 <span class="pill">{{ property.get_state_display }}</span>
                                 <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">{% trans "Featured" %}</span>{% endif %}
+                                {% if property.is_available %}<span class="pill pill-featured"> {% trans "Featured" %} </span>{% endif %}
                             </div>
                         </div>
 
@@ -58,15 +65,15 @@
                             <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
 
                             <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} beds</span>
-                                <span class="meta-chip">🛁 {{ property.bathrooms }} baths</span>
-                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m²</span>
-                                <span class="meta-chip">👥 {{ property.capacity }} guests</span>
+                                <span class="meta-chip">🛏 {{ property.rooms }} {% trans "beds"%}/span>
+                                <span class="meta-chip">🛁 {{ property.bathrooms }} {% trans "baths" %} </span>
+                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m² </span>
+                                <span class="meta-chip">👥 {{ property.capacity }}  {% trans "guests" %} </span>
                             </div>
 
                             <div class="card-footer">
                                 <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">{% trans "View Details" %}</a>
+                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}"> {% trans "View Details" %} </a>
                             </div>
                         </div>
                     </article>
@@ -78,7 +85,7 @@
                             <div class="pill-row">
                                 <span class="pill">{{ property.get_state_display }}</span>
                                 <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">{% trans "Featured" %}</span>{% endif %}
+                                {% if property.is_available %}<span class="pill pill-featured"> {% trans "Featured" %}</span>{% endif %}
                             </div>
                         </div>
 
@@ -92,15 +99,15 @@
                             <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
 
                             <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} beds</span>
-                                <span class="meta-chip">🛁 {{ property.bathrooms }} baths</span>
+                                <span class="meta-chip">🛏 {{ property.rooms }} {% trans "beds" %}</span>
+                                <span class="meta-chip">🛁 {{ property.bathrooms }} {% trans "baths" %}</span>
                                 <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m²</span>
-                                <span class="meta-chip">👥 {{ property.capacity }} guests</span>
+                                <span class="meta-chip">👥 {{ property.capacity }} {% trans "guests" %}</span>
                             </div>
 
                             <div class="card-footer">
                                 <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">{% trans "View Details" %}</a>
+                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}"> {% trans "View Details" %} </a>
                             </div>
                         </div>
                     </article>
@@ -112,7 +119,7 @@
                             <div class="pill-row">
                                 <span class="pill">{{ property.get_state_display }}</span>
                                 <span class="pill pill-featured">{{ property.get_listing_type_display }}</span>
-                                {% if property.is_available %}<span class="pill pill-featured">{% trans "Featured" %}</span>{% endif %}
+                                {% if property.is_available %}<span class="pill pill-featured"> {% trans "Featured" %} </span>{% endif %}
                             </div>
                         </div>
 
@@ -126,22 +133,22 @@
                             <p class="featured-desc">{{ property.description|default:"Sin descripción"|truncatewords:18 }}</p>
 
                             <div class="meta-row">
-                                <span class="meta-chip">🛏 {{ property.rooms }} beds</span>
-                                <span class="meta-chip">🛁 {{ property.bathrooms }} baths</span>
-                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m²</span>
-                                <span class="meta-chip">👥 {{ property.capacity }} guests</span>
+                                <span class="meta-chip">🛏 {{ property.rooms }} {% trans "beds" %} </span>
+                                <span class="meta-chip">🛁 {{ property.bathrooms }} {% trans "baths" %} </span>
+                                <span class="meta-chip">📐 {{ property.square_meters|default:"--" }} m² </span>
+                                <span class="meta-chip">👥 {{ property.capacity }} {% trans "guests" %} </span>
                             </div>
 
                             <div class="card-footer">
                                 <div class="price-tag">${{ property.price|floatformat:0 }}<small>/mo</small></div>
-                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}">{% trans "View Details" %}</a>
+                                <a class="ghost-btn" href="{% url 'properties:property_detail' pk=property.pk %}"> {% trans "View Details" %} </a>
                             </div>
                         </div>
                     </article>
                 {% endwith %}
             {% endif %}
         {% empty %}
-            <p>{% trans "No available properties" %}.</p>
+            <p> {% trans "No available properties" %}. </p>
         {% endfor %}
     </div>
 </section>

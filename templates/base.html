@@ -30,7 +30,7 @@
             <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
          </svg>
       </div>
-      <span class="logo-text">{% trans "Stay " %}<span>{% trans "Home" %}</span></span>
+      <span class="logo-text"> {% trans "Stay " %}<span> {% trans "Home" %}</span></span>
    </a>
 
    <ul class="nav-links">
@@ -41,8 +41,8 @@
             <svg viewBox="0 0 24 24" fill="currentColor">
                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
-            Home
-         </a>
+            {% trans "Home" %}
+         </a> 
       </li>
 
       <!-- PROPERTIES -->
@@ -51,7 +51,7 @@
             <svg viewBox="0 0 24 24" fill="currentColor">
                <path d="M17 11h2v2h-2v-2zm0 4h2v2h-2v-2zm-4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM1 21h22V3H1v18zm2-2V5h18v14H3zm4-8h2v2H7v-2zm0 4h2v2H7v-2zM7 7h2v2H7V7z"/>
             </svg>
-            Property
+            {% trans "Property" %}
          </a>
       </li>
 
@@ -67,7 +67,7 @@
                18H5V8h14v13zM7 
                10h5v5H7z"/>
             </svg>
-            My Bookings
+            {% trans "My Bookings" %}
          </a>
          {% endif %}
 
@@ -81,7 +81,7 @@
                18H5V8h14v13zM7 
                10h5v5H7z"/>
             </svg>
-            My Bookings
+           {% trans "My Bookings" %}
          </a>
          {% endif %}
       </li>
@@ -104,7 +104,7 @@
             11.54L12 
             21.35z"/>
          </svg>
-         Favorites
+         {% trans "Favorites" %}
       </a>
    </li>
    <li>
@@ -112,7 +112,7 @@
       <svg viewBox="0 0 24 24" fill="currentColor">
          <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12l-4-3-4 3-4-3-4 3V7z"/>
       </svg>
-      Wishlist
+      {% trans "Wishlist" %}
    </a>
 </li>
 
@@ -128,7 +128,7 @@
          14H5.17L4 
          17.17V4h16v12z"/>
       </svg>
-      Messages
+      {% trans "Messages" %}
    </a>
 </li>
 
@@ -142,7 +142,7 @@
          <svg viewBox="0 0 24 24">
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
          </svg>
-         List Property
+         {% trans "List Property" %}
       </a>
       {% endif %}
 
@@ -151,19 +151,36 @@
          <svg viewBox="0 10 15 24">
             <path d="M10 17l5-5-5-5v3H3v4h7v3z"/>
          </svg>
-         Profile
+         {% trans "Profile" %}
       </a>
       {% else %}
       <a href="{% url 'login' %}" class="btn-list">
          <svg viewBox="0 10 15 24">
             <path d="M10 17l5-5-5-5v3H3v4h7v3z"/>
          </svg>
-         Login
+         {% trans "Login" %}
       </a>
       {% endif %}
 
    </div>
 
+
+   {% load i18n %}
+
+<!-- LANGUAGE SELECTOR -->
+<form action="{% url 'set_language' %}" method="post">
+  {% csrf_token %}
+  <input name="next" type="hidden" value="{{ request.path }}">
+  <select name="language" onchange="this.form.submit()">
+    {% get_current_language as LANGUAGE_CODE %}
+    {% get_available_languages as LANGUAGES %}
+    {% for lang_code, lang_name in LANGUAGES %}
+      <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
+        {{ lang_name }}
+      </option>
+    {% endfor %}
+  </select>
+</form>
 </nav>
 
 <!-- PAGE -->
@@ -184,20 +201,20 @@
    <div class="cta-badge">🏡 Join StayHome</div>
 
    <h2 class="cta-title">
-      Ready to Find Your Perfect Home?
+     {% trans "Ready to Find Your Perfect Home?" %}
    </h2>
 
    <p class="cta-sub">
-      Join thousands of satisfied users who found their dream properties through StayHome.
+      {% trans "Join thousands of satisfied users who found their dream properties through StayHome." %}
    </p>
 
    <div class="cta-actions">
       <a href="/properties/" class="cta-btn-primary">
-         🔍 Browse Properties
+        {% trans "🔍 Browse Properties" %}
       </a>
 
       <a href="{% url 'properties:create_property' %}" class="cta-btn-secondary">
-         ➕ List Your Property
+         ➕ {% trans "List Your Property" %}
       </a>
    </div>
 

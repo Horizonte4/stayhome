@@ -1,31 +1,31 @@
 {% extends "base.html" %}
-
+{% load static i18n %}
 {% block content %}
 
 <section class="container bookings-page">
 
-<h1>{% trans "My Bookings" %}</h1>
-<p class="sub">{% trans "Manage your reservations and purchased properties" %}.</p>
+<h1> {% trans "My Bookings" %} </h1>
+<p class="sub"> {% trans "Manage your reservations and purchased properties" %}. </p>
 
 <div class="booking-tabs">
     <button class="tab active" onclick="showTab(event,'pending')">
-        Pending <span class="badge">{{ pending|length }}</span>
+        {% trans "Pending" %}<span class="badge">{{ pending|length }}</span>
     </button>
 
     <button class="tab" onclick="showTab(event,'approved')">
-        Approved <span class="badge">{{ approved|length }}</span>
+        {% trans "Approved" %} <span class="badge">{{ approved|length }}</span>
     </button>
 
     <button class="tab" onclick="showTab(event,'rejected')">
-        Rejected <span class="badge">{{ rejected|length }}</span>
+        {% trans "Rejected" %} <span class="badge">{{ rejected|length }}</span>
     </button>
 
     <button class="tab" onclick="showTab(event,'cancelled')">
-        Cancelled <span class="badge">{{ cancelled|length }}</span>
+        {% trans "Cancelled" %}<span class="badge">{{ cancelled|length }}</span>
     </button>
 
     <button class="tab" onclick="showTab(event,'purchase')">
-        Purchase <span class="badge">{{ purchased_contracts|length }}</span>
+        {% trans "Purchase" %} <span class="badge">{{ purchased_contracts|length }}</span>
     </button>
 </div>
 
@@ -38,22 +38,22 @@
 
         <div class="booking-main">
             <h3>{{ booking.property.title }}</h3>
-            <span class="status pending">{% trans "Pending" %}</span>
+            <span class="status pending"> {% trans "Pending" %} </span>
 
             <div class="booking-details">
                 <div class="detail">
-                    <span>{% trans "Check" %}-in</span>
+                    <span> {% trans "Check-in" %} </span>
                     <p>{{ booking.check_in|date:"F j, Y" }}</p>
                 </div>
 
                 <div class="detail">
-                    <span>{% trans "Check" %}-out</span>
+                    <span> {% trans "Check-out" %} </span>
                     <p>{{ booking.check_out|date:"F j, Y" }}</p>
                 </div>
             </div>
 
-            <p class="guests">{% trans "Guests capacity" %}: {{ booking.property.capacity }}</p>
-            <p class="booking-date">{% trans "Requested on " %}{{ booking.created_at|date:"F j, Y" }}</p>
+            <p class="guests"> {% trans "Guests capacity" %} : {{ booking.property.capacity }}</p>
+            <p class="booking-date"> {% trans "Requested on " %} {{ booking.created_at|date:"F j, Y" }}</p>
         </div>
 
         <div class="booking-price">
@@ -62,7 +62,7 @@
         </div>
     </div>
 {% empty %}
-    <p class="empty">{% trans "You have no pending bookings" %}.</p>
+    <p class="empty"> {% trans "You have no pending bookings" %}. </p>
 {% endfor %}
 </div>
 
@@ -71,27 +71,27 @@
     <div class="booking-card">
         <div class="booking-main">
             <h3>{{ booking.property.title }}</h3>
-            <span class="status approved">{% trans "Approved" %}</span>
+            <span class="status approved"> {% trans "Approved" %} </span>
 
             <div class="booking-details">
                 <div class="detail">
-                    <span>{% trans "Check" %}-in</span>
+                    <span> {% trans "Check-in" %} </span>
                     <p>{{ booking.check_in|date:"F j, Y" }}</p>
                 </div>
 
                 <div class="detail">
-                    <span>{% trans "Check" %}-out</span>
+                    <span> {% trans "Check-out" %} </span>
                     <p>{{ booking.check_out|date:"F j, Y" }}</p>
                 </div>
             </div>
 
-            <p class="guests">{% trans "Guests capacity" %}: {{ booking.property.capacity }}</p>
+            <p class="guests"> {% trans "Guests capacity" %}: {{ booking.property.capacity }} </p>
 
             <div style="margin-top:12px;">
                 <form method="post" action="{% url 'comunication:start_conversation' booking.property.pk %}">
                     {% csrf_token %}
                     <button type="submit" class="cta-btn">
-                        Contact Owner
+                        {% trans "Contact Owner" %}
                     </button>
                 </form>
             </div>
@@ -99,11 +99,11 @@
 
         <div class="booking-price">
             <h2>${{ booking.total_price }}</h2>
-            <p>{{ booking.nights }} nights</p>
+            <p>{{ booking.nights }} {% trans "nights" %} </p>
         </div>
     </div>
 {% empty %}
-    <p class="empty">{% trans "You have no approved bookings" %}.</p>
+    <p class="empty"> {% trans "You have no approved bookings" %}. </p>
 {% endfor %}
 </div>
 
@@ -112,16 +112,16 @@
     <div class="booking-card">
         <div class="booking-main">
             <h3>{{ booking.property.title }}</h3>
-            <span class="status rejected">{% trans "Rejected" %}</span>
+            <span class="status rejected"> {% trans "Rejected" %} </span>
 
             <div class="booking-details">
                 <div class="detail">
-                    <span>{% trans "Check" %}-in</span>
+                    <span> {% trans "Check-in" %} </span>
                     <p>{{ booking.check_in|date:"F j, Y" }}</p>
                 </div>
 
-                <div class="detail">
-                    <span>{% trans "Check" %}-out</span>
+                <div class="detail"> 
+                    <span> {% trans "Check-out" %}</span>
                     <p>{{ booking.check_out|date:"F j, Y" }}</p>
                 </div>
             </div>
@@ -132,7 +132,7 @@
         </div>
     </div>
 {% empty %}
-    <p class="empty">{% trans "No rejected bookings" %}.</p>
+    <p class="empty"> {% trans "No rejected bookings" %}. </p>
 {% endfor %}
 </div>
 
@@ -141,16 +141,16 @@
     <div class="booking-card">
         <div class="booking-main">
             <h3>{{ booking.property.title }}</h3>
-            <span class="status cancelled">{% trans "Cancelled" %}</span>
+            <span class="status cancelled"> {% trans "Cancelled" %} </span>
 
             <div class="booking-details">
                 <div class="detail">
-                    <span>{% trans "Check" %}-in</span>
+                    <span> {% trans "Check-in" %} </span>
                     <p>{{ booking.check_in|date:"F j, Y" }}</p>
                 </div>
 
                 <div class="detail">
-                    <span>{% trans "Check" %}-out</span>
+                    <span> {% trans "Check-out" %} </span>
                     <p>{{ booking.check_out|date:"F j, Y" }}</p>
                 </div>
             </div>
@@ -161,7 +161,7 @@
         </div>
     </div>
 {% empty %}
-    <p class="empty">{% trans "No cancelled bookings" %}.</p>
+    <p class="empty"> {% trans "No cancelled bookings" %}. </p>
 {% endfor %}
 </div>
 
@@ -176,20 +176,20 @@
 
             <div class="purchase-card-body">
                 <h3>{{ contract.property.title }}</h3>
-                <span class="status approved">{% trans "Accepted" %}</span>
+                <span class="status approved"> {% trans "Accepted" %} </span>
 
-                <p class="sub purchase-request-buyer">{% trans "Owner" %}: {{ contract.property.owner.user.first_name }} {{ contract.property.owner.user.last_name }}</p>
-                <p class="sub">{% trans "Purchased on " %}{{ contract.created_at|date:"F j, Y" }}</p>
+                <p class="sub purchase-request-buyer"> {% trans "Owner" %}: {{ contract.property.owner.user.first_name }} {{ contract.property.owner.user.last_name }}</p>
+                <p class="sub"> {% trans "Purchased on " %} {{ contract.created_at|date:"F j, Y" }}</p>
             </div>
 
             <div class="booking-price purchase-request-price">
                 <h2>${{ contract.total_value }}</h2>
                 <p class="sub">{% trans "Sale price" %}</p>
                 <div class="purchase-actions">
-                    <a href="{% url 'properties:property_detail' pk=contract.property.pk %}" class="purchase-primary">{% trans "View property" %}</a>
+                    <a href="{% url 'properties:property_detail' pk=contract.property.pk %}" class="purchase-primary"> {% trans "View property" %} </a>
                     <form method="post" action="{% url 'comunication:start_conversation' contract.property.pk %}">
                         {% csrf_token %}
-                        <button type="submit" class="purchase-secondary">{% trans "Contact owner" %}</button>
+                        <button type="submit" class="purchase-secondary"> {% trans "Contact owner" %} </button>
                     </form>
                 </div>
             </div>
@@ -197,7 +197,7 @@
         {% endfor %}
     </div>
     {% else %}
-    <p class="empty">{% trans "Here your purchased properties will appear" %}.</p>
+    <p class="empty"> {% trans "Here your purchased properties will appear" %}. </p>
     {% endif %}
 </div>
 

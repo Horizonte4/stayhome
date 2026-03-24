@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-
+{% load static i18n %}
 {% block title %}Your Wishlist{% endblock %}
 
 {% block content %}
 <section class="container favorites-page">
 
     <div class="favorites-header">
-        <h1>{% trans "Your Wishlist" %}</h1>
-        <p class="sub">{{ saved_properties|length }} saved properties</p>
+        <h1> {% trans "Your Wishlist" %} </h1>
+        <p class="sub">{{ saved_properties|length }} {% trans "saved properties" %} </p>
     </div>
 
     {% if saved_properties %}
@@ -21,7 +21,7 @@
                      class="favorite-image">
 
                 <div class="favorite-badges">
-                    <span class="badge-type sale">{% trans "For Sale" %}</span>
+                    <span class="badge-type sale"> {% trans "For Sale" %} </span>
                 </div>
 
                 <form method="POST"
@@ -40,8 +40,8 @@
                 </p>
 
                 <div class="favorite-meta">
-                    <span>{{ saved.property_obj.rooms }} bed</span>
-                    <span>{{ saved.property_obj.bathrooms }} bath</span>
+                    <span>{{ saved.property_obj.rooms }}  {% trans "bed" %} </span>
+                    <span>{{ saved.property_obj.bathrooms }}  {% trans "bath" %} </span>
                     <span>{{ saved.property_obj.square_meters|default:"--" }} m²</span>
                 </div>
 
@@ -50,7 +50,7 @@
                         ${{ saved.property_obj.price }}
                     </div>
                     <a href="{% url 'properties:property_detail' saved.property_obj.pk %}"
-                       class="details-btn">{% trans "View details" %}</a>
+                       class="details-btn"> {% trans "View details" %} </a>
                 </div>
             </div>
 
@@ -60,8 +60,8 @@
 
     {% else %}
     <div class="empty-state">
-        <p>{% trans "You haven" %}'t saved any properties to your wishlist yet.</p>
-        <a href="{% url 'properties:list_properties' %}" class="details-btn">{% trans "Browse properties" %}</a>
+        <p>> {% trans "You haven't saved any properties to your wishlist yet." %} </p>
+        <a href="{% url 'properties:list_properties' %}" class="details-btn"> {% trans "Browse properties" %} </a>
     </div>
     {% endif %}
 
