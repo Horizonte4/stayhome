@@ -1,11 +1,6 @@
-# Librerías estándar
-# (ninguna)
-
-# Librerías externas
 from django.conf import settings
 from django.db import models
 
-# Archivos del proyecto
 from core.models import TimeStampedModel, SoftDeleteModel
 from properties.models import Property
 
