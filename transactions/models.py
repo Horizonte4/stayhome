@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from core.models import SoftDeleteModel, TimeStampedModel
 
@@ -9,8 +10,8 @@ class Contract(TimeStampedModel, SoftDeleteModel):
     TYPE_SALE = "sale"
 
     TYPE_CHOICES = (
-        (TYPE_RENTAL, "Rental"),
-        (TYPE_SALE, "Sale"),
+        (TYPE_RENTAL, _("Rental")),
+        (TYPE_SALE, _("Sale")),
     )
 
     property = models.ForeignKey(
@@ -51,10 +52,10 @@ class Booking(TimeStampedModel):
     STATUS_CANCELLED = "cancelled"
 
     STATUS_CHOICES = [
-        (STATUS_PENDING, "Pending"),
-        (STATUS_APPROVED, "Approved"),
-        (STATUS_REJECTED, "Rejected"),
-        (STATUS_CANCELLED, "Cancelled"),
+        (STATUS_PENDING, _("Pending")),
+        (STATUS_APPROVED, _("Approved")),
+        (STATUS_REJECTED, _("Rejected")),
+        (STATUS_CANCELLED, _("Cancelled")),
     ]
 
     property = models.ForeignKey(

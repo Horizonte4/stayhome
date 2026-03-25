@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static i18n %}
-{% block title %}Profile - StayHome{% endblock %}
+{% block title %}{% trans "Profile" %} - StayHome{% endblock %}
 
 {% block content %}
 <div class="page">
@@ -17,7 +17,7 @@
             <p class="card-loc">{{ role|title }}</p>
 
             <p class="section-sub">
-                Member since {{ request.user.date_joined|date:"F Y" }}
+                {% trans "Member since" %} {{ request.user.date_joined|date:"F Y" }}
             </p>
 
             <p class="auth-footer" style="margin-top:12px;">
@@ -26,7 +26,7 @@
         </div>
     </div>
 
-    <h3 class="section-title" style="margin-top:40px;">Contact Information</h3>
+    <h3 class="section-title" style="margin-top:40px;">{% trans "Contact Information" %}</h3>
 
     <div class="cards">
         <div class="card">
@@ -39,14 +39,20 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-title">{% trans "Phone" %}</div>
-                <div class="card-loc">{{ request.user.phone|default:"Not provided" }}</div>
+                <div class="card-loc">
+                    {% if request.user.phone %}
+                        {{ request.user.phone }}
+                    {% else %}
+                        {% trans "Not provided" %}
+                    {% endif %}
+                </div>
             </div>
         </div>
 
         <div class="card">
             <div class="card-body">
                 <div class="card-title">{% trans "Location" %}</div>
-                <div class="card-loc">Colombia</div>
+                <div class="card-loc">{% trans "Colombia" %}</div>
             </div>
         </div>
 
@@ -95,7 +101,7 @@
     </div>
     {% else %}
         <p class="property-list-empty">
-            You don't have any properties yet. Create one to get started!
+            {% trans "You don't have any properties yet. Create one to get started!" %}
         </p>
     {% endif %}
 </div>

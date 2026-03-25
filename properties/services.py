@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta
 
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from transactions.models import Booking, Contract
 from transactions.selectors import can_access_property
@@ -81,10 +82,12 @@ class PropertyService:
         owner = getattr(user, "owner", None)
 
         if not owner:
-            raise PermissionError("Only property owners can perform this action.")
+            raise PermissionError(_("Only property owners can perform this action."))
 
         if property_obj.owner_id != owner.id:
-            raise PermissionError("You cannot manage a property that is not yours.")
+            raise PermissionError(
+                _("You cannot manage a property that is not yours.")
+            )
 
         return True
 
@@ -93,7 +96,7 @@ class PropertyService:
         blocked_dates, invalid_dates = normalize_availability_dates(availability_dates)
         if invalid_dates:
             raise ValueError(
-                "Invalid blocked date format: " + ", ".join(invalid_dates)
+                _("Invalid blocked date format: ") + ", ".join(invalid_dates)
             )
 
         property_obj = form.save(commit=False)
@@ -115,11 +118,23 @@ class PropertyService:
         property_obj.delete()
 
     @staticmethod
-    def update_availability_calendar(property_obj, availability_dates):
+    def update_availability_calendar(
+        property_obj,
+        availability_dates,
+        clear_all_dates=False,
+    ):
+        if clear_all_dates:
+            property_obj.availability_dates = ""
+            property_obj.save(update_fields=["availability_dates"])
+            return property_obj
+
+        if not (availability_dates or "").strip():
+            return property_obj
+
         blocked_dates, invalid_dates = normalize_availability_dates(availability_dates)
         if invalid_dates:
             raise ValueError(
-                "Invalid blocked date format: " + ", ".join(invalid_dates)
+                _("Invalid blocked date format: ") + ", ".join(invalid_dates)
             )
 
         property_obj.availability_dates = blocked_dates

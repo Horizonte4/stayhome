@@ -8,6 +8,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import URLValidator
+from django.utils.translation import gettext_lazy as _
 
 from .models import Property
 
@@ -19,7 +20,7 @@ class PropertyForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-input",
-                "placeholder": "https://...",
+                "placeholder": _("https://..."),
             }
         ),
     )
@@ -46,20 +47,22 @@ class PropertyForm(forms.ModelForm):
             "title": forms.TextInput(
                 attrs={
                     "class": "form-input",
-                    "placeholder": "Modern Downtown Apartment",
+                    "placeholder": _("Modern Downtown Apartment"),
                 }
             ),
             "description": forms.Textarea(
                 attrs={
                     "class": "form-input",
                     "rows": 4,
-                    "placeholder": "Describe highlights, amenities, nearby places...",
+                    "placeholder": _(
+                        "Describe highlights, amenities, nearby places..."
+                    ),
                 }
             ),
             "address": forms.TextInput(
                 attrs={
                     "class": "form-input",
-                    "placeholder": "Search location",
+                    "placeholder": _("Search location"),
                     "autocomplete": "off",
                 }
             ),
@@ -136,13 +139,15 @@ class PropertyForm(forms.ModelForm):
                 image_bytes = response.read()
                 content_type = response.headers.get("Content-Type", "")
         except Exception as exc:
-            raise ValidationError("Could not download the image from that URL.") from exc
+            raise ValidationError(
+                _("Could not download the image from that URL.")
+            ) from exc
 
         if not image_bytes:
-            raise ValidationError("The image URL returned an empty file.")
+            raise ValidationError(_("The image URL returned an empty file."))
 
         if content_type and not content_type.lower().startswith("image/"):
-            raise ValidationError("The URL must point directly to an image.")
+            raise ValidationError(_("The URL must point directly to an image."))
 
         file_name = self._build_remote_image_name(image_url, content_type)
         return ContentFile(image_bytes, name=file_name)
@@ -156,7 +161,9 @@ class PropertyForm(forms.ModelForm):
         try:
             validator(image_url)
         except ValidationError as exc:
-            raise forms.ValidationError("Enter a valid http or https URL.") from exc
+            raise forms.ValidationError(
+                _("Enter a valid http or https URL.")
+            ) from exc
 
         return image_url
 
@@ -166,16 +173,16 @@ class PropertyForm(forms.ModelForm):
         for field_name in ["price", "rooms", "bathrooms", "capacity"]:
             value = cleaned_data.get(field_name)
             if value is not None and value <= 0:
-                self.add_error(field_name, "This value must be greater than zero.")
+                self.add_error(field_name, _("This value must be greater than zero."))
 
         square_meters = cleaned_data.get("square_meters")
         if square_meters is not None and square_meters < 0:
-            self.add_error("square_meters", "This value cannot be negative.")
+            self.add_error("square_meters", _("This value cannot be negative."))
 
         image = cleaned_data.get("image")
         image_url = cleaned_data.get("image_url")
         if not image and not image_url:
-            error_message = "Upload an image or provide an image URL."
+            error_message = _("Upload an image or provide an image URL.")
             self.add_error("image", error_message)
             self.add_error("image_url", error_message)
 
@@ -194,13 +201,13 @@ class PropertyForm(forms.ModelForm):
         if address and (latitude is None or longitude is None):
             self.add_error(
                 "address",
-                "You must select a valid location on the map.",
+                _("You must select a valid location on the map."),
             )
 
         if address and not city:
             self.add_error(
                 "address",
-                "City could not be detected. Please select a valid location.",
+                _("City could not be detected. Please select a valid location."),
             )
 
         return cleaned_data

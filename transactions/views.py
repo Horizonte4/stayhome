@@ -3,6 +3,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.translation import gettext_lazy as _
 
 from properties.models import Property
 
@@ -22,22 +23,22 @@ def create_booking(request, property_id):
     check_out = request.POST.get("check_out")
 
     if not check_in or not check_out:
-        messages.error(request, "Must select check in and check out.")
+        messages.error(request, _("Must select check in and check out."))
         return redirect("properties:property_detail", pk=property_obj.id)
 
     try:
         check_in_date = datetime.strptime(check_in, "%Y-%m-%d").date()
         check_out_date = datetime.strptime(check_out, "%Y-%m-%d").date()
     except ValueError:
-        messages.error(request, "Dates must use the YYYY-MM-DD format.")
+        messages.error(request, _("Dates must use the YYYY-MM-DD format."))
         return redirect("properties:property_detail", pk=property_obj.id)
 
     if check_in_date >= check_out_date:
-        messages.error(request, "Check-out must be later than check-in.")
+        messages.error(request, _("Check-out must be later than check-in."))
         return redirect("properties:property_detail", pk=property_obj.id)
 
     if BookingService.has_conflict(property_obj, check_in_date, check_out_date):
-        messages.error(request, "These dates are already booked.")
+        messages.error(request, _("These dates are already booked."))
         return redirect("properties:property_detail", pk=property_obj.id)
 
     try:
@@ -77,7 +78,7 @@ def change_booking_status(request, booking_id, new_status):
     is_client = booking.user == request.user and new_status == Booking.STATUS_CANCELLED
 
     if not is_owner and not is_client:
-        messages.error(request, "You are not allowed to change this booking.")
+        messages.error(request, _("You are not allowed to change this booking."))
         return redirect("transactions:my_bookings")
 
     try:

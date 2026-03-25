@@ -3,15 +3,16 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from .managers import PropertyManager
 
 
 class Property(models.Model):
     LISTING_TYPE_CHOICES = [
-        ("short_term", "Short-term rental"),
-        ("long_term", "Long-term rental"),
-        ("sale", "Sale"),
+        ("short_term", _("Short-term rental")),
+        ("long_term", _("Long-term rental")),
+        ("sale", _("Sale")),
     ]
 
     owner = models.ForeignKey(
@@ -119,12 +120,12 @@ class Property(models.Model):
     @property
     def availability_label(self):
         if self.has_sale_contract():
-            return "Sold"
+            return _("Sold")
 
         if self.listing_type == "sale":
-            return "Available"
+            return _("Available")
 
-        return "Available" if self.is_available() else "Unavailable"
+        return _("Available") if self.is_available() else _("Unavailable")
 
 
 class SavedPropertyQuerySet(models.QuerySet):

@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 from .models import Booking
 from .selectors import get_client_bookings_context
@@ -19,13 +20,13 @@ class BookingService:
     @staticmethod
     def create_booking(property_obj, user, check_in, check_out):
         if property_obj.owner and property_obj.owner.user_id == user.id:
-            raise ValueError("Owners cannot book their own properties.")
+            raise ValueError(_("Owners cannot book their own properties."))
 
         if property_obj.listing_type == "sale":
-            raise ValueError("Sale properties cannot receive bookings.")
+            raise ValueError(_("Sale properties cannot receive bookings."))
 
         if not property_obj.is_available(check_in, check_out):
-            raise ValueError("The property is not available for those dates.")
+            raise ValueError(_("The property is not available for those dates."))
 
         return Booking.objects.create(
             property=property_obj,
@@ -44,7 +45,7 @@ class BookingService:
         }
 
         if new_status not in valid_statuses:
-            raise ValueError(f"Invalid status: {new_status}")
+            raise ValueError(_("Invalid status: %(status)s") % {"status": new_status})
 
         if new_status == Booking.STATUS_APPROVED:
             if BookingService.has_conflict(
@@ -52,7 +53,7 @@ class BookingService:
                 booking.check_in,
                 booking.check_out,
             ):
-                raise ValueError("These dates are already booked.")
+                raise ValueError(_("These dates are already booked."))
 
             booking.status = Booking.STATUS_APPROVED
             booking.save(update_fields=["status", "updated_at"])
@@ -70,7 +71,9 @@ class BookingService:
             limit_date = booking.check_in - timedelta(days=5)
             if today > limit_date:
                 raise ValueError(
-                    "You can only cancel a booking at least 5 days before check-in."
+                    _(
+                        "You can only cancel a booking at least 5 days before check-in."
+                    )
                 )
 
         booking.status = new_status
