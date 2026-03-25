@@ -1,5 +1,6 @@
 from properties.models import Property
 from django.shortcuts import render
+from django.utils.translation import gettext_lazy as _
 
 
 # HOME

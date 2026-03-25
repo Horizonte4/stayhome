@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,6 +12,19 @@ SECRET_KEY = os.getenv(
     "SECRET_KEY",
     "django-insecure-s)=q^^j@j32c)-a5o^5tt&0chq!-!uqix-$pqi1xb(s81wulj3",
 )
+
+
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = [
+    ('en', _('English')),
+    ('es', _('Spanish')),
+]
+
+USE_I18N = True
+USE_L10N = True
+
+LOCALE_PATHS = [BASE_DIR / 'locale']
 
 # Mantener True en desarrollo para que no se rompan static/media
 DEBUG = True
@@ -39,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -62,6 +77,8 @@ TEMPLATES = [
         },
     },
 ]
+
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
 WSGI_APPLICATION = "stayhome.wsgi.application"
 
