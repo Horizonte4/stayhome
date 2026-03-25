@@ -11,7 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <a href="{% url 'properties:list_properties' %}" class="back-link">
-    ← Back to Properties
+    {% trans  "Back to Properties" %}
 </a>
 
 <section class="detail-wrap">
@@ -65,19 +65,19 @@
 
             <button type="submit" class="cta-btn">
               {% if is_saved %}
-                Remove from saved
+                {% trans "Remove from saved" %}
               {% else %}
                 {% if property.listing_type == 'sale' %}
-                  Save to wishlist
+                   {% trans "Save to wishlist" %}
                 {% else %}
-                  Save to favorites
+                  {% trans "Save to favorites" %}
                 {% endif %}
               {% endif %}
             </button>
           </form>
         {% elif property.active_listing %}
           <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-            Log in to save this property
+            {% trans "Log in to save this property" %}
           </a>
         {% endif %}
 
@@ -89,14 +89,14 @@
         <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
             {% csrf_token %}
             <button type="submit" class="cta-btn">
-                Contact Owner
+                {% trans "Contact Owner" %}
             </button>
         </form>
     {% endif %}
 
 {% elif not request.user.is_authenticated %}
     <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}" class="cta-btn">
-        Login to contact owner
+        {% trans "Login to contact owner"}
     </a>
 {% endif %}
 
@@ -145,14 +145,14 @@
     <form method="POST" action="{% url 'transactions:create_purchase_request' property.id %}">
         {% csrf_token %}
         <button class="cta-btn" type="submit">
-            Send new request
+            {% trans "Send new request" %}
         </button>
     </form>
     {% elif not property.active_listing %}
     <p class="sub" style="font-weight:700;"> {% trans "This property is no longer available for purchase" %}. </p>
     {% elif not user.is_authenticated %}
     <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-        Login to request this property
+        {% trans "Login to request this property" %}
     </a>
     {% elif request.user == property.owner.user %}
     <p class="sub" style="font-weight:700;"> {% trans "You cannot request the purchase of your own property" %}. </p>
@@ -160,7 +160,7 @@
     <form method="POST" action="{% url 'transactions:create_purchase_request' property.id %}">
         {% csrf_token %}
         <button class="cta-btn" type="submit">
-            Request purchase
+            {% trans "Request purchase" %}
         </button>
     </form>
     {% else %}
@@ -187,7 +187,7 @@
     <!-- CALENDAR -->
     <input id="calendar" type="text">
     <p class="sub" style="margin-top:10px;">
-        Green days are available. Red days are unavailable.
+        {% trans "Green days are available. Red days are unavailable." %}
     </p>
 
     <p class="sub" style="margin:4px 0 10px 0; font-weight:700;">
@@ -199,7 +199,7 @@
     <input type="hidden" name="check_out" id="check_out" required>
 
     <button class="cta-btn" type="submit">
-        Request booking
+       {% trans "Request booking" %}
     </button>
 </form>
 </div>

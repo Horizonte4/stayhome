@@ -92,11 +92,11 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 </div>
 
-<p class="sub">👤 > {% trans "Client:" %} {{ booking.user.email }} </p>
-<p class="sub">👥 {{ booking.property.capacity }} {% trans "guests" }</p>
+<p class="sub">👤  {% trans "Client:" %} {{ booking.user.email }} </p>
+<p class="sub">👥 {{ booking.property.capacity }} {% trans "guests" %}</p>
 
 <p class="sub">
-{% trans "Booked" } {{ booking.created_at|date:"F j, Y" }}
+{% trans "Booked" %} {{ booking.created_at|date:"F j, Y" }}
 </p>
 
 </div>
@@ -112,7 +112,7 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 <a class="approve-btn"
 href="{% url 'transactions:change_booking_status' booking.id 'approved' %}">
-{% trans "Approve" }
+{% trans "Approve" %}
 </a>
 
 <a class="reject-btn"
