@@ -92,11 +92,11 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 </div>
 
-<p class="sub">👤 > {% trans "Client:" %} {{ booking.user.email }} </p>
-<p class="sub">👥 {{ booking.property.capacity }} {% trans "guests" }</p>
+<p class="sub">👤  {% trans "Client:" %} {{ booking.user.email }} </p>
+<p class="sub">👥 {{ booking.property.capacity }} {% trans "guests" %}</p>
 
 <p class="sub">
-{% trans "Booked" } {{ booking.created_at|date:"F j, Y" }}
+{% trans "Booked" %} {{ booking.created_at|date:"F j, Y" }}
 </p>
 
 </div>
@@ -106,13 +106,13 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 <h2>${{ booking.total_price }}</h2>
 
-<p class="sub">{{ booking.nights }} {% trans "nights" }</p>
+<p class="sub">{{ booking.nights }} {% trans "nights" %}</p>
 
 <div class="actions">
 
 <a class="approve-btn"
 href="{% url 'transactions:change_booking_status' booking.id 'approved' %}">
-{% trans "Approve" }
+{% trans "Approve" %}
 </a>
 
 <a class="reject-btn"
@@ -129,7 +129,7 @@ href="{% url 'transactions:change_booking_status' booking.id 'rejected' %}">
 {% empty %}
 
 <div class="empty-state">
-<p>{% trans "You dont  have pending reservations."" $}</p>
+<p>{% trans "You dont  have pending reservations." %$}</p>
 </div>
 
 {% endfor %}

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StayHome\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-24 19:49+0000\n"
+"POT-Creation-Date: 2026-03-25 02:23+0000\n"
 "PO-Revision-Date: 2026-03-24 19:49+0000\n"
 "Last-Translator: StayHome\n"
 "Language-Team: Spanish\n"
@@ -66,7 +66,8 @@ msgstr "Revisa tu correo"
 
 #: templates/auth/password_reset_done.html:9
 msgid "If the email exists, we sent you a link to reset your password."
-msgstr "Si el correo existe, te enviamos un enlace para restablecer tu contraseña."
+msgstr ""
+"Si el correo existe, te enviamos un enlace para restablecer tu contraseña."
 
 #: templates/base.html:33
 msgid "Stay "
@@ -205,6 +206,7 @@ msgid "baths"
 msgstr "baños"
 
 #: templates/home.html:71 templates/home.html:105 templates/home.html:139
+#: templates/transactions/owner_bookings.html:96
 msgid "guests"
 msgstr "huéspedes"
 
@@ -332,6 +334,10 @@ msgstr "Eliminar propiedad"
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: templates/properties/detail.html:14
+msgid "Back to Properties"
+msgstr "volver a propiedades"
+
 #: templates/properties/detail.html:30
 msgid "Active"
 msgstr "Activo"
@@ -339,6 +345,27 @@ msgstr "Activo"
 #: templates/properties/detail.html:51
 msgid "sale price"
 msgstr "precio de venta"
+
+#: templates/properties/detail.html:68
+msgid "Remove from saved"
+msgstr "Quitar de guardados"
+
+#: templates/properties/detail.html:71
+msgid "Save to wishlist"
+msgstr "Guardar en lista de deseos"
+
+#: templates/properties/detail.html:73
+msgid "Save to favorites"
+msgstr "guadar en favoritos"
+
+#: templates/properties/detail.html:80
+msgid "Log in to save this property"
+msgstr "inicia sesion para Guardar propiedad"
+
+#: templates/properties/detail.html:92
+#: templates/transactions/my_bookings.html:94
+msgid "Contact Owner"
+msgstr "Contactar propietario"
 
 #: templates/properties/detail.html:115
 msgid "where will you go"
@@ -364,13 +391,25 @@ msgstr "Tu solicitud de compra fue aceptada"
 msgid "Your previous request was rejected. You can send a new one."
 msgstr "Tu solicitud anterior fue rechazada. Puedes enviar una nueva."
 
+#: templates/properties/detail.html:148
+msgid "Send new request"
+msgstr "Enviar nueva solicitud"
+
 #: templates/properties/detail.html:152
 msgid "This property is no longer available for purchase"
 msgstr "Esta propiedad ya no está disponible para compra"
 
+#: templates/properties/detail.html:155
+msgid "Login to request this property"
+msgstr "inicia sesion para esta propiedad"
+
 #: templates/properties/detail.html:158
 msgid "You cannot request the purchase of your own property"
 msgstr "No puedes solicitar la compra de tu propia propiedad"
+
+#: templates/properties/detail.html:163
+msgid "Request purchase"
+msgstr "solicitar compra"
 
 #: templates/properties/detail.html:167
 msgid "This property cannot receive a purchase request right now"
@@ -379,6 +418,14 @@ msgstr "Esta propiedad no puede recibir solicitudes de compra en este momento"
 #: templates/properties/detail.html:175
 msgid "Reserve property"
 msgstr "Reservar propiedad"
+
+#: templates/properties/detail.html:190
+msgid "Green days are available. Red days are unavailable."
+msgstr "Dias en verde estan disponible. rojos no disponible"
+
+#: templates/properties/detail.html:202
+msgid "Request booking"
+msgstr "Solicitar reserva "
 
 #: templates/properties/edit.html:11
 msgid "Edit Property"
@@ -793,10 +840,6 @@ msgstr "Solicitado el "
 msgid "You have no pending bookings"
 msgstr "No tienes reservas pendientes"
 
-#: templates/transactions/my_bookings.html:94
-msgid "Contact Owner"
-msgstr "Contactar propietario"
-
 #: templates/transactions/my_bookings.html:102
 #: templates/transactions/owner_bookings.html:192
 msgid "nights"
@@ -858,6 +901,14 @@ msgstr "Pasadas"
 #: templates/transactions/owner_bookings.html:95
 msgid "Client:"
 msgstr "Cliente:"
+
+#: templates/transactions/owner_bookings.html:99
+msgid "Booked"
+msgstr ""
+
+#: templates/transactions/owner_bookings.html:115
+msgid "Approve"
+msgstr "Aprobado"
 
 #: templates/transactions/owner_bookings.html:120
 #: templates/transactions/owner_bookings.html:317
