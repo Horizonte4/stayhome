@@ -106,7 +106,7 @@ https://images.unsplash.com/photo-1505691938895-1758d7feb511
 
 <h2>${{ booking.total_price }}</h2>
 
-<p class="sub">{{ booking.nights }} {% trans "nights" }</p>
+<p class="sub">{{ booking.nights }} {% trans "nights" %}</p>
 
 <div class="actions">
 
@@ -129,7 +129,7 @@ href="{% url 'transactions:change_booking_status' booking.id 'rejected' %}">
 {% empty %}
 
 <div class="empty-state">
-<p>{% trans "You dont  have pending reservations."" $}</p>
+<p>{% trans "You dont  have pending reservations." %$}</p>
 </div>
 
 {% endfor %}
