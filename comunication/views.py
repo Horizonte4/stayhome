@@ -6,7 +6,7 @@ from django.http import HttpResponseForbidden, HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from transactions.models import Booking
 from transactions.selectors import has_sale_contract
-from .models import Conversation
+from django.utils.translation import gettext_lazy as _
 
 
 from properties.models import Property

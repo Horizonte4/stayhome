@@ -1,36 +1,44 @@
 {% extends "base.html" %}
+{% load static i18n %}
 {% block title %}Home | StayHome{% endblock %}
-
 {% block content %}
 <section class="home-hero">
     <div class="home-hero-content">
         <h1 class="home-hero-title">
-            Find Your Perfect Home
+            {% trans "Find Your Perfect Home" %}
         </h1>
 
         <p class="home-hero-text">
-            Discover properties for rent, sale, or short-term stays.
-            Connect directly with owners.
+            {% blocktrans %}
+                Discover properties for rent, sale, or short-term stays.
+            {% endblocktrans %}
+            {% blocktrans %}
+                Connect directly with owners.
+            {% endblocktrans %}
         </p>
 
-        <form method="get" action="{% url 'properties:list_properties' %}" class="home-search-bar">
+        <form
+            method="get"
+            action="{% url 'properties:list_properties' %}"
+            class="home-search-bar"
+        >
             <input
                 type="text"
                 name="q"
-                placeholder="Search by property, owner, city, address..."
+                placeholder="{% trans 'Search by property, owner, city, address...' %}"
                 class="home-search-input"
             >
 
             <button type="submit" class="home-search-btn">
-                Search
+                {% trans "Search" %}
             </button>
         </form>
     </div>
 </section>
 
 <section>
-    <h2 class="section-title">Featured Properties</h2>
-    <p class="section-sub">See what owners are listing right now.</p>
+    <h2 class="section-title">{% trans "Featured Properties" %}</h2>
+    <p class="section-sub">{% trans "See what owners are listing right now" %}.</p>
 
     <div class="property-grid">
         {% for property in properties %}
@@ -48,7 +56,7 @@
                 {% endwith %}
             {% endif %}
         {% empty %}
-            <p>No available properties.</p>
+            <p>{% trans "No available properties" %}.</p>
         {% endfor %}
     </div>
 </section>

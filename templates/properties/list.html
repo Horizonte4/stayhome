@@ -1,35 +1,43 @@
 {% extends "base.html" %}
-
+{% load static i18n %}
 {% block title %}Explore Properties{% endblock %}
 
 {% block content %}
 <div class="explore-page">
     <div class="explore-header">
-        <h1 class="explore-title">Explore Properties</h1>
+        <h1 class="explore-title">{% trans "Explore Properties" %}</h1>
         <p class="explore-subtitle">
-            Browse through {{ properties.paginator.count|default:properties|length }} available properties
+            {% blocktrans with count=properties.paginator.count|default:properties|length %}
+                Browse through {{ count }} available properties
+            {% endblocktrans %}
         </p>
     </div>
 
     <div class="explore-layout">
         <aside class="explore-sidebar">
             <form method="get" class="explore-filter-card">
-                <h3 class="explore-filter-title">Filters</h3>
+                <h3 class="explore-filter-title">{% trans "Filters" %}</h3>
 
                 <div class="explore-filter-group">
-                    <label>Property Type</label>
+                    <label>{% trans "Property Type" %}</label>
                     <select name="listing_type" class="explore-select">
-                        <option value="">All Types</option>
-                        <option value="short_term" {% if filters.listing_type == "short_term" %}selected{% endif %}>Short-term rental</option>
-                        <option value="long_term" {% if filters.listing_type == "long_term" %}selected{% endif %}>Long-term rental</option>
-                        <option value="sale" {% if filters.listing_type == "sale" %}selected{% endif %}>Sale</option>
+                        <option value="">{% trans "All Types" %}</option>
+                        <option value="short_term" {% if filters.listing_type == "short_term" %}selected{% endif %}>
+                            {% trans "Short-term rental" %}
+                        </option>
+                        <option value="long_term" {% if filters.listing_type == "long_term" %}selected{% endif %}>
+                            {% trans "Long-term rental" %}
+                        </option>
+                        <option value="sale" {% if filters.listing_type == "sale" %}selected{% endif %}>
+                            {% trans "Sale" %}
+                        </option>
                     </select>
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Bedrooms</label>
+                    <label>{% trans "Bedrooms" %}</label>
                     <select name="rooms" class="explore-select">
-                        <option value="">Any</option>
+                        <option value="">{% trans "Any" %}</option>
                         <option value="1" {% if filters.rooms == "1" %}selected{% endif %}>1</option>
                         <option value="2" {% if filters.rooms == "2" %}selected{% endif %}>2</option>
                         <option value="3" {% if filters.rooms == "3" %}selected{% endif %}>3</option>
@@ -39,48 +47,48 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Location</label>
+                    <label>{% trans "Location" %}</label>
                     <input
                         type="text"
                         name="city"
-                        placeholder="Search location"
+                        placeholder="{% trans 'Search location' %}"
                         value="{{ filters.city }}"
                         class="explore-input"
                     >
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Bathrooms</label>
+                    <label>{% trans "Bathrooms" %}</label>
                     <input
                         type="number"
                         name="bathrooms"
                         min="1"
                         step="1"
-                        placeholder="Bathrooms"
+                        placeholder="{% trans 'Bathrooms' %}"
                         value="{{ filters.bathrooms }}"
                         class="explore-input"
                     >
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Guests</label>
+                    <label>{% trans "Guests" %}</label>
                     <input
                         type="number"
                         name="capacity"
                         min="1"
                         step="1"
-                        placeholder="Min guests"
+                        placeholder="{% trans 'Min guests' %}"
                         value="{{ filters.capacity }}"
                         class="explore-input"
                     >
                 </div>
 
                 <div class="explore-filter-group">
-                    <label>Availability</label>
+                    <label>{% trans "Availability" %}</label>
                     <input
                         type="text"
                         id="availability_range"
-                        placeholder="Select date range"
+                        placeholder="{% trans 'Select date range' %}"
                         class="explore-input"
                         readonly
                     >
@@ -91,8 +99,12 @@
                 <input type="hidden" name="q" value="{{ filters.q }}">
 
                 <div class="explore-filter-actions">
-                    <button type="submit" class="explore-filter-btn">Apply Filters</button>
-                    <a href="{% url 'properties:list_properties' %}" class="explore-clear-btn">Clear Filters</a>
+                    <button type="submit" class="explore-filter-btn">
+                        {% trans "Apply Filters" %}
+                    </button>
+                    <a href="{% url 'properties:list_properties' %}" class="explore-clear-btn">
+                        {% trans "Clear Filters" %}
+                    </a>
                 </div>
             </form>
         </aside>
@@ -103,11 +115,10 @@
                 <input
                     type="text"
                     name="q"
-                    placeholder="Search by title, location, or city..."
+                    placeholder="{% trans 'Search by title, location, or city...' %}"
                     value="{{ filters.q }}"
                     class="explore-search-input"
                 >
-
                 <input type="hidden" name="city" value="{{ filters.city }}">
                 <input type="hidden" name="min_price" value="{{ filters.min_price }}">
                 <input type="hidden" name="max_price" value="{{ filters.max_price }}">
@@ -120,7 +131,9 @@
             </form>
 
             <p class="explore-results-count">
-                Showing {{ properties|length }} of {{ properties.paginator.count|default:properties|length }} properties
+                {% blocktrans with shown=properties|length total=properties.paginator.count|default:properties|length %}
+                    Showing {{ shown }} of {{ total }} properties
+                {% endblocktrans %}
             </p>
 
             {% if properties %}
@@ -133,12 +146,16 @@
                                 {% elif property.image_url %}
                                     <img src="{{ property.image_url }}" alt="{{ property.title }}" class="explore-card-image">
                                 {% else %}
-                                    <div class="property-card-image-placeholder">No image available</div>
+                                    <div class="property-card-image-placeholder">
+                                        {% trans "No image available" %}
+                                    </div>
                                 {% endif %}
 
                                 <div class="explore-card-badges">
                                     <span class="explore-badge">{{ property.get_listing_type_display }}</span>
-                                    <span class="explore-badge explore-badge-featured">{{ property.availability_label }}</span>
+                                    <span class="explore-badge explore-badge-featured">
+                                        {{ property.availability_label }}
+                                    </span>
                                 </div>
                             </div>
 
@@ -162,24 +179,32 @@
                                         <div class="explore-card-price">
                                             ${{ property.price }}
                                             {% if property.listing_type == "short_term" %}
-                                                /night
+                                                {% trans "/night" %}
                                             {% elif property.listing_type == "long_term" %}
-                                                /mo
+                                                {% trans "/mo" %}
                                             {% endif %}
                                         </div>
-                                        <div class="explore-card-owner">{{ property.capacity }} guests · {{ property.availability_label }}</div>
+                                        <div class="explore-card-owner">
+                                            {{ property.capacity }} guests · {{ property.availability_label }}
+                                        </div>
                                     </div>
 
                                     <a href="{% url 'properties:property_detail' pk=property.pk %}" class="explore-details-btn">
-                                        View Details
+                                        {% trans "View Details" %}
                                     </a>
                                 </div>
 
                                 {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
                                     <div class="property-card-actions">
-                                        <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">Edit</a>
-                                        <a href="{% url 'properties:edit_calendar' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">Edit calendar</a>
-                                        <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">Delete</a>
+                                        <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">
+                                            {% trans "Edit" %}
+                                        </a>
+                                        <a href="{% url 'properties:edit_calendar' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">
+                                            {% trans "Edit calendar" %}
+                                        </a>
+                                        <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">
+                                            {% trans "Delete" %}
+                                        </a>
                                     </div>
                                 {% endif %}
                             </div>
@@ -187,7 +212,9 @@
                     {% endfor %}
                 </div>
             {% else %}
-                <p class="property-list-empty">No properties found with the selected filters.</p>
+                <p class="property-list-empty">
+                    {% trans "No properties found with the selected filters." %}
+                </p>
             {% endif %}
         </section>
     </div>
@@ -235,5 +262,4 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-
 {% endblock %}

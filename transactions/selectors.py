@@ -4,7 +4,10 @@ from .models import Booking, Contract
 
 
 def has_sale_contract(property_obj, buyer=None):
-    contracts = Contract.objects.filter(property=property_obj, type=Contract.TYPE_SALE)
+    contracts = Contract.objects.filter(
+        property=property_obj,
+        type=Contract.TYPE_SALE,
+    )
     if buyer is not None:
         contracts = contracts.filter(tenant=buyer)
     return contracts.exists()

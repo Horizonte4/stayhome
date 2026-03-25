@@ -2,7 +2,6 @@ from django.conf import settings
 from django.db import models
 
 from core.models import SoftDeleteModel, TimeStampedModel
-from properties.models import Property
 
 
 class Contract(TimeStampedModel, SoftDeleteModel):
@@ -59,7 +58,7 @@ class Booking(TimeStampedModel):
     ]
 
     property = models.ForeignKey(
-        Property,
+        "properties.Property",
         on_delete=models.CASCADE,
         related_name="bookings",
     )

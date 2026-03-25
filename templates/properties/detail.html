@@ -1,6 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
-
+{% load static i18n %}
 {% block title %}Property Details{% endblock %}
 
 {% block content %}
@@ -9,168 +8,161 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <a href="{% url 'properties:list_properties' %}" class="back-link">
-    &larr; Back to Properties
+    {% trans "Back to Properties" %}
 </a>
 
 <section class="detail-wrap">
     <div class="media-card">
-        <div class="hero-media"
-             style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}');">
+        <div class="hero-media" style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}');">
             <div class="pill-row">
                 <span class="pill pill-blue">{{ availability_label }}</span>
                 <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
             </div>
-        </div>
 
-        <div class="media-body">
-            <h1 class="title">{{ property.title }}</h1>
+            <div class="media-body">
+                <h1 class="title">{{ property.title }}</h1>
+                <p class="owner">
+                    Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}
+                </p>
+                <p class="sub">{{ property.address|default:property.city }}</p>
 
-            <p class="owner">
-                Owner: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}
-            </p>
-
-            <p class="sub">
-                {{ property.address|default:property.city }}
-            </p>
-
-            <p class="price">
-                ${{ property.price }}
-                {% if property.listing_type == 'sale' %}
-                <small class="price-period">sale price</small>
-                {% else %}
-                <small class="price-period">/mo</small>
-                {% endif %}
-            </p>
-
-            <p class="description">
-                {{ property.description|default:"No description provided." }}
-            </p>
-
-            {% if user.is_authenticated and not has_sale_contract %}
-            <form method="post" action="{% url 'properties:toggle_saved_property' property.pk %}">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.path }}">
-
-                <button type="submit" class="cta-btn">
-                    {% if is_saved %}
-                        Remove from saved
+                <p class="price">
+                    ${{ property.price }}
+                    {% if property.listing_type == "sale" %}
+                        <small class="price-period">sale price</small>
                     {% else %}
-                        {% if property.listing_type == 'sale' %}
-                            Save to wishlist
-                        {% else %}
-                            Save to favorites
-                        {% endif %}
+                        <small class="price-period">/mo</small>
                     {% endif %}
-                </button>
-            </form>
-            {% elif not user.is_authenticated and not has_sale_contract %}
-            <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-                Log in to save this property
-            </a>
-            {% endif %}
+                </p>
 
-            <div class="contact-owner" style="margin-top:20px;">
-                {% if request.user.is_authenticated and request.user != property.owner.user and can_contact_owner %}
+                <p class="description">
+                    {{ property.description|default:"No description provided." }}
+                </p>
+
+                {% if user.is_authenticated and not has_sale_contract %}
+                    <form method="post" action="{% url 'properties:toggle_saved_property' property.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+
+                        <button type="submit" class="cta-btn">
+                            {% if is_saved %}
+                                Remove from saved
+                            {% else %}
+                                {% if property.listing_type == "sale" %}
+                                    Save to wishlist
+                                {% else %}
+                                    Save to favorites
+                                {% endif %}
+                            {% endif %}
+                        </button>
+                    </form>
+                {% elif not user.is_authenticated and not has_sale_contract %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
+                        Log in to save this property
+                    </a>
+                {% endif %}
+
+                <div class="contact-owner" style="margin-top:20px;">
+                    {% if request.user.is_authenticated and request.user != property.owner.user and can_contact_owner %}
+                        <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="cta-btn">Contact Owner</button>
+                        </form>
+                    {% elif not request.user.is_authenticated and property.listing_type == "sale" and not has_sale_contract %}
+                        <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}" class="cta-btn">
+                            Log in to contact owner
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="specs">
+                    <span>&#128719; {{ property.rooms }} rooms</span>
+                    <span>&#128703; {{ property.bathrooms }} baths</span>
+                    <span>&#128208; {{ property.square_meters|default:"--" }} m2</span>
+                    <span>&#128101; {{ property.capacity }} guests</span>
+                    <span>&#128197; {{ property.availability_dates|default:"All dates available" }}</span>
+                </div>
+
+                {% if property.latitude and property.longitude %}
+                    <section class="location-section">
+                        <h2 class="location-section-title">Where is it located?</h2>
+                        <div id="detail-map"></div>
+                    </section>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if property.listing_type == "sale" %}
+        <div class="detail-booking-card">
+            <div class="cal-header">
+                <div class="cal-title">Sale details</div>
+            </div>
+
+            <p class="sub" style="margin-top:10px;">Final price: ${{ property.price }}</p>
+
+            {% if has_purchased_property %}
+                <p class="sub" style="font-weight:700;">
+                    This property is already part of your purchase history.
+                </p>
+            {% elif has_sale_contract %}
+                <p class="sub" style="font-weight:700;">
+                    This property has already been sold.
+                </p>
+            {% elif not user.is_authenticated %}
+                <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
+                    Log in to contact the owner
+                </a>
+            {% elif request.user == property.owner.user %}
+                <p class="sub" style="font-weight:700;">You are the owner of this property.</p>
+            {% elif can_contact_owner %}
                 <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
                     {% csrf_token %}
-                    <button type="submit" class="cta-btn">
-                        Contact Owner
+                    <button class="cta-btn" type="submit">
+                        Contact owner about this property
                     </button>
                 </form>
-                {% elif not request.user.is_authenticated and property.listing_type == 'sale' and not has_sale_contract %}
-                <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}" class="cta-btn">
-                    Log in to contact owner
-                </a>
-                {% endif %}
-            </div>
-
-            <div class="specs">
-                <span>&#128719; {{ property.rooms }} rooms</span>
-                <span>&#128703; {{ property.bathrooms }} baths</span>
-                <span>&#128208; {{ property.square_meters|default:"--" }} m2</span>
-                <span>&#128101; {{ property.capacity }} guests</span>
-                <span>&#128197; {{ property.availability_dates|default:"All dates available" }}</span>
-            </div>
-
-            {% if property.latitude and property.longitude %}
-            <section class="location-section">
-                <h2 class="location-section-title">Where is it located?</h2>
-                <div id="detail-map"></div>
-            </section>
-            {% endif %}
-        </div>
-    </div>
-
-    {% if property.listing_type == 'sale' %}
-    <div class="detail-booking-card">
-        <div class="cal-header">
-            <div class="cal-title">Sale details</div>
-        </div>
-
-        <p class="sub" style="margin-top:10px;">
-            Final price: ${{ property.price }}
-        </p>
-
-        {% if has_purchased_property %}
-        <p class="sub" style="font-weight:700;">This property is already part of your purchase history.</p>
-        {% elif has_sale_contract %}
-        <p class="sub" style="font-weight:700;">This property has already been sold.</p>
-        {% elif not user.is_authenticated %}
-        <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">
-            Log in to contact the owner
-        </a>
-        {% elif request.user == property.owner.user %}
-        <p class="sub" style="font-weight:700;">You are the owner of this property.</p>
-        {% elif can_contact_owner %}
-        <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
-            {% csrf_token %}
-            <button class="cta-btn" type="submit">
-                Contact owner about this property
-            </button>
-        </form>
-        {% else %}
-        <p class="sub" style="font-weight:700;">This property is available, but you need to log in to contact the owner.</p>
-        {% endif %}
-    </div>
-    {% else %}
-    <div class="detail-booking-card">
-        <div class="cal-header">
-            <div class="cal-title">Reserve property</div>
-
-            <div class="legend">
-                <span class="dot detail-dot-available"></span> available
-                <span class="dot detail-dot-occupied"></span> unavailable
-            </div>
-        </div>
-
-        <form method="POST" action="{% url 'transactions:create_booking' property.id %}">
-            {% csrf_token %}
-
-            <input id="calendar" type="text">
-            <p class="sub" style="margin-top:10px;">
-                Green days are available. Red days are unavailable.
-            </p>
-
-            <p class="sub" style="margin:4px 0 10px 0; font-weight:700;">
-                Capacity: {{ property.capacity }} guests
-            </p>
-
-            <input type="hidden" name="check_in" id="check_in" required>
-            <input type="hidden" name="check_out" id="check_out" required>
-
-            <button class="cta-btn" type="submit">
-                Request booking
-            </button>
-
-            {% if messages %}
-                {% for message in messages %}
-                <p style="color:red; margin-top:10px;">
-                    {{ message }}
+            {% else %}
+                <p class="sub" style="font-weight:700;">
+                    This property is available, but you need to log in to contact the owner.
                 </p>
-                {% endfor %}
             {% endif %}
-        </form>
-    </div>
+        </div>
+    {% else %}
+        <div class="detail-booking-card">
+            <div class="cal-header">
+                <div class="cal-title">Reserve property</div>
+
+                <div class="legend">
+                    <span class="dot detail-dot-available"></span> available
+                    <span class="dot detail-dot-occupied"></span> unavailable
+                </div>
+            </div>
+
+            <form method="POST" action="{% url 'transactions:create_booking' property.id %}">
+                {% csrf_token %}
+
+                <input id="calendar" type="text">
+                <p class="sub" style="margin-top:10px;">
+                    Green days are available. Red days are unavailable.
+                </p>
+
+                <p class="sub" style="margin:4px 0 10px 0; font-weight:700;">
+                    Capacity: {{ property.capacity }} guests
+                </p>
+
+                <input type="hidden" name="check_in" id="check_in" required>
+                <input type="hidden" name="check_out" id="check_out" required>
+
+                <button class="cta-btn" type="submit">Request booking</button>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <p style="color:red; margin-top:10px;">{{ message }}</p>
+                    {% endfor %}
+                {% endif %}
+            </form>
+        </div>
     {% endif %}
 </section>
 
@@ -247,5 +239,4 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 {% endif %}
-
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static i18n %}
 {% block content %}
 <div class="delete-confirmation-wrapper">
     <div class="delete-confirmation-card">
@@ -7,26 +7,26 @@
             ⚠️
         </div>
 
-        <h2 class="delete-confirmation-title">Delete Property</h2>
+        <h2 class="delete-confirmation-title"> {% trans "Delete Property" %} </h2>
 
         <p class="delete-confirmation-text">
-            Are you sure you want to delete
+            {% trans "Are you sure you want to delete" %}
             <strong>{{ property.title }}</strong>?
         </p>
 
         <p class="delete-confirmation-warning">
-            This action cannot be undone.
+            {% trans "This action cannot be undone." %}
         </p>
 
         <form method="POST" class="delete-confirmation-actions">
             {% csrf_token %}
 
             <button type="submit" class="delete-confirmation-btn delete-confirmation-btn-danger">
-                Delete property
+                {% trans "Delete property" %}
             </button>
 
             <a href="{% url 'properties:list_properties' %}" class="delete-confirmation-btn delete-confirmation-btn-secondary">
-                Cancel
+                {% trans "Cancel" %}
             </a>
         </form>
     </div>
