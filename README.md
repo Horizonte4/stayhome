@@ -1,49 +1,88 @@
-usar
+# 🏠 StayHome
+
+Plataforma de alquiler de alojamientos desarrollada con **Django** y **PostgreSQL**, containerizada con **Docker**.
+
+---
+
+## 📋 Requisitos previos
+
+Asegúrate de tener instalado lo siguiente antes de comenzar:
+
+- [Git](https://git-scm.com/)
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+---
+
+## Instalación y ejecución
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Horizonte4/stayhome.git
+cd stayhome
+```
+
+### 2. Construir y levantar los contenedores
+
+```bash
 docker compose up --build
+```
+
+Esto levantará dos servicios:
+- **web** — aplicación Django
+- **db** — base de datos PostgreSQL
+
+### 3. Aplicar las migraciones
+
+En una terminal aparte (con los contenedores corriendo):
+
+```bash
+docker compose exec web python manage.py migrate
+```
+
+### 4. Crear un superusuario (opcional)
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+### 5. Acceder a la aplicación
+
+Abre tu navegador en:
+
+```
+http://localhost:8000
+```
+
+Panel de administración:
+
+```
+http://localhost:8000/admin
+```
+
+---
+
+##  Detener los contenedores
+
+```bash
 docker compose down
+```
+---
 
-Proyecto básico en Django conectado a PostgreSQL, con un formulario web para registrar usuarios en la base de datos.
+## 👥 Equipo de desarrollo
 
- Requisitos
-- Python 3.x
-- PostgreSQL (pgAdmin opcional)
-- Django
-- psycopg2-binary
+| Nombre | GitHub | Rol |
+|---|---|---|
+| Jerónimo Gómez | [@Horizonte4](https://github.com/Horizonte4) | Developer |
+| Laura Marín | [@lauramarin15](https://github.com/lauramarin15) | Developer |
+| Mateo Cadavid | [@Mcadavidr2](https://github.com/Mcadavidr2) | Developer |
 
- Instalación (Windows)
+---
 
-1) Crear y activar entorno virtual
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+## Tecnologías utilizadas
 
-2) Instalar dependencias
-pip install django psycopg2-binary
-
-Configuración de PostgreSQL
-Ejecutar como postgres:
-CREATE DATABASE usuarios_db;
-
-CREATE USER usuario_django WITH PASSWORD 'password123';
-ALTER ROLE usuario_django SET client_encoding TO 'utf8';
-ALTER ROLE usuario_django SET default_transaction_isolation TO 'read committed';
-ALTER ROLE usuario_django SET timezone TO 'UTC';
-
-GRANT ALL PRIVILEGES ON DATABASE usuarios_db TO usuario_django;
-
--- Permisos para crear tablas en public
-GRANT USAGE, CREATE ON SCHEMA public TO usuario_django;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-GRANT ALL ON TABLES TO usuario_django;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public
-GRANT ALL ON SEQUENCES TO usuario_django;
-
-Migraciones
-python manage.py makemigrations
-python manage.py migrate
-
-Ejecutar el servidor
-python manage.py runserver
-
-Abrir en el navegador:
-http://127.0.0.1:8000/
+- [Django](https://www.djangoproject.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Docker](https://www.docker.com/)
+- [Docker Compose](https://docs.docker.com/compose/)
