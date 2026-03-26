@@ -1,10 +1,10 @@
-# 🏠 StayHome
+# StayHome
 
 Plataforma de alquiler de alojamientos desarrollada con **Django** y **PostgreSQL**, containerizada con **Docker**.
 
 ---
 
-## 📋 Requisitos previos
+## Requisitos previos
 
 Asegúrate de tener instalado lo siguiente antes de comenzar:
 
