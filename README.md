@@ -70,7 +70,7 @@ docker compose down
 ```
 ---
 
-## 👥 Equipo de desarrollo
+## Equipo de desarrollo
 
 | Nombre | GitHub | Rol |
 |---|---|---|
