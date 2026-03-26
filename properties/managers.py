@@ -1,35 +1,57 @@
 from datetime import timedelta
 
 from django.db import models
+from django.db.models import Exists, OuterRef
 from django.utils import timezone
 
 
-class PropertyManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset()
+class PropertyQuerySet(models.QuerySet):
+    def with_owner(self):
+        return self.select_related("owner", "owner__user")
 
-    def active(self):
-        return self.get_queryset().filter(active_listing=True)
+    def available(self, start_date=None, end_date=None):
+        from transactions.models import Booking, Contract
 
-    def available(self):
-        return self.active().filter(state="available")
+        if start_date is None or end_date is None:
+            start_date = timezone.localdate()
+            end_date = start_date + timedelta(days=1)
 
-    def in_city(self, city):
-        if not city:
-            return self.available()
-        return self.available().filter(city__iexact=city)
+        sold_contracts = Contract.objects.filter(
+            property_id=OuterRef("pk"),
+            type=Contract.TYPE_SALE,
+        )
+        approved_booking_conflicts = Booking.objects.filter(
+            property_id=OuterRef("pk"),
+            status=Booking.STATUS_APPROVED,
+            check_in__lt=end_date,
+            check_out__gt=start_date,
+        )
 
-    def by_price_range(self, min_price=None, max_price=None):
-        queryset = self.available()
+        return (
+            self.annotate(
+                has_sale_contract_flag=Exists(sold_contracts),
+                has_booking_conflict_flag=Exists(approved_booking_conflicts),
+            )
+            .filter(has_sale_contract_flag=False)
+            .exclude(
+                listing_type__in=["short_term", "long_term"],
+                has_booking_conflict_flag=True,
+            )
+        )
 
-        if min_price is not None:
-            queryset = queryset.filter(price__gte=min_price)
+    def in_city(self, city, start_date=None, end_date=None):
+        return self.available(start_date, end_date).filter(city__iexact=city)
 
-        if max_price is not None:
-            queryset = queryset.filter(price__lte=max_price)
+    def by_price_range(self, min_price, max_price, start_date=None, end_date=None):
+        return self.available(start_date, end_date).filter(
+            price__gte=min_price,
+            price__lte=max_price,
+        )
 
-        return queryset
-
-    def recent(self, days=7):
+    def recent(self, days=7, start_date=None, end_date=None):
         limit_date = timezone.now() - timedelta(days=days)
-        return self.available().filter(created_at__gte=limit_date)
+        return self.available(start_date, end_date).filter(created_at__gte=limit_date)
+
+
+class PropertyManager(models.Manager.from_queryset(PropertyQuerySet)):
+    pass

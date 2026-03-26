@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block title %} Explore Properties{% endblock %}
+{% block title %}{% trans "Explore Properties" %}{% endblock %}
 
 {% block content %}
 <div class="explore-page">
     <div class="explore-header">
-        <h1 class="explore-title"> {% trans "Explore Properties" %} </h1>
+        <h1 class="explore-title">{% trans "Explore Properties" %}</h1>
         <p class="explore-subtitle">
-           {% blocktrans with count=properties.paginator.count|default:properties|length %}
+            {% blocktrans with count=properties.paginator.count|default:properties|length %}
                 Browse through {{ count }} available properties
             {% endblocktrans %}
         </p>
@@ -16,12 +16,12 @@
     <div class="explore-layout">
         <aside class="explore-sidebar">
             <form method="get" class="explore-filter-card">
-                <h3 class="explore-filter-title"> {% trans "Filters" %} </h3>
+                <h3 class="explore-filter-title">{% trans "Filters" %}</h3>
 
                 <div class="explore-filter-group">
-                    <label> {% trans "Property Type" %} </label>
+                    <label>{% trans "Property Type" %}</label>
                     <select name="listing_type" class="explore-select">
-                        <option value=""> {% trans "All Types" %} </option>
+                        <option value="">{% trans "All Types" %}</option>
                         <option value="short_term" {% if filters.listing_type == "short_term" %}selected{% endif %}>
                             {% trans "Short-term rental" %}
                         </option>
@@ -35,25 +35,9 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label> {% trans "Category" %} </label>
-                    <select name="state" class="explore-select">
-                        <option value=""> {% trans "All Categories" %} </option>
-                        <option value="available" {% if filters.state == "available" %}selected{% endif %}>
-                            {% trans "Available" %}
-                        </option>
-                        <option value="occupied" {% if filters.state == "occupied" %}selected{% endif %}>
-                            {% trans "Occupied" %}
-                        </option>
-                        <option value="reserved" {% if filters.state == "reserved" %}selected{% endif %}>
-                            {% trans "Reserved" %}
-                        </option>
-                    </select>
-                </div>
-
-                <div class="explore-filter-group">
-                    <label> {% trans "Bedrooms" %} </label>
+                    <label>{% trans "Bedrooms" %}</label>
                     <select name="rooms" class="explore-select">
-                        <option value=""> {% trans "Any" %} </option>
+                        <option value="">{% trans "Any" %}</option>
                         <option value="1" {% if filters.rooms == "1" %}selected{% endif %}>1</option>
                         <option value="2" {% if filters.rooms == "2" %}selected{% endif %}>2</option>
                         <option value="3" {% if filters.rooms == "3" %}selected{% endif %}>3</option>
@@ -63,7 +47,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label> {% trans "Location" %} </label>
+                    <label>{% trans "Location" %}</label>
                     <input
                         type="text"
                         name="city"
@@ -74,7 +58,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label> {% trans "Bathrooms" %} </label>
+                    <label>{% trans "Bathrooms" %}</label>
                     <input
                         type="number"
                         name="bathrooms"
@@ -87,7 +71,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label> {% trans "Guests" %} </label>
+                    <label>{% trans "Guests" %}</label>
                     <input
                         type="number"
                         name="capacity"
@@ -100,7 +84,7 @@
                 </div>
 
                 <div class="explore-filter-group">
-                    <label> {% trans "Availability" %} </label>
+                    <label>{% trans "Availability" %}</label>
                     <input
                         type="text"
                         id="availability_range"
@@ -108,18 +92,8 @@
                         class="explore-input"
                         readonly
                     >
-                    <input
-                        type="hidden"
-                        id="check_in"
-                        name="check_in"
-                        value="{{ filters.check_in }}"
-                    >
-                    <input
-                        type="hidden"
-                        id="check_out"
-                        name="check_out"
-                        value="{{ filters.check_out }}"
-                    >
+                    <input type="hidden" id="check_in" name="check_in" value="{{ filters.check_in }}">
+                    <input type="hidden" id="check_out" name="check_out" value="{{ filters.check_out }}">
                 </div>
 
                 <input type="hidden" name="q" value="{{ filters.q }}">
@@ -128,11 +102,8 @@
                     <button type="submit" class="explore-filter-btn">
                         {% trans "Apply Filters" %}
                     </button>
-                    <a
-                        href="{% url 'properties:list_properties' %}"
-                        class="explore-clear-btn"
-                    >
-                       {% trans "✕ Clear Filters" %}
+                    <a href="{% url 'properties:list_properties' %}" class="explore-clear-btn">
+                        {% trans "Clear Filters" %}
                     </a>
                 </div>
             </form>
@@ -140,7 +111,7 @@
 
         <section class="explore-main">
             <form method="get" class="explore-search-bar">
-                <span class="explore-search-icon">⌕</span>
+                <span class="explore-search-icon">&#8981;</span>
                 <input
                     type="text"
                     name="q"
@@ -155,7 +126,6 @@
                 <input type="hidden" name="bathrooms" value="{{ filters.bathrooms }}">
                 <input type="hidden" name="capacity" value="{{ filters.capacity }}">
                 <input type="hidden" name="listing_type" value="{{ filters.listing_type }}">
-                <input type="hidden" name="state" value="{{ filters.state }}">
                 <input type="hidden" name="check_in" value="{{ filters.check_in }}">
                 <input type="hidden" name="check_out" value="{{ filters.check_out }}">
             </form>
@@ -172,17 +142,9 @@
                         <div class="explore-card">
                             <div class="explore-card-image-wrap">
                                 {% if property.image %}
-                                    <img
-                                        src="{{ property.image.url }}"
-                                        alt="{{ property.title }}"
-                                        class="explore-card-image"
-                                    >
+                                    <img src="{{ property.image.url }}" alt="{{ property.title }}" class="explore-card-image">
                                 {% elif property.image_url %}
-                                    <img
-                                        src="{{ property.image_url }}"
-                                        alt="{{ property.title }}"
-                                        class="explore-card-image"
-                                    >
+                                    <img src="{{ property.image_url }}" alt="{{ property.title }}" class="explore-card-image">
                                 {% else %}
                                     <div class="property-card-image-placeholder">
                                         {% trans "No image available" %}
@@ -190,14 +152,10 @@
                                 {% endif %}
 
                                 <div class="explore-card-badges">
-                                    <span class="explore-badge">
-                                        {{ property.get_listing_type_display }}
+                                    <span class="explore-badge">{{ property.get_listing_type_display }}</span>
+                                    <span class="explore-badge explore-badge-featured">
+                                        {{ property.availability_label }}
                                     </span>
-                                    {% if property.state == "available" %}
-                                        <span class="explore-badge explore-badge-featured">
-                                            {% trans "Featured" %}
-                                        </span>
-                                    {% endif %}
                                 </div>
                             </div>
 
@@ -207,13 +165,13 @@
                                 </div>
 
                                 <p class="explore-card-location">
-                                    📍 {{ property.address|default:property.city }}
+                                    &#128205; {{ property.address|default:property.city }}
                                 </p>
 
                                 <div class="explore-card-meta">
-                                    <span>🛏 {{ property.rooms }}</span>
-                                    <span>🛁 {{ property.bathrooms }}</span>
-                                    <span>📐 {{ property.square_meters|default:"--" }} m²</span>
+                                    <span>&#128719; {{ property.rooms }}</span>
+                                    <span>&#128703; {{ property.bathrooms }}</span>
+                                    <span>&#128208; {{ property.square_meters|default:"--" }} m2</span>
                                 </div>
 
                                 <div class="explore-card-footer">
@@ -227,38 +185,24 @@
                                             {% endif %}
                                         </div>
                                         <div class="explore-card-owner">
-                                            {% blocktrans with capacity=property.capacity state=property.get_state_display %}
-                                                {{ capacity }} guests · {{ state }}
-                                            {% endblocktrans %}
+                                            {{ property.capacity }} guests · {{ property.availability_label }}
                                         </div>
                                     </div>
 
-                                    <a
-                                        href="{% url 'properties:property_detail' pk=property.pk %}"
-                                        class="explore-details-btn"
-                                    >
-                                       {% trans "View Details" %}
+                                    <a href="{% url 'properties:property_detail' pk=property.pk %}" class="explore-details-btn">
+                                        {% trans "View Details" %}
                                     </a>
                                 </div>
 
                                 {% if request.user.is_authenticated and request.user.is_owner and property.owner and property.owner.user_id == request.user.id %}
                                     <div class="property-card-actions">
-                                        <a
-                                            href="{% url 'properties:edit_property' pk=property.pk %}"
-                                            class="property-card-action-btn property-card-action-btn-edit"
-                                        >
+                                        <a href="{% url 'properties:edit_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">
                                             {% trans "Edit" %}
                                         </a>
-                                        <a
-                                            href="{% url 'properties:edit_calendar' pk=property.pk %}"
-                                            class="property-card-action-btn property-card-action-btn-edit"
-                                        >
-                                           {% trans "Edit calendar" %}
+                                        <a href="{% url 'properties:edit_calendar' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-edit">
+                                            {% trans "Edit calendar" %}
                                         </a>
-                                        <a
-                                            href="{% url 'properties:delete_property' pk=property.pk %}"
-                                            class="property-card-action-btn property-card-action-btn-delete"
-                                        >
+                                        <a href="{% url 'properties:delete_property' pk=property.pk %}" class="property-card-action-btn property-card-action-btn-delete">
                                             {% trans "Delete" %}
                                         </a>
                                     </div>
@@ -269,17 +213,14 @@
                 </div>
             {% else %}
                 <p class="property-list-empty">
-                   {% trans "No properties found with the selected filters." %}
+                    {% trans "No properties found with the selected filters." %}
                 </p>
             {% endif %}
         </section>
     </div>
 </div>
 
-<link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
@@ -292,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    let defaultDates = [];
+    const defaultDates = [];
     if (checkInInput.value) {
         defaultDates.push(checkInInput.value);
     }
@@ -308,19 +249,10 @@ document.addEventListener("DOMContentLoaded", function () {
         disableMobile: true,
         onChange: function (selectedDates, dateStr, instance) {
             if (selectedDates.length === 2) {
-                checkInInput.value = instance.formatDate(
-                    selectedDates[0],
-                    "Y-m-d"
-                );
-                checkOutInput.value = instance.formatDate(
-                    selectedDates[1],
-                    "Y-m-d"
-                );
+                checkInInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
+                checkOutInput.value = instance.formatDate(selectedDates[1], "Y-m-d");
             } else if (selectedDates.length === 1) {
-                checkInInput.value = instance.formatDate(
-                    selectedDates[0],
-                    "Y-m-d"
-                );
+                checkInInput.value = instance.formatDate(selectedDates[0], "Y-m-d");
                 checkOutInput.value = "";
             } else {
                 checkInInput.value = "";

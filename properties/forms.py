@@ -8,6 +8,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import URLValidator
+from django.utils.translation import gettext_lazy as _
 
 from .models import Property
 
@@ -19,7 +20,7 @@ class PropertyForm(forms.ModelForm):
         widget=forms.TextInput(
             attrs={
                 "class": "form-input",
-                "placeholder": "https://...",
+                "placeholder": _("https://..."),
             }
         ),
     )
@@ -34,7 +35,6 @@ class PropertyForm(forms.ModelForm):
             "latitude",
             "longitude",
             "price",
-            "state",
             "listing_type",
             "rooms",
             "bathrooms",
@@ -42,20 +42,19 @@ class PropertyForm(forms.ModelForm):
             "capacity",
             "image",
             "image_url",
-            "active_listing",
         ]
         widgets = {
             "title": forms.TextInput(
                 attrs={
                     "class": "form-input",
-                    "placeholder": "Modern Downtown Apartment",
+                    "placeholder": _("Modern Downtown Apartment"),
                 }
             ),
             "description": forms.Textarea(
                 attrs={
                     "class": "form-input",
                     "rows": 4,
-                    "placeholder": (
+                    "placeholder": _(
                         "Describe highlights, amenities, nearby places..."
                     ),
                 }
@@ -63,7 +62,7 @@ class PropertyForm(forms.ModelForm):
             "address": forms.TextInput(
                 attrs={
                     "class": "form-input",
-                    "placeholder": "Search location",
+                    "placeholder": _("Search location"),
                     "autocomplete": "off",
                 }
             ),
@@ -77,20 +76,9 @@ class PropertyForm(forms.ModelForm):
                     "step": "0.01",
                 }
             ),
-            "state": forms.Select(attrs={"class": "form-input"}),
             "listing_type": forms.Select(attrs={"class": "form-input"}),
-            "rooms": forms.NumberInput(
-                attrs={
-                    "class": "form-input",
-                    "min": 1,
-                }
-            ),
-            "bathrooms": forms.NumberInput(
-                attrs={
-                    "class": "form-input",
-                    "min": 1,
-                }
-            ),
+            "rooms": forms.NumberInput(attrs={"class": "form-input", "min": 1}),
+            "bathrooms": forms.NumberInput(attrs={"class": "form-input", "min": 1}),
             "square_meters": forms.NumberInput(
                 attrs={
                     "class": "form-input",
@@ -98,29 +86,12 @@ class PropertyForm(forms.ModelForm):
                     "step": 1,
                 }
             ),
-            "capacity": forms.NumberInput(
-                attrs={
-                    "class": "form-input",
-                    "min": 1,
-                }
-            ),
+            "capacity": forms.NumberInput(attrs={"class": "form-input", "min": 1}),
             "image": forms.ClearableFileInput(attrs={"class": "form-input"}),
-            "active_listing": forms.CheckboxInput(
-                attrs={"class": "form-checkbox"}
-            ),
         }
 
     def __init__(self, *args, **kwargs):
-        show_active_listing = kwargs.pop("show_active_listing", True)
         super().__init__(*args, **kwargs)
-
-        if not show_active_listing:
-            self.fields.pop("active_listing", None)
-
-        if not self.instance.pk:
-            self.fields["state"].initial = "available"
-            if "active_listing" in self.fields:
-                self.fields["active_listing"].initial = True
 
         required_fields = [
             "title",
@@ -128,14 +99,12 @@ class PropertyForm(forms.ModelForm):
             "address",
             "city",
             "price",
-            "state",
             "listing_type",
             "rooms",
             "bathrooms",
             "square_meters",
             "capacity",
         ]
-
         for field_name in required_fields:
             if field_name in self.fields:
                 self.fields[field_name].required = True
@@ -171,14 +140,14 @@ class PropertyForm(forms.ModelForm):
                 content_type = response.headers.get("Content-Type", "")
         except Exception as exc:
             raise ValidationError(
-                "Could not download the image from that URL."
+                _("Could not download the image from that URL.")
             ) from exc
 
         if not image_bytes:
-            raise ValidationError("The image URL returned an empty file.")
+            raise ValidationError(_("The image URL returned an empty file."))
 
         if content_type and not content_type.lower().startswith("image/"):
-            raise ValidationError("The URL must point directly to an image.")
+            raise ValidationError(_("The URL must point directly to an image."))
 
         file_name = self._build_remote_image_name(image_url, content_type)
         return ContentFile(image_bytes, name=file_name)
@@ -193,7 +162,7 @@ class PropertyForm(forms.ModelForm):
             validator(image_url)
         except ValidationError as exc:
             raise forms.ValidationError(
-                "Enter a valid http or https URL."
+                _("Enter a valid http or https URL.")
             ) from exc
 
         return image_url
@@ -204,17 +173,16 @@ class PropertyForm(forms.ModelForm):
         for field_name in ["price", "rooms", "bathrooms", "capacity"]:
             value = cleaned_data.get(field_name)
             if value is not None and value <= 0:
-                self.add_error(field_name, "This value must be greater than zero.")
+                self.add_error(field_name, _("This value must be greater than zero."))
 
         square_meters = cleaned_data.get("square_meters")
         if square_meters is not None and square_meters < 0:
-            self.add_error("square_meters", "This value cannot be negative.")
+            self.add_error("square_meters", _("This value cannot be negative."))
 
         image = cleaned_data.get("image")
         image_url = cleaned_data.get("image_url")
-
         if not image and not image_url:
-            error_message = "Upload an image or provide an image URL."
+            error_message = _("Upload an image or provide an image URL.")
             self.add_error("image", error_message)
             self.add_error("image_url", error_message)
 
@@ -223,7 +191,7 @@ class PropertyForm(forms.ModelForm):
                 cleaned_data["image"] = self._download_image_from_url(image_url)
                 cleaned_data["image_url"] = ""
             except ValidationError as exc:
-                self.add_error("image_url", exc.message)
+                self.add_error("image_url", str(exc))
 
         latitude = cleaned_data.get("latitude")
         longitude = cleaned_data.get("longitude")
@@ -233,13 +201,13 @@ class PropertyForm(forms.ModelForm):
         if address and (latitude is None or longitude is None):
             self.add_error(
                 "address",
-                "Debes seleccionar una ubicación válida en el mapa.",
+                _("You must select a valid location on the map."),
             )
 
         if address and not city:
             self.add_error(
                 "address",
-                "No se pudo detectar la ciudad. Selecciona una ubicación válida.",
+                _("City could not be detected. Please select a valid location."),
             )
 
         return cleaned_data

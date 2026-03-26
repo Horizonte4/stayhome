@@ -1,15 +1,18 @@
 {% extends "base.html" %}
 {% load static i18n %}
 
-{% block title %}Editar calendario – {{ property.title }}{% endblock %}
+{% block title %}{% trans "Edit calendar" %} - {{ property.title }}{% endblock %}
 
 {% block content %}
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <div class="form-card" style="background:#fff; padding:28px; border-radius:18px; box-shadow:0 16px 40px rgba(0,0,0,0.08); border:1px solid #e5e7eb; max-width:720px; margin:0 auto;">
-    <h2 class="form-title" style="font-size:1.4rem; font-weight:800; margin-bottom:6px;">{% trans "Calendario de disponibilidad" %}</h2>
-    <p class="form-sub" style="color:#6b7280; margin-bottom:18px;">{% trans "Selecciona los d" %}ías que quieras bloquear. Si dejas el calendario vacío, todos los días quedarán disponibles.</p>
+    <h2 class="form-title" style="font-size:1.4rem; font-weight:800; margin-bottom:6px;">
+        {% trans "Availability Calendar" %}
+    </h2>
+    <p class="form-sub" style="color:#6b7280; margin-bottom:18px;">
+        {% trans "Select the days you want to block. If you leave the calendar blank, all days will remain available." %}
+    </p>
 
     {% if messages %}
         <div style="background:#ecfeff; border:1px solid #67e8f9; color:#0f172a; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
@@ -20,20 +23,27 @@
     <form method="post" class="form-grid" style="display:flex; flex-direction:column; gap:14px;" novalidate>
         {% csrf_token %}
 
-        <label for="availability-calendar" style="font-weight:700; color:#111827;">{% trans "Fechas bloqueadas" %}</label>
+        <label for="availability-calendar" style="font-weight:700; color:#111827;">
+            {% trans "Blocked Dates" %}
+        </label>
         <input
             id="availability-calendar"
             name="availability_dates"
             class="form-input"
-            placeholder="Selecciona fechas a bloquear"
+            placeholder="{% trans 'Select dates to block' %}"
             style="border:1px solid #d1d5db; border-radius:12px; padding:12px 14px; font-size:0.95rem; background:#f9fafb;"
         >
+        <input type="hidden" name="clear_all_dates" id="clear-all-dates" value="0">
 
-        <small style="color:#6b7280;">{% trans "Solo las fechas seleccionadas quedan bloqueadas" %}. Sin selección = todo disponible.</small>
+        <small style="color:#6b7280;">
+            {% trans "Only the selected dates will be blocked. No selection means all dates stay available." %}
+        </small>
 
         <div style="display:flex; gap:10px; margin-top:6px;">
-            <button type="submit" class="btn-list">{% trans "Guardar calendario" %}</button>
-            <button type="button" id="clear-dates" class="btn-secondary" style="padding:10px 14px; border:1px solid #d1d5db; border-radius:10px; background:#fff;">{% trans "Liberar todos los d" %}ías</button>
+            <button type="submit" class="btn-list">{% trans "Save Calendar" %}</button>
+            <button type="button" id="clear-dates" class="btn-secondary" style="padding:10px 14px; border:1px solid #d1d5db; border-radius:10px; background:#fff;">
+                {% trans "Free All Days" %}
+            </button>
         </div>
     </form>
 </div>
@@ -41,6 +51,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     const initialDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
+    const clearAllDatesInput = document.getElementById("clear-all-dates");
 
     const fp = flatpickr("#availability-calendar", {
         mode: "multiple",
@@ -48,14 +59,16 @@
         minDate: "today",
         defaultDate: initialDates,
         onChange: function(selectedDates, dateStr) {
-            // flatpickr ya escribe el valor separado por comas en el input
+            if (selectedDates.length > 0) {
+                clearAllDatesInput.value = "0";
+            }
         }
     });
 
     const clearBtn = document.getElementById("clear-dates");
     clearBtn.addEventListener("click", function() {
+        clearAllDatesInput.value = "1";
         fp.clear();
     });
 </script>
-
 {% endblock %}
