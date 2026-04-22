@@ -1,6 +1,7 @@
 {% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +23,7 @@
 <body>
 
 <!-- NAVBAR -->
-<nav>
+<nav class="{% if request.user.is_authenticated and request.user.is_owner %}nav-owner{% endif %}">
 
    <a href="{% url 'home' %}" class="logo">
       <div class="logo-icon">
@@ -47,7 +48,7 @@
 
       <!-- PROPERTIES -->
       <li>
-         <a href="/properties/" class="{% block nav_property %}{% endblock %}">
+         <a href="{% url 'properties:list_properties' %}" class="{% block nav_property %}{% endblock %}">
             <svg viewBox="0 0 24 24" fill="currentColor">
                <path d="M17 11h2v2h-2v-2zm0 4h2v2h-2v-2zm-4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM1 21h22V3H1v18zm2-2V5h18v14H3zm4-8h2v2H7v-2zm0 4h2v2H7v-2zM7 7h2v2H7V7z"/>
             </svg>
@@ -162,25 +163,34 @@
       </a>
       {% endif %}
 
+      <!-- LANGUAGE SELECTOR -->
+      <form
+         action="{% url 'set_language' %}"
+         method="post"
+         id="language-form"
+         class="language-form"
+      >
+         {% csrf_token %}
+         <input
+            name="next"
+            type="hidden"
+            id="language-next"
+            value="{{ request.get_full_path }}"
+         >
+         <label for="language-select" class="language-label">{% trans "Language" %}</label>
+         <select name="language" id="language-select" aria-label="{% trans 'Language' %}">
+            {% get_available_languages as LANGUAGES %}
+            {% for lang_code, lang_name in LANGUAGES %}
+               <option
+                  value="{{ lang_code }}"
+                  {% if lang_code == LANGUAGE_CODE %}selected{% endif %}
+               >
+                  {{ lang_name }}
+               </option>
+            {% endfor %}
+         </select>
+      </form>
    </div>
-
-
-   {% load i18n %}
-
-<!-- LANGUAGE SELECTOR -->
-<form action="{% url 'set_language' %}" method="post">
-  {% csrf_token %}
-  <input name="next" type="hidden" value="{{ request.path }}">
-  <select name="language" onchange="this.form.submit()">
-    {% get_current_language as LANGUAGE_CODE %}
-    {% get_available_languages as LANGUAGES %}
-    {% for lang_code, lang_name in LANGUAGES %}
-      <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
-        {{ lang_name }}
-      </option>
-    {% endfor %}
-  </select>
-</form>
 </nav>
 
 <!-- PAGE -->
@@ -209,7 +219,7 @@
    </p>
 
    <div class="cta-actions">
-      <a href="/properties/" class="cta-btn-primary">
+      <a href="{% url 'properties:list_properties' %}" class="cta-btn-primary">
         {% trans "🔍 Browse Properties" %}
       </a>
 
@@ -220,6 +230,31 @@
 
 </section>
 {% endblock %}
+
+<script>
+   const languageForm = document.getElementById("language-form");
+   const languageSelect = document.getElementById("language-select");
+   const languageNext = document.getElementById("language-next");
+   const currentPath = "{{ request.path|escapejs }}";
+   const currentQuery = "{{ request.META.QUERY_STRING|escapejs }}";
+
+   if (languageForm && languageSelect && languageNext) {
+      languageSelect.addEventListener("change", function () {
+         const selectedLanguage = languageSelect.value;
+         const basePath = currentPath.replace(/^\/(en|es)(?=\/|$)/, "") || "/";
+         const normalizedPath = basePath.startsWith("/") ? basePath : "/" + basePath;
+         const translatedPath = selectedLanguage === "en"
+            ? normalizedPath
+            : "/" + selectedLanguage + (normalizedPath === "/" ? "/" : normalizedPath);
+
+         languageNext.value = currentQuery
+            ? translatedPath + "?" + currentQuery
+            : translatedPath;
+
+         languageForm.submit();
+      });
+   }
+</script>
 
 </body>
 </html>

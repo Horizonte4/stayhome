@@ -1,48 +1,49 @@
-{% extends 'base.html' %} {% block title %}Edit Profile – StayHome{% endblock %}
-{% block content %}
+{% extends 'base.html' %}
 {% load static i18n %}
+{% block title %}{% trans "Edit Profile" %} - StayHome{% endblock %}
 
+{% block content %}
 <div class="page">
-  <div class="card auth-card">
-    <h2 class="section-title" style="text-align: center"> {% trans "Edit Profile" %} </h2>
-    <p class="section-sub" style="text-align: center">
-      {% trans "Update your personal information and password." %}
-    </p>
+    <div class="card" style="max-width:720px; margin:0 auto;">
+        <div class="card-body">
+            <h1 class="section-title">{% trans "Edit Profile" %}</h1>
+            <p class="section-sub">{% trans "Update your personal information and password." %}</p>
 
-    <form method="post" class="auth-form">
-      {% csrf_token %} {{ form.non_field_errors }}
+            <form method="post" class="form-grid" style="margin-top:20px;">
+                {% csrf_token %}
 
-      <!-- Personal Info -->
-      <div class="form-row">
-        <div class="form-group">
-          <label> {% trans "First Name" %} </label>
-          {{ form.first_name }} {{ form.first_name.errors }}
+                <div class="field">
+                    <label>{% trans "First Name" %}</label>
+                    {{ form.first_name }}
+                    {{ form.first_name.errors }}
+                </div>
+
+                <div class="field">
+                    <label>{% trans "Last Name" %}</label>
+                    {{ form.last_name }}
+                    {{ form.last_name.errors }}
+                </div>
+
+                <div class="field">
+                    <label>{% trans "Phone" %}</label>
+                    {{ form.phone }}
+                    {{ form.phone.errors }}
+                </div>
+
+                <div class="field">
+                    <label>{% trans "Email" %}</label>
+                    <input type="email" value="{{ request.user.email }}" class="form-input" disabled>
+                    <small>{% trans "Email cannot be changed" %}</small>
+                </div>
+
+                <div class="submit-bar" style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button type="submit" class="btn-list">{% trans "Save Changes" %}</button>
+                    <a href="{% url 'board' %}" class="property-card-action-btn">
+                        {% trans "Cancel and return to dashboard" %}
+                    </a>
+                </div>
+            </form>
         </div>
-
-        <div class="form-group">
-          <label> {% trans "Last Name" %} </label>
-          {{ form.last_name }} {{ form.last_name.errors }}
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label> {% trans "Email" %} </label>
-        <input type="email" value="{{ request.user.email }}" disabled />
-        <small style="color: #94a3b8"> {% trans "Email cannot be changed" %}. </small>
-      </div>
-
-      <div class="form-group">
-        <label> {% trans "Phone" %} </label>
-        {{ form.phone }} {{ form.phone.errors }}
-      </div>
-
-      <button type="submit" class="btn-list full-width"> {% trans "Save Changes" %} </button>
-
-      <p class="auth-footer">
-        <a href="{% url 'board' %}"> {% trans "Cancel and return to dashboard" %} </a>
-      </p>
-    </form>
-  </div>
+    </div>
 </div>
-
 {% endblock %}

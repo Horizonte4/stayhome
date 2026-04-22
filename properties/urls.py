@@ -23,9 +23,5 @@ urlpatterns = [
     path("<int:pk>/edit/", edit_property, name="edit_property"),
     path("<int:pk>/calendar/", edit_calendar, name="edit_calendar"),
     path("<int:pk>/delete/", delete_property, name="delete_property"),
-    path(
-        "<int:pk>/toggle-save/",
-        toggle_saved_property,
-        name="toggle_saved_property",
-    ),
+    path("<int:pk>/toggle-save/", toggle_saved_property, name="toggle_saved_property"),
 ]

@@ -13,22 +13,7 @@ SECRET_KEY = os.getenv(
     "django-insecure-s)=q^^j@j32c)-a5o^5tt&0chq!-!uqix-$pqi1xb(s81wulj3",
 )
 
-
-LANGUAGE_CODE = 'en'
-
-LANGUAGES = [
-    ('en', _('English')),
-    ('es', _('Spanish')),
-]
-
-USE_I18N = True
-USE_L10N = True
-
-LOCALE_PATHS = [BASE_DIR / 'locale']
-
-# Mantener True en desarrollo para que no se rompan static/media
 DEBUG = True
-
 ALLOWED_HOSTS = ["*"]
 
 LOGIN_REDIRECT_URL = "home"
@@ -88,7 +73,7 @@ DATABASES = {
         "NAME": os.getenv("DB_NAME", "usuarios_db"),
         "USER": os.getenv("DB_USER", "usuario_django"),
         "PASSWORD": os.getenv("DB_PASSWORD", "password123"),
-        "HOST": os.getenv("DB_HOST", "db"),
+        "HOST": os.getenv("DB_HOST", "localhost"),
         "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
@@ -108,20 +93,24 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "en"
+LANGUAGES = [
+    ("en", _("English")),
+    ("es", _("Spanish")),
+]
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
+LOCALE_PATHS = [BASE_DIR / "locale"]
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 AUTH_USER_MODEL = "users.User"
-
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

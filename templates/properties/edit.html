@@ -1,32 +1,31 @@
 {% extends "base.html" %}
 {% load static i18n %}
 
-{% block title %}Edit Property{% endblock %}
+{% block title %}{% trans "Edit Property" %}{% endblock %}
 
 {% block content %}
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <div class="form-card">
-    <h2 class="form-title"> {% trans "Edit Property" %} : {{ property.title }}</h2>
+    <h2 class="form-title">{% trans "Edit Property" %}: {{ property.title }}</h2>
 
     <form method="POST" enctype="multipart/form-data" class="form-grid" novalidate>
         {% csrf_token %}
 
         <div class="field">
-            <label> {% trans "Title" %} </label>
+            <label>{% trans "Title" %}</label>
             {{ form.title }}
             {{ form.title.errors }}
         </div>
 
         <div class="field">
-            <label> {% trans "Description" %} </label>
+            <label>{% trans "Description" %}</label>
             {{ form.description }}
             {{ form.description.errors }}
         </div>
 
         <div class="field">
-            <label> {% trans "Address" %} </label>
+            <label>{% trans "Address" %}</label>
             {{ form.address }}
             {{ form.address.errors }}
 
@@ -41,43 +40,37 @@
 
         <div class="form-grid three-col">
             <div class="field">
-                <label> {% trans "Price" %} </label>
+                <label>{% trans "Price" %}</label>
                 {{ form.price }}
                 {{ form.price.errors }}
             </div>
 
             <div class="field">
-                <label> {% trans "Status" %} </label>
-                {{ form.state }}
-                {{ form.state.errors }}
-            </div>
-
-            <div class="field">
-                <label> {% trans "Listing Type" %} </label>
+                <label>{% trans "Listing Type" %}</label>
                 {{ form.listing_type }}
                 {{ form.listing_type.errors }}
             </div>
 
             <div class="field">
-                <label> {% trans "Rooms" %} </label>
+                <label>{% trans "Rooms" %}</label>
                 {{ form.rooms }}
                 {{ form.rooms.errors }}
             </div>
 
             <div class="field">
-                <label> {% trans "Bathrooms" %} </label>
+                <label>{% trans "Bathrooms" %}</label>
                 {{ form.bathrooms }}
                 {{ form.bathrooms.errors }}
             </div>
 
             <div class="field">
-                <label>{% trans "Area " %}(m²) </label>
+                <label>{% trans "Area" %} (m2)</label>
                 {{ form.square_meters }}
                 {{ form.square_meters.errors }}
             </div>
 
             <div class="field">
-                <label> {% trans "Guests Capacity" %} </label>
+                <label>{% trans "Guests Capacity" %}</label>
                 {{ form.capacity }}
                 {{ form.capacity.errors }}
             </div>
@@ -85,32 +78,28 @@
 
         <div class="form-grid two-col">
             <div class="field">
-                <label> {% trans "Main Photo" %} </label>
+                <label>{% trans "Main Photo" %}</label>
                 {{ form.image }}
                 {{ form.image.errors }}
             </div>
 
             <div class="field">
-                <label> {% trans "Main Photo URL" %} </label>
+                <label>{% trans "Main Photo URL" %}</label>
                 {{ form.image_url }}
                 {{ form.image_url.errors }}
             </div>
         </div>
 
-        <div class="pill-checkbox">
-            {{ form.active_listing }}
-            <span> {% trans "Active Listing" %} </span>
-            {{ form.active_listing.errors }}
-        </div>
-        
+        <p class="section-sub" style="margin-bottom:0;">
+            {% trans "Availability is now managed from bookings and the blocked dates calendar." %}
+        </p>
 
         <div class="submit-bar">
-            <button type="submit" class="btn-list"> {% trans "Save Changes" %} </button>
+            <button type="submit" class="btn-list">{% trans "Save Changes" %}</button>
         </div>
     </form>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="{% static 'js/property_location.js' %}"></script>
-
 {% endblock %}

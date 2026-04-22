@@ -643,6 +643,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  overflow: hidden;
 }
 
 .cal-header {
@@ -691,6 +692,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  min-width: 0;
 }
 
 .detail-booking-card .flatpickr-calendar,
@@ -857,6 +859,36 @@
   .detail-booking-card .flatpickr-calendar,
   .detail-booking-card .flatpickr-calendar.inline {
     transform: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .detail-booking-card {
+    padding: 14px;
+  }
+
+  .cal-header {
+    gap: 12px;
+  }
+
+  .legend {
+    gap: 10px;
+    font-size: 0.82rem;
+  }
+
+  .legend span {
+    gap: 6px;
+  }
+
+  .detail-booking-card .flatpickr-calendar,
+  .detail-booking-card .flatpickr-calendar.inline {
+    padding: 8px;
+  }
+
+  .detail-booking-card .flatpickr-day {
+    max-width: none;
+    height: 36px;
+    line-height: 36px;
   }
 }
 
