@@ -1,29 +1,27 @@
-# Librerías externas
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.timezone import now
 from datetime import timedelta
 
-# Modelos
 from .models import User, Client, Owner
 
 # ── Título del panel ─────────────────────────────────────────────────────────
-admin.site.site_header  = "StayHome Admin"
-admin.site.site_title   = "StayHome"
-admin.site.index_title  = "Panel de administración"
+admin.site.site_header = "StayHome Admin"
+admin.site.site_title = "StayHome"
+admin.site.index_title = "Panel de administración"
 
 
-# ── Filtro: fecha de registro ─────────────────────────────────────────────────
+# ── Filtro: fecha de registro ─────────────────────────────────────────────
 class RegistrationDateFilter(admin.SimpleListFilter):
-    title         = "fecha de registro"
+    title = "fecha de registro"
     parameter_name = "registered"
 
     def lookups(self, request, model_admin):
         return [
-            ("today",    "Hoy"),
-            ("week",     "Últimos 7 días"),
-            ("month",    "Últimos 30 días"),
-            ("older",    "Más de 30 días"),
+            ("today", "Hoy"),
+            ("week", "Últimos 7 días"),
+            ("month", "Últimos 30 días"),
+            ("older", "Más de 30 días"),
         ]
 
     def queryset(self, request, queryset):
@@ -38,15 +36,15 @@ class RegistrationDateFilter(admin.SimpleListFilter):
             return queryset.filter(registration_date__lt=today - timedelta(days=30))
 
 
-# ── Filtro: rol del usuario ───────────────────────────────────────────────────
+# ── Filtro: rol del usuario ────────────────────────────────────────────
 class RoleFilter(admin.SimpleListFilter):
-    title          = "rol"
+    title = "rol"
     parameter_name = "role"
 
     def lookups(self, request, model_admin):
         return [
-            ("owner",   "Propietario"),
-            ("client",  "Cliente"),
+            ("owner", "Propietario"),
+            ("client", "Cliente"),
             ("unknown", "Sin rol"),
         ]
 
@@ -61,53 +59,70 @@ class RoleFilter(admin.SimpleListFilter):
 
 # ── Inlines ──────────────────────────────────────────────────────────────────
 class ClientInline(admin.StackedInline):
-    model        = Client
-    extra        = 0
+    model = Client
+    extra = 0
     verbose_name = "Perfil cliente"
 
+
 class OwnerInline(admin.StackedInline):
-    model        = Owner
-    extra        = 0
+    model = Owner
+    extra = 0
     verbose_name = "Perfil propietario"
 
 
 # ── User ─────────────────────────────────────────────────────────────────────
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    inlines         = [ClientInline, OwnerInline]
-    list_display    = ["email", "first_name", "last_name", "phone",
-                       "role_display", "is_staff", "is_active", "registration_date"]
-    list_filter     = ["is_staff", "is_active", RoleFilter, RegistrationDateFilter]
-    search_fields   = ["email", "first_name", "last_name"]
-    ordering        = ["-registration_date"]
+    inlines = [ClientInline, OwnerInline]
+    list_display = [
+        "email",
+        "first_name",
+        "last_name",
+        "phone",
+        "role_display",
+        "is_staff",
+        "is_active",
+        "registration_date",
+    ]
+    list_filter = ["is_staff", "is_active", RoleFilter, RegistrationDateFilter]
+    search_fields = ["email", "first_name", "last_name"]
+    ordering = ["-registration_date"]
     readonly_fields = ["registration_date", "role_display"]
 
     fieldsets = (
-        ("Credenciales", {
-            "fields": ("email", "password")
-        }),
-        ("Información personal", {
-            "fields": ("first_name", "last_name", "phone")
-        }),
-        ("Rol", {
-            "fields": ("role_display",)
-        }),
-        ("Permisos", {
-            "fields": ("is_active", "is_staff", "is_superuser",
-                       "groups", "user_permissions"),
-            "classes": ("collapse",)
-        }),
-        ("Auditoría", {
-            "fields": ("registration_date",),
-            "classes": ("collapse",)
-        }),
+        ("Credenciales", {"fields": ("email", "password")}),
+        ("Información personal", {"fields": ("first_name", "last_name", "phone")}),
+        ("Rol", {"fields": ("role_display",)}),
+        (
+            "Permisos",
+            {
+                "fields": (
+                    "is_active",
+                    "is_staff",
+                    "is_superuser",
+                    "groups",
+                    "user_permissions",
+                ),
+                "classes": ("collapse",),
+            },
+        ),
+        ("Auditoría", {"fields": ("registration_date",), "classes": ("collapse",)}),
     )
 
     add_fieldsets = (
-        ("Nuevo usuario", {
-            "fields": ("email", "first_name", "last_name",
-                       "phone", "password1", "password2")
-        }),
+        (
+            "Nuevo usuario",
+            {
+                "fields": (
+                    "email",
+                    "first_name",
+                    "last_name",
+                    "phone",
+                    "password1",
+                    "password2",
+                )
+            },
+        ),
     )
 
     @admin.display(description="Rol")
@@ -118,7 +133,7 @@ class UserAdmin(BaseUserAdmin):
 # ── Client ───────────────────────────────────────────────────────────────────
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display  = ["id", "get_email", "get_full_name"]
+    list_display = ["id", "get_email", "get_full_name"]
     search_fields = ["user__email", "user__first_name", "user__last_name"]
 
     @admin.display(description="Email")
@@ -130,10 +145,10 @@ class ClientAdmin(admin.ModelAdmin):
         return f"{obj.user.first_name} {obj.user.last_name}"
 
 
-# ── Owner ─────────────────────────────────────────────────────────────────────
+# ── Owner ──────────────────────────────────────────────────────────────────
 @admin.register(Owner)
 class OwnerAdmin(admin.ModelAdmin):
-    list_display  = ["id", "get_email", "get_full_name"]
+    list_display = ["id", "get_email", "get_full_name"]
     search_fields = ["user__email", "user__first_name", "user__last_name"]
 
     @admin.display(description="Email")

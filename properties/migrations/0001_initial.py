@@ -4,35 +4,66 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Property',
+            name="Property",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('description', models.TextField(blank=True)),
-                ('address', models.CharField(blank=True, max_length=255)),
-                ('city', models.CharField(max_length=100)),
-                ('price', models.DecimalField(decimal_places=2, max_digits=12)),
-                ('state', models.CharField(choices=[('available', 'Available'), ('occupied', 'Occupied'), ('reserved', 'Reserved')], default='available', max_length=20)),
-                ('listing_type', models.CharField(choices=[('short_term', 'Short-term rental'), ('long_term', 'Long-term rental'), ('sale', 'Sale')], default='short_term', max_length=20)),
-                ('rooms', models.PositiveSmallIntegerField(default=1)),
-                ('bathrooms', models.PositiveSmallIntegerField(default=1)),
-                ('square_meters', models.PositiveIntegerField(blank=True, null=True)),
-                ('capacity', models.PositiveSmallIntegerField(default=1)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='properties/')),
-                ('image_url', models.URLField(blank=True)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('active_listing', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("description", models.TextField(blank=True)),
+                ("address", models.CharField(blank=True, max_length=255)),
+                ("city", models.CharField(max_length=100)),
+                ("price", models.DecimalField(decimal_places=2, max_digits=12)),
+                (
+                    "state",
+                    models.CharField(
+                        choices=[
+                            ("available", "Available"),
+                            ("occupied", "Occupied"),
+                            ("reserved", "Reserved"),
+                        ],
+                        default="available",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "listing_type",
+                    models.CharField(
+                        choices=[
+                            ("short_term", "Short-term rental"),
+                            ("long_term", "Long-term rental"),
+                            ("sale", "Sale"),
+                        ],
+                        default="short_term",
+                        max_length=20,
+                    ),
+                ),
+                ("rooms", models.PositiveSmallIntegerField(default=1)),
+                ("bathrooms", models.PositiveSmallIntegerField(default=1)),
+                ("square_meters", models.PositiveIntegerField(blank=True, null=True)),
+                ("capacity", models.PositiveSmallIntegerField(default=1)),
+                (
+                    "image",
+                    models.ImageField(blank=True, null=True, upload_to="properties/"),
+                ),
+                ("image_url", models.URLField(blank=True)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("active_listing", models.BooleanField(default=True)),
             ],
             options={
-                'ordering': ['-created_at'],
+                "ordering": ["-created_at"],
             },
         ),
     ]

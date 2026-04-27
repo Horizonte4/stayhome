@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('properties', '0003_property_latitude_property_longitude'),
-        ('properties', '0006_rename_date_availability_availability_dates_and_more'),
+        ("properties", "0003_property_latitude_property_longitude"),
+        ("properties", "0006_rename_date_availability_availability_dates_and_more"),
     ]
 
-    operations = [
-    ]
+    operations = []

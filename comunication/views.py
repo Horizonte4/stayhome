@@ -2,11 +2,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import OuterRef, Q, Subquery
-from django.http import HttpResponseForbidden, HttpResponseNotAllowed
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from transactions.models import Booking
 from transactions.selectors import has_sale_contract
-from django.utils.translation import gettext_lazy as _
 
 
 from properties.models import Property
@@ -16,9 +15,7 @@ from .models import Conversation, Message
 
 def _get_conversation_for_user_or_404(conversation_id, user):
     return get_object_or_404(
-        Conversation.objects.with_related().filter(
-            Q(buyer=user) | Q(owner=user)
-        ),
+        Conversation.objects.with_related().filter(Q(buyer=user) | Q(owner=user)),
         pk=conversation_id,
     )
 
@@ -51,9 +48,7 @@ def start_conversation(request, property_id):
     # -----------------------------
 
     approved_booking = Booking.objects.filter(
-        property=property_obj,
-        user=buyer_user,
-        status="approved"
+        property=property_obj, user=buyer_user, status="approved"
     ).exists()
 
     purchased_property = has_sale_contract(property_obj, buyer=buyer_user)
@@ -61,7 +56,7 @@ def start_conversation(request, property_id):
     if not approved_booking and not purchased_property:
         messages.error(
             request,
-            "You can only contact the owner after an approved booking or a completed purchase."
+            "You can only contact the owner after an approved booking or a completed purchase.",
         )
         return redirect("transactions:my_bookings")
 
@@ -78,10 +73,7 @@ def start_conversation(request, property_id):
     if created:
         messages.success(request, "Conversation started successfully.")
 
-    return redirect(
-        "comunication:conversation_detail",
-        conversation_id=conversation.pk
-    )
+    return redirect("comunication:conversation_detail", conversation_id=conversation.pk)
 
 
 @login_required
@@ -95,16 +87,26 @@ def inbox(request):
         .with_related()
         .annotate(
             last_message_content=Subquery(last_message_subquery.values("content")[:1]),
-            last_message_created_at=Subquery(last_message_subquery.values("created_at")[:1]),
+            last_message_created_at=Subquery(
+                last_message_subquery.values("created_at")[:1]
+            ),
         )
         .prefetch_related("messages")
     )
 
     conversation_rows = []
     for conversation in conversations:
-        other_user = conversation.owner if conversation.buyer == request.user else conversation.buyer
+        other_user = (
+            conversation.owner
+            if conversation.buyer == request.user
+            else conversation.buyer
+        )
 
-        unread_count = conversation.messages.filter(is_read=False).exclude(sender=request.user).count()
+        unread_count = (
+            conversation.messages.filter(is_read=False)
+            .exclude(sender=request.user)
+            .count()
+        )
 
         conversation_rows.append(
             {
@@ -138,12 +140,13 @@ def conversation_detail(request, conversation_id):
         .order_by("created_at")
     )
 
-    conversation.messages.filter(
-        is_read=False
-    ).exclude(sender=request.user).update(is_read=True)
+    conversation.messages.filter(is_read=False).exclude(sender=request.user).update(
+        is_read=True
+    )
 
-    other_user = conversation.owner if conversation.buyer == request.user else conversation.buyer
-
+    other_user = (
+        conversation.owner if conversation.buyer == request.user else conversation.buyer
+    )
 
     # -------------------------
     # CONVERSACIONES (SIDEBAR)
@@ -158,7 +161,9 @@ def conversation_detail(request, conversation_id):
         .with_related()
         .annotate(
             last_message_content=Subquery(last_message_subquery.values("content")[:1]),
-            last_message_created_at=Subquery(last_message_subquery.values("created_at")[:1]),
+            last_message_created_at=Subquery(
+                last_message_subquery.values("created_at")[:1]
+            ),
         )
         .prefetch_related("messages")
     )
@@ -166,39 +171,35 @@ def conversation_detail(request, conversation_id):
     conversation_rows = []
 
     for conv in conversations:
-
         other = conv.owner if conv.buyer == request.user else conv.buyer
 
-        unread_count = conv.messages.filter(
-            is_read=False
-        ).exclude(sender=request.user).count()
+        unread_count = (
+            conv.messages.filter(is_read=False).exclude(sender=request.user).count()
+        )
 
-        conversation_rows.append({
-            "conversation": conv,
-            "property": conv.property,
-            "other_user": other,
-            "last_message": conv.last_message_content,
-            "last_message_created_at": conv.last_message_created_at,
-            "unread_count": unread_count,
-        })
-
+        conversation_rows.append(
+            {
+                "conversation": conv,
+                "property": conv.property,
+                "other_user": other,
+                "last_message": conv.last_message_content,
+                "last_message_created_at": conv.last_message_created_at,
+                "unread_count": unread_count,
+            }
+        )
 
     context = {
         "conversation": conversation,
         "messages_list": messages_qs,
         "other_user": other_user,
-        "conversation_rows": conversation_rows,   # 👈 IMPORTANTE
+        "conversation_rows": conversation_rows,  # 👈 IMPORTANTE
     }
 
-    return render(
-        request,
-        "comunication/conversation_detail.html",
-        context
-    )
-    
-#
-# @login_required
-#def conversation_detail(request, conversation_id):
+    return render(request, "comunication/conversation_detail.html", context)
+
+    #
+    # @login_required
+    # def conversation_detail(request, conversation_id):
     conversation = _get_conversation_for_user_or_404(conversation_id, request.user)
 
     messages_qs = (
@@ -207,11 +208,13 @@ def conversation_detail(request, conversation_id):
         .order_by("created_at")
     )
 
-    conversation.messages.filter(
-        is_read=False
-    ).exclude(sender=request.user).update(is_read=True)
+    conversation.messages.filter(is_read=False).exclude(sender=request.user).update(
+        is_read=True
+    )
 
-    other_user = conversation.owner if conversation.buyer == request.user else conversation.buyer
+    other_user = (
+        conversation.owner if conversation.buyer == request.user else conversation.buyer
+    )
 
     context = {
         "conversation": conversation,
@@ -231,7 +234,9 @@ def send_message(request, conversation_id):
     content = request.POST.get("content", "").strip()
     if not content:
         messages.error(request, "Message cannot be empty.")
-        return redirect("comunication:conversation_detail", conversation_id=conversation.pk)
+        return redirect(
+            "comunication:conversation_detail", conversation_id=conversation.pk
+        )
 
     Message.objects.create(
         conversation=conversation,

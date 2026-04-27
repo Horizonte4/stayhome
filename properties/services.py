@@ -92,9 +92,7 @@ class PropertyService:
     def create_property(form, owner, availability_dates):
         blocked_dates, invalid_dates = normalize_availability_dates(availability_dates)
         if invalid_dates:
-            raise ValueError(
-                "Invalid blocked date format: " + ", ".join(invalid_dates)
-            )
+            raise ValueError("Invalid blocked date format: " + ", ".join(invalid_dates))
 
         property_obj = form.save(commit=False)
         property_obj.owner = owner
@@ -118,9 +116,7 @@ class PropertyService:
     def update_availability_calendar(property_obj, availability_dates):
         blocked_dates, invalid_dates = normalize_availability_dates(availability_dates)
         if invalid_dates:
-            raise ValueError(
-                "Invalid blocked date format: " + ", ".join(invalid_dates)
-            )
+            raise ValueError("Invalid blocked date format: " + ", ".join(invalid_dates))
 
         property_obj.availability_dates = blocked_dates
         property_obj.save(update_fields=["availability_dates"])

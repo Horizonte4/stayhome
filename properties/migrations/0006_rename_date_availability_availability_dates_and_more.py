@@ -5,20 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('properties', '0005_availability'),
+        ("properties", "0005_availability"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='availability',
-            old_name='date',
-            new_name='availability_dates',
+            model_name="availability",
+            old_name="date",
+            new_name="availability_dates",
         ),
         migrations.AlterField(
-            model_name='availability',
-            name='property',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='properties.property'),
+            model_name="availability",
+            name="property",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="properties.property"
+            ),
         ),
     ]

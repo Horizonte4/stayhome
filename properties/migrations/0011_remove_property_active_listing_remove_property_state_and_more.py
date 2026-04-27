@@ -4,21 +4,20 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('properties', '0010_delete_booking'),
+        ("properties", "0010_delete_booking"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='property',
-            name='active_listing',
+            model_name="property",
+            name="active_listing",
         ),
         migrations.RemoveField(
-            model_name='property',
-            name='state',
+            model_name="property",
+            name="state",
         ),
         migrations.DeleteModel(
-            name='Availability',
+            name="Availability",
         ),
     ]

@@ -2,7 +2,6 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
-from django.utils.translation import gettext_lazy as _
 
 class UsuarioManager(BaseUserManager):
     """Manager personalizado que usa email en lugar de username."""
@@ -62,11 +61,7 @@ class User(RoleCheckerMixin, AbstractUser):
 class Client(models.Model):
     """Perfil de cliente asociado a un usuario."""
 
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name="client"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="client")
 
     def __str__(self):
         return f"Client: {self.user.email}"
@@ -75,11 +70,7 @@ class Client(models.Model):
 class Owner(models.Model):
     """Perfil de propietario asociado a un usuario."""
 
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name="owner"
-    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="owner")
 
     def __str__(self):
         return f"Owner: {self.user.email}"

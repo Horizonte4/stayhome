@@ -1,114 +1,130 @@
-{% extends 'base.html' %}
-{% load static i18n %}
-{% block title %}Profile - StayHome{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static i18n %} {% block title %}Profile -
+StayHome{% endblock %} {% block content %}
 <div class="page">
+  <div class="card">
+    <div class="card-body" style="text-align: center; padding: 40px">
+      <div
+        class="card-img"
+        style="border-radius: 50%; width: 120px; height: 120px; margin: 0 auto"
+      >
+        {{ request.user.first_name|first }}{{ request.user.last_name|first }}
+      </div>
+
+      <h2 class="section-title">
+        {{ request.user.first_name }} {{ request.user.last_name }}
+      </h2>
+
+      <p class="card-loc">{{ role|title }}</p>
+
+      <p class="section-sub">
+        Member since {{ request.user.date_joined|date:"F Y" }}
+      </p>
+
+      <p class="auth-footer" style="margin-top: 12px">
+        <a href="{% url 'edit_profile' %}">{% trans "Edit profile" %}</a>
+      </p>
+    </div>
+  </div>
+
+  <h3 class="section-title" style="margin-top: 40px">Contact Information</h3>
+
+  <div class="cards">
     <div class="card">
-        <div class="card-body" style="text-align:center; padding:40px;">
-            <div class="card-img" style="border-radius:50%; width:120px; height:120px; margin:0 auto;">
-                {{ request.user.first_name|first }}{{ request.user.last_name|first }}
-            </div>
-
-            <h2 class="section-title">
-                {{ request.user.first_name }} {{ request.user.last_name }}
-            </h2>
-
-            <p class="card-loc">{{ role|title }}</p>
-
-            <p class="section-sub">
-                Member since {{ request.user.date_joined|date:"F Y" }}
-            </p>
-
-            <p class="auth-footer" style="margin-top:12px;">
-                <a href="{% url 'edit_profile' %}">{% trans "Edit profile" %}</a>
-            </p>
-        </div>
+      <div class="card-body">
+        <div class="card-title">{% trans "Email" %}</div>
+        <div class="card-loc">{{ request.user.email }}</div>
+      </div>
     </div>
 
-    <h3 class="section-title" style="margin-top:40px;">Contact Information</h3>
-
-    <div class="cards">
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">{% trans "Email" %}</div>
-                <div class="card-loc">{{ request.user.email }}</div>
-            </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title">{% trans "Phone" %}</div>
+        <div class="card-loc">
+          {{ request.user.phone|default:"Not provided" }}
         </div>
-
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">{% trans "Phone" %}</div>
-                <div class="card-loc">{{ request.user.phone|default:"Not provided" }}</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">{% trans "Location" %}</div>
-                <div class="card-loc">Colombia</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-body">
-                <div class="card-title">{% trans "Joined" %}</div>
-                <div class="card-loc">{{ request.user.date_joined|date:"F Y" }}</div>
-            </div>
-        </div>
+      </div>
     </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title">{% trans "Location" %}</div>
+        <div class="card-loc">Colombia</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title">{% trans "Joined" %}</div>
+        <div class="card-loc">{{ request.user.date_joined|date:"F Y" }}</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% if request.user.is_authenticated and request.user.is_owner %}
-<div class="page" style="margin-top:32px;">
-    <div class="section-title" style="display:flex; justify-content:space-between; align-items:center;">
-        <span>{% trans "My properties" %}</span>
-        <a href="{% url 'properties:create_property' %}" class="btn-list" style="padding:10px 14px;">
-            {% trans "Create Property" %}
-        </a>
-    </div>
+<div class="page" style="margin-top: 32px">
+  <div
+    class="section-title"
+    style="display: flex; justify-content: space-between; align-items: center"
+  >
+    <span>{% trans "My properties" %}</span>
+    <a
+      href="{% url 'properties:create_property' %}"
+      class="btn-list"
+      style="padding: 10px 14px"
+    >
+      {% trans "Create Property" %}
+    </a>
+  </div>
 
-    {% if properties %}
-    <div class="cards" style="margin-top:14px;">
-        {% for prop in properties %}
-            <div class="card">
-                <div class="card-body">
-                    <div class="card-title" style="font-weight:700;">{{ prop.title }}</div>
-                    <div class="card-loc" style="color:#6b7280;">{{ prop.address|default:prop.city }}</div>
-                    <div class="card-meta" style="margin:8px 0; color:#374151;">
-                        {{ prop.get_listing_type_display }} · {{ prop.availability_label }} · ${{ prop.price }}
-                    </div>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <a href="{% url 'properties:edit_property' pk=prop.pk %}" class="property-card-action-btn property-card-action-btn-edit">
-                            {% trans "Edit property" %}
-                        </a>
-                        <a href="{% url 'properties:edit_calendar' pk=prop.pk %}" class="property-card-action-btn property-card-action-btn-edit">
-                            {% trans "Edit calendar" %}
-                        </a>
-                        <a href="{% url 'properties:property_detail' pk=prop.pk %}" class="property-card-action-btn">
-                            {% trans "View" %}
-                        </a>
-                    </div>
-                </div>
-            </div>
-        {% endfor %}
+  {% if properties %}
+  <div class="cards" style="margin-top: 14px">
+    {% for prop in properties %}
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title" style="font-weight: 700">{{ prop.title }}</div>
+        <div class="card-loc" style="color: #6b7280">
+          {{ prop.address|default:prop.city }}
+        </div>
+        <div class="card-meta" style="margin: 8px 0; color: #374151">
+          {{ prop.get_listing_type_display }} · {{ prop.availability_label }} ·
+          ${{ prop.price }}
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap">
+          <a
+            href="{% url 'properties:edit_property' pk=prop.pk %}"
+            class="property-card-action-btn property-card-action-btn-edit"
+          >
+            {% trans "Edit property" %}
+          </a>
+          <a
+            href="{% url 'properties:edit_calendar' pk=prop.pk %}"
+            class="property-card-action-btn property-card-action-btn-edit"
+          >
+            {% trans "Edit calendar" %}
+          </a>
+          <a
+            href="{% url 'properties:property_detail' pk=prop.pk %}"
+            class="property-card-action-btn"
+          >
+            {% trans "View" %}
+          </a>
+        </div>
+      </div>
     </div>
-    {% else %}
-        <p class="property-list-empty">
-            You don't have any properties yet. Create one to get started!
-        </p>
-    {% endif %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="property-list-empty">
+    You don't have any properties yet. Create one to get started!
+  </p>
+  {% endif %}
 </div>
-{% endif %}
-
-{% if user.is_authenticated %}
+{% endif %} {% if user.is_authenticated %}
 <form action="{% url 'logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit" class="logout-link">
-        {% trans "Log out" %}
-    </button>
+  {% csrf_token %}
+  <button type="submit" class="logout-link">{% trans "Log out" %}</button>
 </form>
 {% else %}
 <a href="{% url 'login' %}">{% trans "Login" %}</a>
-{% endif %}
-{% endblock %}
+{% endif %} {% endblock %}

@@ -14,10 +14,7 @@ class RegisterForm(UserCreationForm):
         ("owner", "Owner"),
     )
 
-    user_type = forms.ChoiceField(
-        choices=USER_TYPE,
-        widget=forms.RadioSelect
-    )
+    user_type = forms.ChoiceField(choices=USER_TYPE, widget=forms.RadioSelect)
 
     class Meta:
         model = User

@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("transactions", "0003_booking"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -16,14 +15,47 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="PurchaseRequest",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 ("is_deleted", models.BooleanField(default=False)),
                 ("deleted_at", models.DateTimeField(blank=True, null=True)),
-                ("status", models.CharField(choices=[("pending", "Pending"), ("accepted", "Accepted"), ("rejected", "Rejected")], default="pending", max_length=20)),
-                ("buyer", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="purchase_requests", to=settings.AUTH_USER_MODEL)),
-                ("property", models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name="purchase_requests", to="properties.property")),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Pending"),
+                            ("accepted", "Accepted"),
+                            ("rejected", "Rejected"),
+                        ],
+                        default="pending",
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "buyer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="purchase_requests",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "property",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="purchase_requests",
+                        to="properties.property",
+                    ),
+                ),
             ],
             options={
                 "ordering": ["-created_at"],
@@ -31,6 +63,9 @@ class Migration(migrations.Migration):
         ),
         migrations.AddConstraint(
             model_name="purchaserequest",
-            constraint=models.UniqueConstraint(fields=("property", "buyer"), name="unique_purchase_request_per_property_and_buyer"),
+            constraint=models.UniqueConstraint(
+                fields=("property", "buyer"),
+                name="unique_purchase_request_per_property_and_buyer",
+            ),
         ),
     ]

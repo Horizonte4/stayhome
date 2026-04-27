@@ -113,9 +113,7 @@ class PropertyForm(forms.ModelForm):
 
         if not extension:
             extension = (
-                mimetypes.guess_extension(
-                    (content_type or "").split(";")[0].strip()
-                )
+                mimetypes.guess_extension((content_type or "").split(";")[0].strip())
                 or ".jpg"
             )
 
@@ -136,7 +134,9 @@ class PropertyForm(forms.ModelForm):
                 image_bytes = response.read()
                 content_type = response.headers.get("Content-Type", "")
         except Exception as exc:
-            raise ValidationError("Could not download the image from that URL.") from exc
+            raise ValidationError(
+                "Could not download the image from that URL."
+            ) from exc
 
         if not image_bytes:
             raise ValidationError("The image URL returned an empty file.")

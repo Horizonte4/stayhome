@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('properties', '0009_alter_property_image_url'),
+        ("properties", "0009_alter_property_image_url"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Booking',
+            name="Booking",
         ),
     ]

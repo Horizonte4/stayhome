@@ -16,7 +16,7 @@ urlpatterns += i18n_patterns(
     path("properties/", include("properties.urls")),
     path("transactions/", include("transactions.urls")),
     path("chat/", include("comunication.urls")),
-    prefix_default_language=False, 
+    prefix_default_language=False,
 )
 
 if settings.DEBUG:

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('properties', '0002_initial'),
+        ("properties", "0002_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='property',
-            name='availability_dates',
+            model_name="property",
+            name="availability_dates",
             field=models.CharField(blank=True, max_length=255),
         ),
     ]
