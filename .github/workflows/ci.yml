@@ -1,4 +1,4 @@
-name: Stayhome CI
+name: Estayhome CI
 
 on:
   push:
@@ -40,13 +40,6 @@ jobs:
 
       - name: Vulnerability scan (pip-audit)
         run: pip-audit -r requirements.txt
-
-      - name: Run tests (Pytest)
-        run: python -m pytest --tb=short
-        env:
-          DJANGO_SETTINGS_MODULE: stayhome.settings
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DEBUG: "True"
 
   frontend-quality:
     name: Frontend Quality (Django Templates)

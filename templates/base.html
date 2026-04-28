@@ -1,225 +1,166 @@
 {% load static i18n %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-   <link rel="stylesheet" href="{% static 'css/base.css' %}">
-   <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-   <link rel="stylesheet" href="{% static 'css/auth.css' %}">
-   <link rel="stylesheet" href="{% static 'css/home.css' %}">
-   <link rel="stylesheet" href="{% static 'css/properties.css' %}">
-   <link rel="stylesheet" href="{% static 'css/transactions.css' %}">
-   <link rel="stylesheet" href="{% static 'css/chat.css' %}">
-   <link rel="stylesheet" href="{% static 'css/components.css' %}">
-
-   <title>{% block title %}StayHome{% endblock %}</title>
-      {% block extra_js %}{% endblock %}
-</head>
-
-<body>
-
-<!-- NAVBAR -->
-<nav>
-
-   <a href="{% url 'home' %}" class="logo">
-      <div class="logo-icon">
-         <svg viewBox="0 0 24 24">
-            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-         </svg>
-      </div>
-      <span class="logo-text"> {% trans "Stay " %}<span> {% trans "Home" %}</span></span>
-   </a>
-
-   <ul class="nav-links">
-
-      <!-- HOME -->
-      <li>
-         <a href="{% url 'home' %}">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-               <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-            </svg>
-            {% trans "Home" %}
-         </a> 
-      </li>
-
-      <!-- PROPERTIES -->
-      <li>
-         <a href="/properties/" class="{% block nav_property %}{% endblock %}">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-               <path d="M17 11h2v2h-2v-2zm0 4h2v2h-2v-2zm-4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM1 21h22V3H1v18zm2-2V5h18v14H3zm4-8h2v2H7v-2zm0 4h2v2H7v-2zM7 7h2v2H7V7z"/>
-            </svg>
-            {% trans "Property" %}
-         </a>
-      </li>
-
-      <!-- BOOKINGS -->
-      <li class="{% block nav_bookings %}{% endblock %}">
-         {% if request.user.is_authenticated and request.user.is_client %}
-         <a href="{% url 'transactions:my_bookings' %}">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-               <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 
-               0-2 .9-2 2v16c0 1.1.9 2 2 
-               2h14c1.1 0 2-.9 
-               2-2V5c0-1.1-.9-2-2-2zm0 
-               18H5V8h14v13zM7 
-               10h5v5H7z"/>
-            </svg>
-            {% trans "My Bookings" %}
-         </a>
-         {% endif %}
-
-         {% if request.user.is_authenticated and request.user.is_owner %}
-         <a href="{% url 'transactions:owner_bookings' %}">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-               <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 
-               0-2 .9-2 2v16c0 1.1.9 2 2 
-               2h14c1.1 0 2-.9 
-               2-2V5c0-1.1-.9-2-2-2zm0 
-               18H5V8h14v13zM7 
-               10h5v5H7z"/>
-            </svg>
-           {% trans "My Bookings" %}
-         </a>
-         {% endif %}
-      </li>
-
-      <!-- FAVORITES -->
-   <li>
-      <a href="{% url 'properties:favorites_list' %}" class="{% block nav_favorites %}{% endblock %}">
-         <svg viewBox="0 0 24 24" fill="currentColor">
-           <path d="M12 21.35l-1.45-1.32C5.4 
-            15.36 2 12.28 2 
-            8.5 2 5.42 4.42 
-            3 7.5 3c1.74 0 
-            3.41.81 4.5 
-            2.09C13.09 3.81 
-            14.76 3 16.5 
-            3 19.58 3 22 
-            5.42 22 
-            8.5c0 3.78-3.4 
-            6.86-8.55 
-            11.54L12 
-            21.35z"/>
-         </svg>
-         {% trans "Favorites" %}
-      </a>
-   </li>
-   <li>
-   <a href="{% url 'properties:wishlist_list' %}" class="{% block nav_wishlist %}{% endblock %}">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-         <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12l-4-3-4 3-4-3-4 3V7z"/>
-      </svg>
-      {% trans "Wishlist" %}
-   </a>
-</li>
-
-      <!-- MESSAGES -->
-<li>
-   <a href="{% url 'comunication:inbox' %}" class="{% block nav_messages %}{% endblock %}">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-         <path d="M20 2H4c-1.1 
-         0-2 .9-2 
-         2v18l4-4h14c1.1 
-         0 2-.9 
-         2-2V4c0-1.1-.9-2-2-2zm0 
-         14H5.17L4 
-         17.17V4h16v12z"/>
-      </svg>
-      {% trans "Messages" %}
-   </a>
-</li>
-
-   </ul>
-
-   <!-- RIGHT SIDE -->
-   <div class="nav-right">
-
-      {% if request.user.is_authenticated and request.user.is_owner %}
-      <a href="{% url 'properties:create_property' %}" class="btn-list">
-         <svg viewBox="0 0 24 24">
-            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-         </svg>
-         {% trans "List Property" %}
-      </a>
-      {% endif %}
-
-      {% if request.user.is_authenticated %}
-      <a href="{% url 'board' %}" class="btn-list {% block nav_login %}{% endblock %}">
-         <svg viewBox="0 10 15 24">
-            <path d="M10 17l5-5-5-5v3H3v4h7v3z"/>
-         </svg>
-         {% trans "Profile" %}
-      </a>
-      {% else %}
-      <a href="{% url 'login' %}" class="btn-list">
-         <svg viewBox="0 10 15 24">
-            <path d="M10 17l5-5-5-5v3H3v4h7v3z"/>
-         </svg>
-         {% trans "Login" %}
-      </a>
-      {% endif %}
-
-   </div>
-
-
-   {% load i18n %}
-
-<!-- LANGUAGE SELECTOR -->
-<form action="{% url 'set_language' %}" method="post">
-  {% csrf_token %}
-  <input name="next" type="hidden" value="{{ request.path }}">
-  <select name="language" onchange="this.form.submit()">
-    {% get_current_language as LANGUAGE_CODE %}
-    {% get_available_languages as LANGUAGES %}
-    {% for lang_code, lang_name in LANGUAGES %}
-      <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
-        {{ lang_name }}
-      </option>
-    {% endfor %}
-  </select>
-</form>
-</nav>
-
-<!-- PAGE -->
-<main class="page">
-   {% if messages %}
-     {% for message in messages %}
-       <div class="message message-{{ message.tags }}">
-         {{ message }}
-       </div>
-     {% endfor %}
-   {% endif %}
-   {% block content %}{% endblock %}
-</main>
-
-<!-- FOOTER -->
-{% block footer %}
-<section class="cta-section">
-   <div class="cta-badge">🏡 Join StayHome</div>
-
-   <h2 class="cta-title">
-     {% trans "Ready to Find Your Perfect Home?" %}
-   </h2>
-
-   <p class="cta-sub">
-      {% trans "Join thousands of satisfied users who found their dream properties through StayHome." %}
-   </p>
-
-   <div class="cta-actions">
-      <a href="/properties/" class="cta-btn-primary">
-        {% trans "🔍 Browse Properties" %}
-      </a>
-
-      <a href="{% url 'properties:create_property' %}" class="cta-btn-secondary">
-         ➕ {% trans "List Your Property" %}
-      </a>
-   </div>
-
-</section>
-{% endblock %}
-
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+              rel="stylesheet">
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+        <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+        <link rel="stylesheet" href="{% static 'css/home.css' %}">
+        <link rel="stylesheet" href="{% static 'css/properties.css' %}">
+        <link rel="stylesheet" href="{% static 'css/transactions.css' %}">
+        <link rel="stylesheet" href="{% static 'css/chat.css' %}">
+        <link rel="stylesheet" href="{% static 'css/components.css' %}">
+        <title>
+            {% block title %}StayHome{% endblock %}
+        </title>
+        {% block extra_js %}{% endblock %}
+    </head>
+    <body>
+        <!-- NAVBAR -->
+        <nav>
+            <a href="{% url 'home' %}" class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                    </svg>
+                </div>
+                <span class="logo-text"> {% trans "Stay " %}<span>{% trans "Home" %}</span></span>
+            </a>
+            <ul class="nav-links">
+                <!-- HOME -->
+                <li>
+                    <a href="{% url 'home' %}">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                        </svg>
+                        {% trans "Home" %}
+                    </a>
+                </li>
+                <!-- PROPERTIES -->
+                <li>
+                    <a href="/properties/" class="{% block nav_property %}{% endblock %}">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17 11h2v2h-2v-2zm0 4h2v2h-2v-2zm-4-8h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zM1 21h22V3H1v18zm2-2V5h18v14H3zm4-8h2v2H7v-2zm0 4h2v2H7v-2zM7 7h2v2H7V7z" />
+                        </svg>
+                        {% trans "Property" %}
+                    </a>
+                </li>
+                <!-- BOOKINGS -->
+                <li class="{% block nav_bookings %}{% endblock %}">
+                    {% if request.user.is_authenticated and request.user.is_client %}
+                        <a href="{% url 'transactions:my_bookings' %}">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zM7 10h5v5H7z" />
+                            </svg>
+                            {% trans "My Bookings" %}
+                        </a>
+                    {% endif %}
+                    {% if request.user.is_authenticated and request.user.is_owner %}
+                        <a href="{% url 'transactions:owner_bookings' %}">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zM7 10h5v5H7z" />
+                            </svg>
+                            {% trans "My Bookings" %}
+                        </a>
+                    {% endif %}
+                </li>
+                <!-- FAVORITES -->
+                <li>
+                    <a href="{% url 'properties:favorites_list' %}"
+                       class="{% block nav_favorites %}{% endblock %}">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                        {% trans "Favorites" %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'properties:wishlist_list' %}"
+                       class="{% block nav_wishlist %}{% endblock %}">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12l-4-3-4 3-4-3-4 3V7z" />
+                        </svg>
+                        {% trans "Wishlist" %}
+                    </a>
+                </li>
+                <!-- MESSAGES -->
+                <li>
+                    <a href="{% url 'comunication:inbox' %}"
+                       class="{% block nav_messages %}{% endblock %}">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z" />
+                        </svg>
+                        {% trans "Messages" %}
+                    </a>
+                </li>
+            </ul>
+            <!-- RIGHT SIDE -->
+            <div class="nav-right">
+                {% if request.user.is_authenticated and request.user.is_owner %}
+                    <a href="{% url 'properties:create_property' %}" class="btn-list">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                        </svg>
+                        {% trans "List Property" %}
+                    </a>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'board' %}"
+                       class="btn-list {% block nav_login %}{% endblock %}">
+                        <svg viewBox="0 10 15 24">
+                            <path d="M10 17l5-5-5-5v3H3v4h7v3z" />
+                        </svg>
+                        {% trans "Profile" %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn-list">
+                        <svg viewBox="0 10 15 24">
+                            <path d="M10 17l5-5-5-5v3H3v4h7v3z" />
+                        </svg>
+                        {% trans "Login" %}
+                    </a>
+                {% endif %}
+            </div>
+            {% load i18n %}
+            <!-- LANGUAGE SELECTOR -->
+            <form action="{% url 'set_language' %}" method="post">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.path }}">
+                <select name="language" onchange="this.form.submit()">
+                    {% get_current_language as LANGUAGE_CODE %}
+                    {% get_available_languages as LANGUAGES %}
+                    {% for lang_code, lang_name in LANGUAGES %}
+                        <option value="{{ lang_code }}"
+                                {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>{{ lang_name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </nav>
+        <!-- PAGE -->
+        <main class="page">
+            {% if messages %}
+                {% for message in messages %}<div class="message message-{{ message.tags }}">{{ message }}</div>{% endfor %}
+            {% endif %}
+            {% block content %}{% endblock %}
+        </main>
+        <!-- FOOTER -->
+        {% block footer %}
+            <section class="cta-section">
+                <div class="cta-badge">🏡 Join StayHome</div>
+                <h2 class="cta-title">{% trans "Ready to Find Your Perfect Home?" %}</h2>
+                <p class="cta-sub">
+                    {% trans "Join thousands of satisfied users who found their dream properties through StayHome." %}
+                </p>
+                <div class="cta-actions">
+                    <a href="/properties/" class="cta-btn-primary">{% trans "🔍 Browse Properties" %}</a>
+                    <a href="{% url 'properties:create_property' %}"
+                       class="cta-btn-secondary">➕ {% trans "List Your Property" %}</a>
+                </div>
+            </section>
+        {% endblock %}
+    </body>
 </html>
