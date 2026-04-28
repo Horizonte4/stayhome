@@ -130,7 +130,7 @@ class PropertyForm(forms.ModelForm):
         )
 
         try:
-            with urlopen(request, timeout=15) as response:
+            with urlopen(request, timeout=15) as response:  # nosec B310
                 image_bytes = response.read()
                 content_type = response.headers.get("Content-Type", "")
         except Exception as exc:

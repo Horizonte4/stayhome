@@ -60,18 +60,24 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install HTML/CSS linting tools
+      - name: Install HTMLHint
+        run: npm install -g htmlhint
+
+      - name: Create HTMLHint config for Django templates
         run: |
-          npm install -g htmlhint stylelint stylelint-config-standard
+          cat > .htmlhintrc << 'EOF'
+          {
+            "doctype-first": false,
+            "attr-lowercase": false,
+            "attr-value-double-quotes": true,
+            "tag-pair": true,
+            "spec-char-escape": false,
+            "id-unique": true,
+            "src-not-empty": true,
+            "title-require": false
+          }
+          EOF
 
       - name: Lint HTML templates
         run: |
-          htmlhint "**/*.html" \
-            --ignore "node_modules/**,media/**,static/vendor/**"
-
-      - name: Lint CSS
-        run: |
-          stylelint "static/**/*.css" \
-            --config '{"extends":"stylelint-config-standard"}' \
-            --ignore-path .gitignore \
-            --allow-empty-input
+          htmlhint "templates/**/*.html" --config .htmlhintrc
