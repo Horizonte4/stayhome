@@ -1,4 +1,4 @@
-name: Estayhome CI
+name: Stayhome CI
 
 on:
   push:
@@ -49,35 +49,20 @@ jobs:
           DEBUG: "True"
 
   frontend-quality:
-    name: Frontend Quality (HTML Templates)
+    name: Frontend Quality (Django Templates)
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          node-version: '20'
+          python-version: '3.12'
+          cache: 'pip'
 
-      - name: Install HTMLHint
-        run: npm install -g htmlhint
+      - name: Install djLint
+        run: pip install djlint
 
-      - name: Create HTMLHint config for Django templates
-        run: |
-          cat > .htmlhintrc << 'EOF'
-          {
-            "doctype-first": false,
-            "attr-lowercase": false,
-            "attr-value-double-quotes": true,
-            "tag-pair": true,
-            "spec-char-escape": false,
-            "id-unique": true,
-            "src-not-empty": true,
-            "title-require": false
-          }
-          EOF
-
-      - name: Lint HTML templates
-        run: |
-          htmlhint "templates/**/*.html" --config .htmlhintrc
+      - name: Lint Django templates
+        run: djlint templates/ --profile=django --check
