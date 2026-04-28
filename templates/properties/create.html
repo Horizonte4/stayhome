@@ -1,140 +1,152 @@
-{% extends "base.html" %}
-{% load static i18n %}
-{% block title %}{% trans "Create Property Listing" %}{% endblock %}
-
-{% block content %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% extends "base.html" %} {% load static i18n %} {% block title %}{% trans
+"Create Property Listing" %}{% endblock %} {% block content %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+/>
 
 <div class="form-card">
-    <div class="form-title">{% trans "Create Property Listing" %}</div>
-    <div class="form-sub">
-        {% trans "Fill in the fields and upload your property to start receiving bookings!" %}
+  <div class="form-title">{% trans "Create Property Listing" %}</div>
+  <div class="form-sub">
+    {% trans "Fill in the fields and upload your property to start receiving
+    bookings!" %}
+  </div>
+
+  {% if messages %}
+  <div
+    style="
+      background: #ecfeff;
+      border: 1px solid #67e8f9;
+      color: #0f172a;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    "
+  >
+    {% for message in messages %} {{ message }}{% if not forloop.last %}<br />{%
+    endif %} {% endfor %}
+  </div>
+  {% endif %} {% if form.non_field_errors %}
+  <div
+    style="
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+      padding: 12px 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    "
+  >
+    {% for error in form.non_field_errors %} {{ error }}{% if not forloop.last
+    %}<br />{% endif %} {% endfor %}
+  </div>
+  {% endif %}
+
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="form-grid"
+    novalidate
+  >
+    {% csrf_token %}
+
+    <div class="field">
+      <label>{% trans "Title" %}</label>
+      {{ form.title }} {{ form.title.errors }}
     </div>
 
-    {% if messages %}
-        <div style="background:#ecfeff; border:1px solid #67e8f9; color:#0f172a; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
-            {% for message in messages %}
-                {{ message }}{% if not forloop.last %}<br>{% endif %}
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div class="field">
+      <label>{% trans "Description" %}</label>
+      {{ form.description }} {{ form.description.errors }}
+    </div>
 
-    {% if form.non_field_errors %}
-        <div style="background:#fef2f2; border:1px solid #fecaca; color:#991b1b; padding:12px 14px; border-radius:12px; margin-bottom:12px; font-weight:700;">
-            {% for error in form.non_field_errors %}
-                {{ error }}{% if not forloop.last %}<br>{% endif %}
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div class="form-grid two-col">
+      <div class="field">
+        <label>{% trans "Address" %}</label>
+        {{ form.address }} {{ form.address.errors }}
 
-    <form method="post" enctype="multipart/form-data" class="form-grid" novalidate>
-        {% csrf_token %}
+        <div id="location-results" class="location-results"></div>
 
-        <div class="field">
-            <label>{% trans "Title" %}</label>
-            {{ form.title }}
-            {{ form.title.errors }}
-        </div>
+        {{ form.city }} {{ form.latitude }} {{ form.longitude }}
 
-        <div class="field">
-            <label>{% trans "Description" %}</label>
-            {{ form.description }}
-            {{ form.description.errors }}
-        </div>
+        <div id="property-map"></div>
+      </div>
 
-        <div class="form-grid two-col">
-            <div class="field">
-                <label>{% trans "Address" %}</label>
-                {{ form.address }}
-                {{ form.address.errors }}
+      <div class="field" style="display: none">
+        <label>{% trans "City" %}</label>
+        {{ form.city.errors }}
+      </div>
+    </div>
 
-                <div id="location-results" class="location-results"></div>
+    <div class="form-grid three-col">
+      <div class="field">
+        <label>{% trans "Price" %}</label>
+        {{ form.price }} {{ form.price.errors }}
+      </div>
 
-                {{ form.city }}
-                {{ form.latitude }}
-                {{ form.longitude }}
+      <div class="field">
+        <label>{% trans "Listing type" %}</label>
+        {{ form.listing_type }} {{ form.listing_type.errors }}
+      </div>
 
-                <div id="property-map"></div>
-            </div>
+      <div class="field">
+        <label>{% trans "Rooms" %}</label>
+        {{ form.rooms }} {{ form.rooms.errors }}
+      </div>
 
-            <div class="field" style="display:none;">
-                <label>{% trans "City" %}</label>
-                {{ form.city.errors }}
-            </div>
-        </div>
+      <div class="field">
+        <label>{% trans "Bathrooms" %}</label>
+        {{ form.bathrooms }} {{ form.bathrooms.errors }}
+      </div>
 
-        <div class="form-grid three-col">
-            <div class="field">
-                <label>{% trans "Price" %}</label>
-                {{ form.price }}
-                {{ form.price.errors }}
-            </div>
+      <div class="field">
+        <label>{% trans "Area" %} (m2)</label>
+        {{ form.square_meters }} {{ form.square_meters.errors }}
+      </div>
 
-            <div class="field">
-                <label>{% trans "Listing type" %}</label>
-                {{ form.listing_type }}
-                {{ form.listing_type.errors }}
-            </div>
+      <div class="field">
+        <label>{% trans "Guests capacity" %}</label>
+        {{ form.capacity }} {{ form.capacity.errors }}
+      </div>
+    </div>
 
-            <div class="field">
-                <label>{% trans "Rooms" %}</label>
-                {{ form.rooms }}
-                {{ form.rooms.errors }}
-            </div>
+    <div class="form-grid two-col">
+      <div class="field">
+        <label>{% trans "Main photo" %} ({% trans "upload" %})</label>
+        {{ form.image }} {{ form.image.errors }}
+      </div>
 
-            <div class="field">
-                <label>{% trans "Bathrooms" %}</label>
-                {{ form.bathrooms }}
-                {{ form.bathrooms.errors }}
-            </div>
+      <div class="field">
+        <label>{% trans "Main photo URL" %} ({% trans "optional" %})</label>
+        {{ form.image_url }} {{ form.image_url.errors }}
+      </div>
+    </div>
 
-            <div class="field">
-                <label>{% trans "Area" %} (m2)</label>
-                {{ form.square_meters }}
-                {{ form.square_meters.errors }}
-            </div>
+    <div class="field">
+      <label>{% trans "Blocked dates" %}</label>
+      <input
+        id="availability-calendar"
+        name="availability_dates"
+        placeholder="{% trans 'Select dates to block' %}"
+        value="{{ request.POST.availability_dates|default:'' }}"
+      />
 
-            <div class="field">
-                <label>{% trans "Guests capacity" %}</label>
-                {{ form.capacity }}
-                {{ form.capacity.errors }}
-            </div>
-        </div>
+      <small style="color: #6b7280">
+        {% trans "If your property is for sale, do not add blocked dates." %}<br />
+        {% trans "If empty, all dates will be available." %}
+      </small>
+    </div>
 
-        <div class="form-grid two-col">
-            <div class="field">
-                <label>{% trans "Main photo" %} ({% trans "upload" %})</label>
-                {{ form.image }}
-                {{ form.image.errors }}
-            </div>
-
-            <div class="field">
-                <label>{% trans "Main photo URL" %} ({% trans "optional" %})</label>
-                {{ form.image_url }}
-                {{ form.image_url.errors }}
-            </div>
-        </div>
-
-        <div class="field">
-            <label>{% trans "Blocked dates" %}</label>
-            <input
-                id="availability-calendar"
-                name="availability_dates"
-                placeholder="{% trans 'Select dates to block' %}"
-                value="{{ request.POST.availability_dates|default:'' }}"
-            >
-
-            <small style="color:#6b7280;">
-                {% trans "If your property is for sale, do not add blocked dates." %}<br>
-                {% trans "If empty, all dates will be available." %}
-            </small>
-        </div>
-
-        <div class="submit-bar">
-            <button type="submit" class="btn-list">{% trans "Save listing" %}</button>
-        </div>
-    </form>
+    <div class="submit-bar">
+      <button type="submit" class="btn-list">{% trans "Save listing" %}</button>
+    </div>
+  </form>
 </div>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -142,12 +154,12 @@
 <script src="{% static 'js/property_location.js' %}"></script>
 
 <script>
-    flatpickr("#availability-calendar", {
-        mode: "multiple",
-        dateFormat: "Y-m-d",
-        altInput: true,
-        altFormat: "F j, Y",
-        minDate: "today"
-    });
+  flatpickr("#availability-calendar", {
+    mode: "multiple",
+    dateFormat: "Y-m-d",
+    altInput: true,
+    altFormat: "F j, Y",
+    minDate: "today",
+  });
 </script>
 {% endblock %}

@@ -1,98 +1,69 @@
-{% extends "base.html" %}
-{% load static i18n %}
-
-{% block title %}Inbox | StayHome{% endblock %}
-{% block nav_messages %}active{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% load static i18n %} {% block title %}Inbox |
+StayHome{% endblock %} {% block nav_messages %}active{% endblock %} {% block
+content %}
 
 <section class="container inbox-container">
+  <h1 class="inbox-title">{% trans "Messages" %}</h1>
 
-<h1 class="inbox-title"> {% trans "Messages" %} </h1>
+  {% if conversation_rows %}
 
-{% if conversation_rows %}
+  <div class="chat-list">
+    {% for row in conversation_rows %}
 
-<div class="chat-list">
+    <a
+      href="{% url 'comunication:conversation_detail' row.conversation.pk %}"
+      class="chat-row"
+    >
+      <div class="chat-avatar">{{ row.other_user.email|first|upper }}</div>
 
-{% for row in conversation_rows %}
-
-<a href="{% url 'comunication:conversation_detail' row.conversation.pk %}" class="chat-row">
-
-
-<div class="chat-avatar">
-    {{ row.other_user.email|first|upper }}
-</div>
-
-<div class="chat-content">
-
-    <div class="chat-header">
-
-        <div class="chat-user">
-
+      <div class="chat-content">
+        <div class="chat-header">
+          <div class="chat-user">
             <strong>
-                {% if row.other_user.get_full_name %}
-                    {{ row.other_user.get_full_name }}
-                {% else %}
-                    {{ row.other_user.email }}
-                {% endif %}
+              {% if row.other_user.get_full_name %} {{
+              row.other_user.get_full_name }} {% else %} {{ row.other_user.email
+              }} {% endif %}
             </strong>
 
-            <span class="chat-property">
-                {{ row.property.title }}
-            </span>
+            <span class="chat-property"> {{ row.property.title }} </span>
+          </div>
 
+          {% if row.last_message_created_at %}
+          <small class="chat-date">
+            {{ row.last_message_created_at|date:"d M" }}
+          </small>
+          {% endif %}
         </div>
 
-        {% if row.last_message_created_at %}
-        <small class="chat-date">
-            {{ row.last_message_created_at|date:"d M" }}
-        </small>
-        {% endif %}
-
-    </div>
-
-    <div class="chat-preview-row">
-
-        <p class="chat-preview">
-
-            {% if row.last_message %}
-                {{ row.last_message|truncatechars:80 }}
-            {% else %}
-                <em> {% trans "No messages yet" %} </em>
+        <div class="chat-preview-row">
+          <p class="chat-preview">
+            {% if row.last_message %} {{ row.last_message|truncatechars:80 }} {%
+            else %}
+            <em> {% trans "No messages yet" %} </em>
             {% endif %}
+          </p>
 
-        </p>
+          {% if row.unread_count %}
+          <span class="chat-unread"> {{ row.unread_count }} </span>
+          {% endif %}
+        </div>
+      </div>
+    </a>
 
-        {% if row.unread_count %}
-        <span class="chat-unread">
-            {{ row.unread_count }}
-        </span>
-        {% endif %}
+    {% endfor %}
+  </div>
 
-    </div>
+  {% else %}
 
-</div>
+  <div class="empty-inbox">
+    <h3>{% trans "No conversations yet" %}</h3>
+    <p>
+      {% trans "Your messages with property owners or guests will appear here"
+      %}.
+    </p>
+  </div>
 
-</a>
-
-{% endfor %}
-
-</div>
-
-{% else %}
-
-<div class="empty-inbox">
-
-
-<h3> {% trans "No conversations yet" %} </h3>
-<p> {% trans "Your messages with property owners or guests will appear here" %}. </p>
-
-
-</div>
-
-{% endif %}
-
+  {% endif %}
 </section>
 
 {% endblock %}
-
