@@ -1,72 +1,70 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block title %}{% trans "Your Favorites" %}{% endblock %}
-
+{% block title %}
+    {% trans "Your Favorites" %}
+{% endblock %}
 {% block content %}
-<section class="container favorites-page">
-<div class="favorites-header">
-    <h1> {% trans "Your Favorites" %} </h1>
-    <p class="sub">
-        {% blocktrans with count=saved_properties|length %}
+    <section class="container favorites-page">
+        <div class="favorites-header">
+            <h1>{% trans "Your Favorites" %}</h1>
+            <p class="sub">
+                {% blocktrans with count=saved_properties|length %}
             {{ count }} saved properties
         {% endblocktrans %}
-    </p>
-</div>
-
-    {% if saved_properties %}
-<div class="favorites-grid">
-        {% for saved in saved_properties %}
-<div class="favorite-card">
-<div class="favorite-image-wrap">
-<img src="{{ saved.property_obj.image.url|default:saved.property_obj.image_url|default:'https://images.unsplash.com/photo-1505691938895-1758d7feb511' }}"
-alt="{{ saved.property_obj.title }}"
-class="favorite-image">
-<div class="favorite-badges">
-                    {% if saved.property_obj.listing_type == "sale" %}
-<span class="badge-type sale"> {% trans "For Sale" %} </span>
-                    {% else %}
-<span class="badge-type rent"> {% trans "For Rent" %} </span>
-                    {% endif %}
-</div>
-<form method="POST"
-action="{% url 'properties:toggle_saved_property' saved.property_obj.pk %}">
-                    {% csrf_token %}
-<input type="hidden" name="next" value="{{ request.path }}">
-<button class="heart-btn active" title="{% trans 'Remove from favorites' %}">♥</button>
-</form>
-</div>
-<div class="favorite-body">
-<h3>{{ saved.property_obj.title }}</h3>
-<p class="favorite-location">
-                    {{ saved.property_obj.address|default:saved.property_obj.city }}
-</p>
-<div class="favorite-meta">
-<span>{{ saved.property_obj.rooms }} {% trans "bed" %} </span>
-<span>{{ saved.property_obj.bathrooms }} {% trans "bath" %} </span>
-<span>{{ saved.property_obj.square_meters|default:"--" }} m² </span>
-</div>
-<div class="favorite-footer">
-<div class="favorite-price">
-                        {% if saved.property_obj.listing_type == "short_term" %}
-                            ${{ saved.property_obj.price }}<span>{% trans "/night" %}</span>
-                        {% elif saved.property_obj.listing_type == "long_term" %}
-                            ${{ saved.property_obj.price }}<span>{% trans "/mo" %}</span>
-                        {% else %}
-                            ${{ saved.property_obj.price }}
-                        {% endif %}
-</div>
-<a href="{% url 'properties:property_detail' saved.property_obj.pk %}"
-class="details-btn"> {% trans "View details" %} </a>
-</div>
-</div>
-</div>
-        {% endfor %}
-</div>
-    {% else %}
-<div class="empty-state">
-<p> {% trans "You haven t saved any properties yet." %} </p>
-<a href="{% url 'properties:list_properties' %}" class="details-btn"> {% trans "Browse properties" %} </a>
-</div>
-    {% endif %}
-</section>
+            </p>
+        </div>
+        {% if saved_properties %}
+            <div class="favorites-grid">
+                {% for saved in saved_properties %}
+                    <div class="favorite-card">
+                        <div class="favorite-image-wrap">
+                            <img src="{{ saved.property_obj.image.url|default:saved.property_obj.image_url|default:'https://images.unsplash.com/photo-1505691938895-1758d7feb511' }}"
+                                 alt="{{ saved.property_obj.title }}"
+                                 class="favorite-image">
+                            <div class="favorite-badges">
+                                {% if saved.property_obj.listing_type == "sale" %}
+                                    <span class="badge-type sale">{% trans "For Sale" %}</span>
+                                {% else %}
+                                    <span class="badge-type rent">{% trans "For Rent" %}</span>
+                                {% endif %}
+                            </div>
+                            <form method="POST"
+                                  action="{% url 'properties:toggle_saved_property' saved.property_obj.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button class="heart-btn active" title="{% trans 'Remove from favorites' %}">♥</button>
+                            </form>
+                        </div>
+                        <div class="favorite-body">
+                            <h3>{{ saved.property_obj.title }}</h3>
+                            <p class="favorite-location">{{ saved.property_obj.address|default:saved.property_obj.city }}</p>
+                            <div class="favorite-meta">
+                                <span>{{ saved.property_obj.rooms }} {% trans "bed" %}</span>
+                                <span>{{ saved.property_obj.bathrooms }} {% trans "bath" %}</span>
+                                <span>{{ saved.property_obj.square_meters|default:"--" }} m²</span>
+                            </div>
+                            <div class="favorite-footer">
+                                <div class="favorite-price">
+                                    {% if saved.property_obj.listing_type == "short_term" %}
+                                        ${{ saved.property_obj.price }}<span>{% trans "/night" %}</span>
+                                    {% elif saved.property_obj.listing_type == "long_term" %}
+                                        ${{ saved.property_obj.price }}<span>{% trans "/mo" %}</span>
+                                    {% else %}
+                                        ${{ saved.property_obj.price }}
+                                    {% endif %}
+                                </div>
+                                <a href="{% url 'properties:property_detail' saved.property_obj.pk %}"
+                                   class="details-btn">{% trans "View details" %}</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>{% trans "You haven t saved any properties yet." %}</p>
+                <a href="{% url 'properties:list_properties' %}" class="details-btn">{% trans "Browse properties" %}</a>
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

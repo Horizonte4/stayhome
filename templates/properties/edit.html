@@ -1,105 +1,88 @@
 {% extends "base.html" %}
 {% load static i18n %}
-
 {% block title %}Edit Property{% endblock %}
-
 {% block content %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
-<div class="form-card">
-    <h2 class="form-title">{% trans "Edit Property" %}: {{ property.title }}</h2>
-
-    <form method="POST" enctype="multipart/form-data" class="form-grid" novalidate>
-        {% csrf_token %}
-
-        <div class="field">
-            <label>{% trans "Title" %}</label>
-            {{ form.title }}
-            {{ form.title.errors }}
-        </div>
-
-        <div class="field">
-            <label>{% trans "Description" %}</label>
-            {{ form.description }}
-            {{ form.description.errors }}
-        </div>
-
-        <div class="field">
-            <label>{% trans "Address" %}</label>
-            {{ form.address }}
-            {{ form.address.errors }}
-
-            <div id="location-results" class="location-results"></div>
-
-            {{ form.city }}
-            {{ form.latitude }}
-            {{ form.longitude }}
-
-            <div id="property-map"></div>
-        </div>
-
-        <div class="form-grid three-col">
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <div class="form-card">
+        <h2 class="form-title">{% trans "Edit Property" %}: {{ property.title }}</h2>
+        <form method="POST"
+              enctype="multipart/form-data"
+              class="form-grid"
+              novalidate>
+            {% csrf_token %}
             <div class="field">
-                <label>{% trans "Price" %}</label>
-                {{ form.price }}
-                {{ form.price.errors }}
+                <label>{% trans "Title" %}</label>
+                {{ form.title }}
+                {{ form.title.errors }}
             </div>
-
             <div class="field">
-                <label>{% trans "Listing Type" %}</label>
-                {{ form.listing_type }}
-                {{ form.listing_type.errors }}
+                <label>{% trans "Description" %}</label>
+                {{ form.description }}
+                {{ form.description.errors }}
             </div>
-
             <div class="field">
-                <label>{% trans "Rooms" %}</label>
-                {{ form.rooms }}
-                {{ form.rooms.errors }}
+                <label>{% trans "Address" %}</label>
+                {{ form.address }}
+                {{ form.address.errors }}
+                <div id="location-results" class="location-results"></div>
+                {{ form.city }}
+                {{ form.latitude }}
+                {{ form.longitude }}
+                <div id="property-map"></div>
             </div>
-
-            <div class="field">
-                <label>{% trans "Bathrooms" %}</label>
-                {{ form.bathrooms }}
-                {{ form.bathrooms.errors }}
+            <div class="form-grid three-col">
+                <div class="field">
+                    <label>{% trans "Price" %}</label>
+                    {{ form.price }}
+                    {{ form.price.errors }}
+                </div>
+                <div class="field">
+                    <label>{% trans "Listing Type" %}</label>
+                    {{ form.listing_type }}
+                    {{ form.listing_type.errors }}
+                </div>
+                <div class="field">
+                    <label>{% trans "Rooms" %}</label>
+                    {{ form.rooms }}
+                    {{ form.rooms.errors }}
+                </div>
+                <div class="field">
+                    <label>{% trans "Bathrooms" %}</label>
+                    {{ form.bathrooms }}
+                    {{ form.bathrooms.errors }}
+                </div>
+                <div class="field">
+                    <label>{% trans "Area" %} (m2)</label>
+                    {{ form.square_meters }}
+                    {{ form.square_meters.errors }}
+                </div>
+                <div class="field">
+                    <label>{% trans "Guests Capacity" %}</label>
+                    {{ form.capacity }}
+                    {{ form.capacity.errors }}
+                </div>
             </div>
-
-            <div class="field">
-                <label>{% trans "Area" %} (m2)</label>
-                {{ form.square_meters }}
-                {{ form.square_meters.errors }}
+            <div class="form-grid two-col">
+                <div class="field">
+                    <label>{% trans "Main Photo" %}</label>
+                    {{ form.image }}
+                    {{ form.image.errors }}
+                </div>
+                <div class="field">
+                    <label>{% trans "Main Photo URL" %}</label>
+                    {{ form.image_url }}
+                    {{ form.image_url.errors }}
+                </div>
             </div>
-
-            <div class="field">
-                <label>{% trans "Guests Capacity" %}</label>
-                {{ form.capacity }}
-                {{ form.capacity.errors }}
+            <p class="section-sub" style="margin-bottom:0;">
+                {% trans "Availability is now managed from bookings and the blocked dates calendar." %}
+            </p>
+            <div class="submit-bar">
+                <button type="submit" class="btn-list">{% trans "Save Changes" %}</button>
             </div>
-        </div>
-
-        <div class="form-grid two-col">
-            <div class="field">
-                <label>{% trans "Main Photo" %}</label>
-                {{ form.image }}
-                {{ form.image.errors }}
-            </div>
-
-            <div class="field">
-                <label>{% trans "Main Photo URL" %}</label>
-                {{ form.image_url }}
-                {{ form.image_url.errors }}
-            </div>
-        </div>
-
-        <p class="section-sub" style="margin-bottom:0;">
-            {% trans "Availability is now managed from bookings and the blocked dates calendar." %}
-        </p>
-
-        <div class="submit-bar">
-            <button type="submit" class="btn-list">{% trans "Save Changes" %}</button>
-        </div>
-    </form>
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="{% static 'js/property_location.js' %}"></script>
+        </form>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static 'js/property_location.js' %}"></script>
 {% endblock %}

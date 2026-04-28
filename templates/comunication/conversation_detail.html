@@ -1,105 +1,80 @@
-{% extends "base.html" %} {% load static i18n %} {% block title %}Messages |
-StayHome{% endblock %} {% block nav_messages %}active{% endblock %} {% block
-content %}
-
-<section class="messages-layout">
-  <!-- SIDEBAR -->
-  <div class="messages-sidebar">
-    <h2 class="messages-title">{% trans "Messages" %}</h2>
-
-    {% for row in conversation_rows %}
-
-    <a
-      href="{% url 'comunication:conversation_detail' row.conversation.pk %}"
-      class="conversation-item {% if row.conversation.pk == conversation.pk %}active{% endif %}"
-    >
-      <div class="conversation-avatar">👤</div>
-
-      <div class="conversation-info">
-        <div class="conversation-top">
-          <strong>
-            {% if row.other_user.get_full_name %} {{
-            row.other_user.get_full_name }} {% else %} {{ row.other_user.email
-            }} {% endif %}
-          </strong>
-
-          {% if row.unread_count %}
-          <span class="conversation-badge"> {{ row.unread_count }} </span>
-          {% endif %}
-        </div>
-
-        <small class="conversation-property"> {{ row.property.title }} </small>
-
-        <p class="conversation-preview">
-          {% if row.last_message %} {{ row.last_message|truncatechars:40 }} {%
-          endif %}
-        </p>
-      </div>
-    </a>
-
-    {% endfor %}
-  </div>
-
-  <!-- CHAT -->
-  <div class="messages-chat">
-    <header class="chat-header">
-      <div class="chat-user">
-        <div class="conversation-avatar">👤</div>
-
-        <div>
-          <strong>
-            {% if other_user.get_full_name %} {{ other_user.get_full_name }} {%
-            else %} {{ other_user.email }} {% endif %}
-          </strong>
-
-          <p class="chat-property">
-            {% trans "About:" %} {{ conversation.property.title }}
-          </p>
-        </div>
-      </div>
-
-      <a href="{% url 'properties:property_detail' conversation.property.pk %}">
-        {% trans "View property" %}
-      </a>
-    </header>
-
-    <!-- MESSAGES -->
-
-    <div class="chat-messages">
-      {% for message in messages_list %}
-
-      <div
-        class="chat-message {% if message.sender == request.user %}own{% else %}other{% endif %}"
-      >
-        <div class="chat-bubble">{{ message.content }}</div>
-
-        <small class="chat-time">
-          {{ message.created_at|date:"M d, Y H:i" }}
-        </small>
-      </div>
-
-      {% endfor %}
-    </div>
-
-    <!-- INPUT -->
-
-    <form
-      method="post"
-      action="{% url 'comunication:send_message' conversation.pk %}"
-      class="chat-input"
-    >
-      {% csrf_token %}
-
-      <input
-        type="text"
-        name="content"
-        placeholder="Type your message..."
-        required
-      />
-
-      <button type="submit">➤</button>
-    </form>
-  </div>
-</section>
-
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}
+    Messages |
+    StayHome
 {% endblock %}
+{% block nav_messages %}active{% endblock %}
+{% block
+    content %}
+    <section class="messages-layout">
+        <!-- SIDEBAR -->
+        <div class="messages-sidebar">
+            <h2 class="messages-title">{% trans "Messages" %}</h2>
+            {% for row in conversation_rows %}
+                <a href="{% url 'comunication:conversation_detail' row.conversation.pk %}"
+                   class="conversation-item {% if row.conversation.pk == conversation.pk %}active{% endif %}">
+                    <div class="conversation-avatar">👤</div>
+                    <div class="conversation-info">
+                        <div class="conversation-top">
+                            <strong>
+                                {% if row.other_user.get_full_name %}
+                                    {{
+                                    row.other_user.get_full_name }}
+                                {% else %}
+                                    {{ row.other_user.email
+                                    }}
+                                {% endif %}
+                            </strong>
+                            {% if row.unread_count %}<span class="conversation-badge">{{ row.unread_count }}</span>{% endif %}
+                        </div>
+                        <small class="conversation-property">{{ row.property.title }}</small>
+                        <p class="conversation-preview">
+                            {% if row.last_message %}
+                                {{ row.last_message|truncatechars:40 }} {%
+                                endif %}
+                            </p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <!-- CHAT -->
+            <div class="messages-chat">
+                <header class="chat-header">
+                    <div class="chat-user">
+                        <div class="conversation-avatar">👤</div>
+                        <div>
+                            <strong>
+                                {% if other_user.get_full_name %}
+                                    {{ other_user.get_full_name }} {%
+                                    else %} {{ other_user.email }}
+                                {% endif %}
+                            </strong>
+                            <p class="chat-property">{% trans "About:" %} {{ conversation.property.title }}</p>
+                        </div>
+                    </div>
+                    <a href="{% url 'properties:property_detail' conversation.property.pk %}">{% trans "View property" %}</a>
+                </header>
+                <!-- MESSAGES -->
+                <div class="chat-messages">
+                    {% for message in messages_list %}
+                        <div class="chat-message {% if message.sender == request.user %}own{% else %}other{% endif %}">
+                            <div class="chat-bubble">{{ message.content }}</div>
+                            <small class="chat-time">{{ message.created_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- INPUT -->
+                <form method="post"
+                      action="{% url 'comunication:send_message' conversation.pk %}"
+                      class="chat-input">
+                    {% csrf_token %}
+                    <input type="text"
+                           name="content"
+                           placeholder="Type your message..."
+                           required />
+                    <button type="submit">➤</button>
+                </form>
+            </div>
+        </section>
+    {% endblock %}

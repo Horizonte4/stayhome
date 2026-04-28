@@ -1,34 +1,24 @@
 {% extends 'base.html' %}
 {% load static i18n %}
 {% block content %}
-<div class="delete-confirmation-wrapper">
-    <div class="delete-confirmation-card">
-        <div class="delete-confirmation-icon">
-            ⚠️
+    <div class="delete-confirmation-wrapper">
+        <div class="delete-confirmation-card">
+            <div class="delete-confirmation-icon">⚠️</div>
+            <h2 class="delete-confirmation-title">{% trans "Delete Property" %}</h2>
+            <p class="delete-confirmation-text">
+                {% trans "Are you sure you want to delete" %}
+                <strong>{{ property.title }}</strong>?
+            </p>
+            <p class="delete-confirmation-warning">{% trans "This action cannot be undone." %}</p>
+            <form method="POST" class="delete-confirmation-actions">
+                {% csrf_token %}
+                <button type="submit"
+                        class="delete-confirmation-btn delete-confirmation-btn-danger">
+                    {% trans "Delete property" %}
+                </button>
+                <a href="{% url 'properties:list_properties' %}"
+                   class="delete-confirmation-btn delete-confirmation-btn-secondary">{% trans "Cancel" %}</a>
+            </form>
         </div>
-
-        <h2 class="delete-confirmation-title"> {% trans "Delete Property" %} </h2>
-
-        <p class="delete-confirmation-text">
-            {% trans "Are you sure you want to delete" %}
-            <strong>{{ property.title }}</strong>?
-        </p>
-
-        <p class="delete-confirmation-warning">
-            {% trans "This action cannot be undone." %}
-        </p>
-
-        <form method="POST" class="delete-confirmation-actions">
-            {% csrf_token %}
-
-            <button type="submit" class="delete-confirmation-btn delete-confirmation-btn-danger">
-                {% trans "Delete property" %}
-            </button>
-
-            <a href="{% url 'properties:list_properties' %}" class="delete-confirmation-btn delete-confirmation-btn-secondary">
-                {% trans "Cancel" %}
-            </a>
-        </form>
     </div>
-</div>
 {% endblock %}

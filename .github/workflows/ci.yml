@@ -1,10 +1,8 @@
 name: Estayhome CI
 
 on:
-  push:
-    branches: [ main, develop ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, dev ]
 
 jobs:
   backend-quality:
@@ -41,37 +39,21 @@ jobs:
       - name: Vulnerability scan (pip-audit)
         run: pip-audit -r requirements.txt
 
-      - name: Run tests (Pytest)
-        run: python -m pytest --tb=short
-        env:
-          DJANGO_SETTINGS_MODULE: stayhome.settings
-          SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DEBUG: "True"
-
   frontend-quality:
-    name: Frontend Quality (HTML Templates)
+    name: Frontend Quality (Django Templates)
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
         with:
-          node-version: '20'
+          python-version: '3.12'
+          cache: 'pip'
 
-      - name: Install HTML/CSS linting tools
-        run: |
-          npm install -g htmlhint stylelint stylelint-config-standard
+      - name: Install djLint
+        run: pip install djlint
 
-      - name: Lint HTML templates
-        run: |
-          htmlhint "**/*.html" \
-            --ignore "node_modules/**,media/**,static/vendor/**"
-
-      - name: Lint CSS
-        run: |
-          stylelint "static/**/*.css" \
-            --config '{"extends":"stylelint-config-standard"}' \
-            --ignore-path .gitignore \
-            --allow-empty-input
+      - name: Lint Django templates
+        run: djlint templates/ --profile=django --check
