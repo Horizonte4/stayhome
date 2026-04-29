@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from .models import User, Client, Owner
 
-# ── Título del panel ─────────────────────────────────────────────────────────
+# ── Título del panel ────────────────────────────────────────────────────
 admin.site.site_header = "StayHome Admin"
 admin.site.site_title = "StayHome"
 admin.site.index_title = "Panel de administración"
