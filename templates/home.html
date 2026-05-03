@@ -1,53 +1,44 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block title %}
-    Home |
-    StayHome
-{% endblock %}
+
+{% block title %}Home | StayHome{% endblock %}
+
 {% block content %}
-    <section class="home-hero">
-        <div class="home-hero-content">
-            <h1 class="home-hero-title">{% trans "Find Your Perfect Home" %}</h1>
-            <p class="home-hero-text">
-                {% blocktrans %} Discover properties for rent, sale, or short-term stays.
-      {% endblocktrans %}
-                {% blocktrans %}
-Connect directly with owners. {%
-endblocktrans %}
-</p>
-<form method="get" action="{% url 'properties:list_properties' %}" class="home-search-bar">
-<input type="text" name="q" placeholder="{% trans 'Search by property, owner, city, address...' %}" class="home-search-input" />
-<button type="submit" class="home-search-btn">{% trans "Search" %}</button>
-</form>
-</div>
+<section class="home-hero">
+    <div class="home-hero-content">
+        <h1 class="home-hero-title">{% trans "Find Your Perfect Home" %}</h1>
+        <p class="home-hero-text">
+            {% blocktrans %}Discover properties for rent, sale, or short-term stays.{% endblocktrans %}
+            {% blocktrans %}Connect directly with owners.{% endblocktrans %}
+        </p>
+        <form method="get" action="{% url 'properties:list_properties' %}" class="home-search-bar">
+            <input type="text" name="q" placeholder="{% trans 'Search by property, owner, city, address...' %}" class="home-search-input" />
+            <button type="submit" class="home-search-btn">{% trans "Search" %}</button>
+        </form>
+    </div>
 </section>
+
 <section>
-<h2 class="section-title">{% trans "Featured Properties" %}</h2>
-<p class="section-sub">{% trans "See what owners are listing right now" %}.</p>
-<div class="property-grid">
-{% for property in properties %}
-{% if property.image %}
-{% with
-cover=property.image.url %}
-{% include
-"partials/featured_property_card.html" %}
-{% endwith %}
-{% elif
-property.image_url %}
-{% with cover=property.image_url %}
-{% include
-"partials/featured_property_card.html" %}
-{% endwith %}
-{% else %}
-{% with
-cover="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80"
-%}
-{% include "partials/featured_property_card.html" %}
-{% endwith %}
-{%
-endif %} {% empty %}
-<p>{% trans "No available properties" %}.</p>
-{% endfor %}
-</div>
+    <h2 class="section-title">{% trans "Featured Properties" %}</h2>
+    <p class="section-sub">{% trans "See what owners are listing right now" %}.</p>
+    <div class="property-grid">
+        {% for property in properties %}
+            {% if property.image %}
+                {% with cover=property.image.url %}
+                    {% include "partials/featured_property_card.html" %}
+                {% endwith %}
+            {% elif property.image_url %}
+                {% with cover=property.image_url %}
+                    {% include "partials/featured_property_card.html" %}
+                {% endwith %}
+            {% else %}
+                {% with cover="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80" %}
+                    {% include "partials/featured_property_card.html" %}
+                {% endwith %}
+            {% endif %}
+        {% empty %}
+            <p>{% trans "No available properties" %}.</p>
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}
