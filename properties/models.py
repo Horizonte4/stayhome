@@ -81,8 +81,10 @@ class Property(models.Model):
         if self.listing_type == "sale":
             return False
 
+        from transactions.models import Booking
+
         return self.bookings.filter(
-            status="approved",
+            status=Booking.STATUS_APPROVED,
             check_in__lt=end_date,
             check_out__gt=start_date,
         ).exists()

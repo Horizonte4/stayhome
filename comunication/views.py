@@ -53,7 +53,7 @@ def start_conversation(request, property_id):
     approved_booking = Booking.objects.filter(
         property=property_obj,
         user=buyer_user,
-        status="approved"
+        status=Booking.STATUS_APPROVED,
     ).exists()
 
     purchased_property = has_sale_contract(property_obj, buyer=buyer_user)

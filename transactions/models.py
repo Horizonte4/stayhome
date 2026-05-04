@@ -46,17 +46,16 @@ class Contract(TimeStampedModel, SoftDeleteModel):
 
 
 class Booking(TimeStampedModel):
-    STATUS_PENDING = "pending"
-    STATUS_APPROVED = "approved"
-    STATUS_REJECTED = "rejected"
-    STATUS_CANCELLED = "cancelled"
+    class Status(models.TextChoices):
+        PENDING = "pending", _("Pending")
+        APPROVED = "approved", _("Approved")
+        REJECTED = "rejected", _("Rejected")
+        CANCELLED = "cancelled", _("Cancelled")
 
-    STATUS_CHOICES = [
-        (STATUS_PENDING, _("Pending")),
-        (STATUS_APPROVED, _("Approved")),
-        (STATUS_REJECTED, _("Rejected")),
-        (STATUS_CANCELLED, _("Cancelled")),
-    ]
+    STATUS_PENDING = Status.PENDING
+    STATUS_APPROVED = Status.APPROVED
+    STATUS_REJECTED = Status.REJECTED
+    STATUS_CANCELLED = Status.CANCELLED
 
     property = models.ForeignKey(
         "properties.Property",
@@ -72,8 +71,8 @@ class Booking(TimeStampedModel):
     check_out = models.DateField()
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
-        default=STATUS_PENDING,
+        choices=Status,
+        default=Status.PENDING,
     )
 
     class Meta:
