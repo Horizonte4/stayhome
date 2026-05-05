@@ -89,17 +89,16 @@ class BookingQuerySet(models.QuerySet):
 
 
 class Booking(TimeStampedModel):
-    STATUS_PENDING = "pending"
-    STATUS_APPROVED = "approved"
-    STATUS_REJECTED = "rejected"
-    STATUS_CANCELLED = "cancelled"
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+        CANCELLED = "cancelled", "Cancelled"
 
-    STATUS_CHOICES = [
-        (STATUS_PENDING, "Pending"),
-        (STATUS_APPROVED, "Approved"),
-        (STATUS_REJECTED, "Rejected"),
-        (STATUS_CANCELLED, "Cancelled"),
-    ]
+    STATUS_PENDING = Status.PENDING
+    STATUS_APPROVED = Status.APPROVED
+    STATUS_REJECTED = Status.REJECTED
+    STATUS_CANCELLED = Status.CANCELLED
 
     property = models.ForeignKey(
         "properties.Property",
@@ -115,8 +114,8 @@ class Booking(TimeStampedModel):
     check_out = models.DateField()
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
-        default=STATUS_PENDING,
+        choices=Status,
+        default=Status.PENDING,
     )
 
     objects = BookingQuerySet.as_manager()
