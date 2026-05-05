@@ -114,3 +114,5 @@ AUTH_USER_MODEL = "users.User"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+BOOKING_CANCEL_DAYS_LIMIT = 5
