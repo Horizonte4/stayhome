@@ -70,13 +70,28 @@ class Property(models.Model):
 
         return blocked_dates
 
-    def has_sale_contract(self):
+    def has_sale_contract(self, buyer=None):
         from transactions.models import Contract
 
-        return Contract.objects.filter(
+        contracts = Contract.objects.filter(
             property=self,
             type=Contract.TYPE_SALE,
-        ).exists()
+        )
+        if buyer is not None:
+            contracts = contracts.filter(tenant=buyer)
+        return contracts.exists()
+
+    def can_be_accessed_by(self, user):
+        if not self.has_sale_contract():
+            return True
+
+        if not getattr(user, "is_authenticated", False):
+            return False
+
+        if self.owner and self.owner.user_id == user.id:
+            return True
+
+        return self.has_sale_contract(buyer=user)
 
     def has_approved_booking_overlap(self, start_date, end_date):
         if self.listing_type == "sale":
@@ -142,6 +157,22 @@ class SavedPropertyQuerySet(models.QuerySet):
 
     def wishlist(self):
         return self.with_related().filter(property_obj__listing_type="sale")
+
+    def for_user(self, user):
+        return self.filter(user=user)
+
+    def ids_for_user(self, user):
+        if not getattr(user, "is_authenticated", False):
+            return set()
+        return set(
+            self.filter(user=user).values_list("property_obj_id", flat=True)
+        )
+
+    def favorites_for(self, user):
+        return self.favorites().filter(user=user).order_by("-created_at")
+
+    def wishlist_for(self, user):
+        return self.wishlist().filter(user=user).order_by("-created_at")
 
 
 class SavedProperty(models.Model):

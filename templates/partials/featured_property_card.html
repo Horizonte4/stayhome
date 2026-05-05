@@ -22,8 +22,7 @@
         <div class="card-footer">
             <div class="price-tag">
                 ${{ property.price|floatformat:0 }}
-                {% if property.listing_type ==
-                    "sale" %}
+                {% if property.listing_type == "sale" %}
                     <small>sale</small>
                 {% else %}
                     <small>/mo</small>
