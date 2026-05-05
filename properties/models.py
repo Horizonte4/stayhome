@@ -164,9 +164,7 @@ class SavedPropertyQuerySet(models.QuerySet):
     def ids_for_user(self, user):
         if not getattr(user, "is_authenticated", False):
             return set()
-        return set(
-            self.filter(user=user).values_list("property_obj_id", flat=True)
-        )
+        return set(self.filter(user=user).values_list("property_obj_id", flat=True))
 
     def favorites_for(self, user):
         return self.favorites().filter(user=user).order_by("-created_at")

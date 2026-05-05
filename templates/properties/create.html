@@ -10,9 +10,7 @@
           href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
     <div class="form-card">
         <div class="form-title">{% trans "Create Property Listing" %}</div>
-        <div class="form-sub">
-            {% trans "Fill in the fields and upload your property to start receiving bookings!" %}
-        </div>
+        <div class="form-sub">{% trans "Fill in the fields and upload your property to start receiving bookings!" %}</div>
         {% if messages %}
             <div style="background: #ecfeff;
                         border: 1px solid #67e8f9;
@@ -23,9 +21,7 @@
                         font-weight: 700">
                 {% for message in messages %}
                     {{ message }}
-                    {% if not forloop.last %}
-                        <br />
-                    {% endif %}
+                    {% if not forloop.last %}<br />{% endif %}
                 {% endfor %}
             </div>
         {% endif %}
@@ -39,9 +35,7 @@
                         font-weight: 700">
                 {% for error in form.non_field_errors %}
                     {{ error }}
-                    {% if not forloop.last %}
-                        <br />
-                    {% endif %}
+                    {% if not forloop.last %}<br />{% endif %}
                 {% endfor %}
             </div>
         {% endif %}

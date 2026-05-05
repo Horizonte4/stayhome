@@ -27,9 +27,7 @@
                         </div>
                         <small class="conversation-property">{{ row.property.title }}</small>
                         <p class="conversation-preview">
-                            {% if row.last_message %}
-                                {{ row.last_message|truncatechars:40 }}
-                            {% endif %}
+                            {% if row.last_message %}{{ row.last_message|truncatechars:40 }}{% endif %}
                         </p>
                     </div>
                 </a>
