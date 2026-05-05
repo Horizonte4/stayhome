@@ -5,8 +5,7 @@
     StayHome
 {% endblock %}
 {% block nav_messages %}active{% endblock %}
-{% block
-    content %}
+{% block content %}
     <section class="container inbox-container">
         <h1 class="inbox-title">{% trans "Messages" %}</h1>
         {% if conversation_rows %}
@@ -20,11 +19,9 @@
                                 <div class="chat-user">
                                     <strong>
                                         {% if row.other_user.get_full_name %}
-                                            {{
-                                            row.other_user.get_full_name }}
+                                            {{ row.other_user.get_full_name }}
                                         {% else %}
-                                            {{ row.other_user.email
-                                            }}
+                                            {{ row.other_user.email }}
                                         {% endif %}
                                     </strong>
                                     <span class="chat-property">{{ row.property.title }}</span>
@@ -36,8 +33,8 @@
                             <div class="chat-preview-row">
                                 <p class="chat-preview">
                                     {% if row.last_message %}
-                                        {{ row.last_message|truncatechars:80 }} {%
-                                        else %}
+                                        {{ row.last_message|truncatechars:80 }}
+                                    {% else %}
                                         <em>{% trans "No messages yet" %}</em>
                                     {% endif %}
                                 </p>
@@ -51,8 +48,7 @@
             <div class="empty-inbox">
                 <h3>{% trans "No conversations yet" %}</h3>
                 <p>
-                    {% trans "Your messages with property owners or guests will appear here"
-                    %}.
+                    {% trans "Your messages with property owners or guests will appear here" %}.
                 </p>
             </div>
         {% endif %}
