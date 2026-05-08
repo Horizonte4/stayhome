@@ -70,7 +70,8 @@ class PropertyForm(forms.ModelForm):
                 attrs={
                     "class": "form-input",
                     "min": 0,
-                    "step": "0.01",
+                    "step": "1",
+                    "placeholder": "1500000",
                 }
             ),
             "listing_type": forms.Select(attrs={"class": "form-input"}),

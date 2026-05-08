@@ -15,12 +15,11 @@
         <link rel="stylesheet" href="{% static 'css/chat.css' %}">
         <link rel="stylesheet" href="{% static 'css/components.css' %}">
         <title>
-            {% block title %}StayHome{% endblock %}
+            {% block title %} StayHome {% endblock %}
         </title>
         {% block extra_js %}{% endblock %}
     </head>
     <body>
-        <!-- NAVBAR -->
         <nav>
             <a href="{% url 'home' %}" class="logo">
                 <div class="logo-icon">
@@ -31,7 +30,6 @@
                 <span class="logo-text"> {% trans "Stay " %}<span>{% trans "Home" %}</span></span>
             </a>
             <ul class="nav-links">
-                <!-- HOME -->
                 <li>
                     <a href="{% url 'home' %}">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -40,7 +38,6 @@
                         {% trans "Home" %}
                     </a>
                 </li>
-                <!-- PROPERTIES -->
                 <li>
                     <a href="/properties/" class="{% block nav_property %}{% endblock %}">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -49,7 +46,6 @@
                         {% trans "Property" %}
                     </a>
                 </li>
-                <!-- BOOKINGS -->
                 <li class="{% block nav_bookings %}{% endblock %}">
                     {% if request.user.is_authenticated and request.user.is_client %}
                         <a href="{% url 'transactions:my_bookings' %}">
@@ -68,7 +64,6 @@
                         </a>
                     {% endif %}
                 </li>
-                <!-- FAVORITES -->
                 <li>
                     <a href="{% url 'properties:favorites_list' %}"
                        class="{% block nav_favorites %}{% endblock %}">
@@ -87,7 +82,6 @@
                         {% trans "Wishlist" %}
                     </a>
                 </li>
-                <!-- MESSAGES -->
                 <li>
                     <a href="{% url 'comunication:inbox' %}"
                        class="{% block nav_messages %}{% endblock %}">
@@ -98,7 +92,6 @@
                     </a>
                 </li>
             </ul>
-            <!-- RIGHT SIDE -->
             <div class="nav-right">
                 {% if request.user.is_authenticated and request.user.is_owner %}
                     <a href="{% url 'properties:create_property' %}" class="btn-list">
@@ -126,7 +119,6 @@
                 {% endif %}
             </div>
             {% load i18n %}
-            <!-- LANGUAGE SELECTOR -->
             <form action="{% url 'set_language' %}" method="post">
                 {% csrf_token %}
                 <input name="next" type="hidden" value="{{ request.path }}">
@@ -140,25 +132,25 @@
                 </select>
             </form>
         </nav>
-        <!-- PAGE -->
+        <!-- pop up de los mensajes de error -->
         <main class="page">
             {% if messages %}
                 {% for message in messages %}<div class="message message-{{ message.tags }}">{{ message }}</div>{% endfor %}
             {% endif %}
             {% block content %}{% endblock %}
         </main>
-        <!-- FOOTER -->
+        
         {% block footer %}
             <section class="cta-section">
-                <div class="cta-badge">🏡 Join StayHome</div>
+                <div class="cta-badge">{% trans "Join StayHome" %}</div>
                 <h2 class="cta-title">{% trans "Ready to Find Your Perfect Home?" %}</h2>
                 <p class="cta-sub">
                     {% trans "Join thousands of satisfied users who found their dream properties through StayHome." %}
                 </p>
                 <div class="cta-actions">
-                    <a href="/properties/" class="cta-btn-primary">{% trans "🔍 Browse Properties" %}</a>
+                    <a href="/properties/" class="cta-btn-primary">{% trans "Browse Properties" %}</a>
                     <a href="{% url 'properties:create_property' %}"
-                       class="cta-btn-secondary">➕ {% trans "List Your Property" %}</a>
+                       class="cta-btn-secondary"> {% trans "List Your Property" %}</a>
                 </div>
             </section>
         {% endblock %}

@@ -1,3 +1,5 @@
+{% load static i18n %}
+{% load humanize %}
 <article class="featured-card">
     <div class="featured-media" style="background-image:url('{{ cover }}');">
         <div class="pill-row">
@@ -14,22 +16,22 @@
         </p>
         <p class="featured-desc">{{ property.description|default:"Sin descripcion"|truncatewords:18 }}</p>
         <div class="meta-row">
-            <span class="meta-chip">&#128719; {{ property.rooms }} rooms</span>
-            <span class="meta-chip">&#128703; {{ property.bathrooms }} baths</span>
-            <span class="meta-chip">&#128208; {{ property.square_meters|default:"--" }} m2</span>
-            <span class="meta-chip">&#128101; {{ property.capacity }} guests</span>
+            <span class="meta-chip">{% blocktrans with rooms=property.rooms %}{{ rooms }} rooms{% endblocktrans %}</span>
+            <span class="meta-chip">{% blocktrans with baths=property.bathrooms %}{{ baths }} baths{% endblocktrans %}</span>
+            <span class="meta-chip"> {% blocktrans with m2=property.square_meters|default:"--" %}{{ m2 }} m2{% endblocktrans %}</span>
+            <span class="meta-chip">{% blocktrans with guests=property.capacity %}{{ guests }} guests{% endblocktrans %}</span>
         </div>
         <div class="card-footer">
             <div class="price-tag">
-                ${{ property.price|floatformat:0 }}
+                ${{ property.price|floatformat:0|intcomma }} COP
                 {% if property.listing_type == "sale" %}
-                    <small>sale</small>
+                    <small>{% trans "sale" %}</small>
                 {% else %}
-                    <small>/mo</small>
+                    <small>{% trans "/mo" %}</small>
                 {% endif %}
             </div>
             <a class="ghost-btn"
-               href="{% url 'properties:property_detail' pk=property.pk %}">View Details</a>
+               href="{% url 'properties:property_detail' pk=property.pk %}">{% trans "View Details:" %}</a>
         </div>
     </div>
 </article>
