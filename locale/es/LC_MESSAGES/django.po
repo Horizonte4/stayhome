@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StayHome\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 15:41-0500\n"
+"POT-Creation-Date: 2026-05-08 16:12-0500\n"
 "PO-Revision-Date: 2026-03-24 19:49+0000\n"
 "Last-Translator: StayHome\n"
 "Language-Team: Spanish\n"
@@ -35,11 +35,11 @@ msgstr "Disponible"
 msgid "Unavailable"
 msgstr "No Disponible"
 
-#: stayhome/settings.py:98
+#: stayhome/settings.py:99
 msgid "English"
 msgstr "Inglés"
 
-#: stayhome/settings.py:99
+#: stayhome/settings.py:100
 msgid "Spanish"
 msgstr "Español"
 
@@ -208,37 +208,37 @@ msgstr "Mira lo que los propietarios están publicando ahora"
 msgid "No available properties"
 msgstr "No hay propiedades disponibles"
 
-#: templates/partials/featured_property_card.html:18
+#: templates/partials/featured_property_card.html:19
 #, python-format
 msgid "%(rooms)s rooms"
 msgstr "%(rooms)s Habitaciones"
 
-#: templates/partials/featured_property_card.html:19
+#: templates/partials/featured_property_card.html:20
 #, python-format
 msgid "%(baths)s baths"
 msgstr "%(baths)s Banos"
 
-#: templates/partials/featured_property_card.html:20
+#: templates/partials/featured_property_card.html:21
 #, python-format
 msgid "%(m2)s m2"
 msgstr "%(m2)s m2"
 
-#: templates/partials/featured_property_card.html:21
+#: templates/partials/featured_property_card.html:22
 #, python-format
 msgid "%(guests)s guests"
 msgstr "%(guests)s Capacidad"
 
-#: templates/partials/featured_property_card.html:27
+#: templates/partials/featured_property_card.html:28
 msgid "sale"
 msgstr "Venta"
 
-#: templates/partials/featured_property_card.html:29
+#: templates/partials/featured_property_card.html:30
 #: templates/properties/favorites_list.html:51
 #: templates/properties/list.html:154
 msgid "/mo"
 msgstr "/mes"
 
-#: templates/partials/featured_property_card.html:33
+#: templates/partials/featured_property_card.html:34
 msgid "View Details:"
 msgstr "Ver detalles"
 
@@ -380,7 +380,7 @@ msgid ""
 "Availability is now managed from bookings and the blocked dates calendar."
 msgstr ""
 
-#: templates/properties/edit.html:82 templates/users/edit_profile.html:31
+#: templates/properties/edit.html:82 templates/users/edit_profile.html:30
 msgid "Save Changes"
 msgstr "Guardar cambios"
 
@@ -596,7 +596,7 @@ msgid "Use your email and password to continue."
 msgstr "Usa tu correo y contraseña para continuar."
 
 #: templates/registration/login.html:13 templates/registration/signup.html:30
-#: templates/users/board.html:28 templates/users/edit_profile.html:23
+#: templates/users/board.html:28 templates/users/edit_profile.html:22
 msgid "Email"
 msgstr "Correo electrónico"
 
@@ -640,16 +640,16 @@ msgstr "Únete a StayHome para reservar propiedades o publicar las tuyas."
 msgid "I want to join as"
 msgstr "Quiero unirme como"
 
-#: templates/registration/signup.html:19 templates/users/edit_profile.html:14
+#: templates/registration/signup.html:19 templates/users/edit_profile.html:13
 msgid "First Name"
 msgstr "Nombre"
 
-#: templates/registration/signup.html:24 templates/users/edit_profile.html:18
+#: templates/registration/signup.html:24 templates/users/edit_profile.html:17
 msgid "Last Name"
 msgstr "Apellido"
 
 #: templates/registration/signup.html:35 templates/users/board.html:34
-#: templates/users/edit_profile.html:28
+#: templates/users/edit_profile.html:27
 msgid "Phone"
 msgstr "Teléfono"
 
@@ -755,9 +755,17 @@ msgstr "Contactar propietario"
 msgid "Here your purchased properties will appear"
 msgstr "Aquí aparecerán tus propiedades compradas"
 
+#: templates/users/board.html:18
+msgid "Member since"
+msgstr "Miembro desde"
+
 #: templates/users/board.html:20
 msgid "Edit profile"
 msgstr "Editar perfil"
+
+#: templates/users/board.html:24
+msgid "Contact Information"
+msgstr "Informacion del perfil"
 
 #: templates/users/board.html:46
 msgid "Joined"
@@ -779,6 +787,10 @@ msgstr "Editar propiedad"
 msgid "View"
 msgstr "ver"
 
+#: templates/users/board.html:91
+msgid "You don't have any properties yet. Create one to get started!"
+msgstr "Aún no tienes propiedades. Publica una para empezar."
+
 #: templates/users/board.html:98
 msgid "Log out"
 msgstr "Cerrar sesión"
@@ -791,13 +803,21 @@ msgstr "Editar perfil"
 msgid "Update your personal information and password."
 msgstr "Actualiza tu información personal y contraseña."
 
-#: templates/users/edit_profile.html:25
+#: templates/users/edit_profile.html:24
 msgid "Email cannot be changed"
 msgstr "El correo no puede ser modificado"
 
-#: templates/users/edit_profile.html:33
+#: templates/users/edit_profile.html:32
 msgid "Cancel and return to dashboard"
 msgstr "Cancelar y volver al panel"
+
+#: users/models.py:38
+msgid "owner"
+msgstr "Propietario"
+
+#: users/models.py:40
+msgid "client"
+msgstr "Cliente"
 
 #~ msgid "Featured"
 #~ msgstr "Destacado"
@@ -954,9 +974,6 @@ msgstr "Cancelar y volver al panel"
 #~ msgid "Reject"
 #~ msgstr "Rechazar"
 
-#~ msgid "Client"
-#~ msgstr "Cliente"
-
 #~ msgid "cancell"
 #~ msgstr "Cancelar"
 
@@ -992,6 +1009,3 @@ msgstr "Cancelar y volver al panel"
 
 #~ msgid "Ver"
 #~ msgstr "Ver"
-
-#~ msgid " you dont have properties yet. list one to start."
-#~ msgstr "Aún no tienes propiedades. Publica una para empezar."
