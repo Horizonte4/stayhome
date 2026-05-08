@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static i18n %}
+{% load humanize %}
 {% block title %}
     {% trans "Your Favorites" %}
 {% endblock %}
@@ -8,9 +9,7 @@
         <div class="favorites-header">
             <h1>{% trans "Your Favorites" %}</h1>
             <p class="sub">
-                {% blocktrans with count=saved_properties|length %}
-            {{ count }} saved properties
-        {% endblocktrans %}
+                {% blocktrans with count=favorites|length %}{{ count }} saved properties{% endblocktrans %}
             </p>
         </div>
         {% if saved_properties %}
@@ -46,15 +45,15 @@
                             <div class="favorite-footer">
                                 <div class="favorite-price">
                                     {% if saved.property_obj.listing_type == "short_term" %}
-                                        ${{ saved.property_obj.price }}<span>{% trans "/night" %}</span>
+                                        ${{ saved.property_obj.price|floatformat:0|intcomma }} COP<span>{% trans "/night" %}</span>
                                     {% elif saved.property_obj.listing_type == "long_term" %}
-                                        ${{ saved.property_obj.price }}<span>{% trans "/mo" %}</span>
+                                        ${{ saved.property_obj.price|floatformat:0|intcomma }} COP<span>{% trans "/mo" %}</span>
                                     {% else %}
-                                        ${{ saved.property_obj.price }}
+                                        ${{ saved.property_obj.price|floatformat:0|intcomma }} COP
                                     {% endif %}
                                 </div>
                                 <a href="{% url 'properties:property_detail' saved.property_obj.pk %}"
-                                   class="details-btn">{% trans "View details" %}</a>
+                                   class="property-card-details-btn">{% trans "View details" %}</a>
                             </div>
                         </div>
                     </div>

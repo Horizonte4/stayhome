@@ -1281,15 +1281,6 @@
     margin: 0;
 }
 
-.cta-btn {
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-weight: 700;
-    border: 1px solid #0f172a;
-    background: #0f172a;
-    color: white;
-    cursor: pointer;
-}
 
 .cancel-btn {
     padding: 10px 14px;

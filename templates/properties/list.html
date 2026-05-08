@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% load static i18n %}
+{% load humanize %}
 {% block title %}Explore Properties{% endblock %}
 {% block content %}
     <div class="explore-page">
         <div class="explore-header">
             <h1 class="explore-title">{% trans "Explore Properties" %}</h1>
             <p class="explore-subtitle">
-                {% blocktrans with count=properties.paginator.count|default:properties|length %}
-                Browse through {{ count }} available properties
-            {% endblocktrans %}
+                {% blocktrans with count=properties.paginator.count|default:properties|length %}Browse through {{ count }} available properties{% endblocktrans %}
             </p>
         </div>
         <div class="explore-layout">
@@ -109,9 +108,7 @@
                                 <input type="hidden" name="check_out" value="{{ filters.check_out }}">
                             </form>
                             <p class="explore-results-count">
-                                {% blocktrans with shown=properties|length total=properties.paginator.count|default:properties|length %}
-                    Showing {{ shown }} of {{ total }} properties
-                {% endblocktrans %}
+                                {% blocktrans with shown=properties|length total=properties.paginator.count|default:properties|length %}Showing {{ shown }} of {{ total }} properties{% endblocktrans %}
                             </p>
                             {% if properties %}
                                 <div class="explore-cards-grid">
@@ -140,21 +137,23 @@
                                                 </div>
                                                 <p class="explore-card-location">&#128205; {{ property.address|default:property.city }}</p>
                                                 <div class="explore-card-meta">
-                                                    <span>&#128719; {{ property.rooms }}</span>
-                                                    <span>&#128703; {{ property.bathrooms }}</span>
-                                                    <span>&#128208; {{ property.square_meters|default:"--" }} m2</span>
+                                                    <span>{% blocktrans with rooms=property.rooms %}{{ rooms }} rooms{% endblocktrans %}</span>
+                                                    <span>{% blocktrans with baths=property.bathrooms %}{{ baths }} baths{% endblocktrans %}</span>
+                                                    <span>{% blocktrans with m2=property.square_meters|default:"--" %}{{ m2 }} m²{% endblocktrans %}</span>
                                                 </div>
                                                 <div class="explore-card-footer">
                                                     <div>
                                                         <div class="explore-card-price">
-                                                            ${{ property.price }}
+                                                            ${{ property.price|floatformat:0|intcomma }} COP
                                                             {% if property.listing_type == "short_term" %}
                                                                 {% trans "/night" %}
                                                             {% elif property.listing_type == "long_term" %}
                                                                 {% trans "/mo" %}
                                                             {% endif %}
                                                         </div>
-                                                        <div class="explore-card-owner">{{ property.capacity }} guests · {{ property.availability_label }}</div>
+                                                        <div class="explore-card-owner">
+                                                            {% blocktrans with guests=property.capacity %}{{ guests }} guests{% endblocktrans %} · {{ property.availability_label }}
+                                                        </div>
                                                     </div>
                                                     <a href="{% url 'properties:property_detail' pk=property.pk %}"
                                                        class="explore-details-btn">{% trans "View Details" %}</a>
