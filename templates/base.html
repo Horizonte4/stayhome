@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="{% static 'css/chat.css' %}">
         <link rel="stylesheet" href="{% static 'css/components.css' %}">
         <title>
-            {% block title %} StayHome {% endblock %}
+            {% block title %}StayHome{% endblock %}
         </title>
         {% block extra_js %}{% endblock %}
     </head>
@@ -139,7 +139,6 @@
             {% endif %}
             {% block content %}{% endblock %}
         </main>
-        
         {% block footer %}
             <section class="cta-section">
                 <div class="cta-badge">{% trans "Join StayHome" %}</div>
@@ -150,7 +149,7 @@
                 <div class="cta-actions">
                     <a href="/properties/" class="cta-btn-primary">{% trans "Browse Properties" %}</a>
                     <a href="{% url 'properties:create_property' %}"
-                       class="cta-btn-secondary"> {% trans "List Your Property" %}</a>
+                       class="cta-btn-secondary">{% trans "List Your Property" %}</a>
                 </div>
             </section>
         {% endblock %}

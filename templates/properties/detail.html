@@ -1,140 +1,143 @@
 {% extends "base.html" %}
 {% load static i18n humanize %}
-{% block title %}{% trans "Property Details" %}{% endblock %}
+{% block title %}
+    {% trans "Property Details" %}
+{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-<a href="{% url 'properties:list_properties' %}" class="back-link">{% trans "Back to Properties" %}</a>
-
-<section class="detail-wrap">
-    <div class="media-card">
-        <div class="hero-media"
-             style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}')">
-            <div class="pill-row">
-                <span class="pill pill-blue">{{ availability_label }}</span>
-                <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
-            </div>
-        </div>
-        <div class="media-body">
-            <h1 class="title">{{ property.title }}</h1>
-            <p class="owner">{% trans "Owner" %}: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
-            <p class="sub">{{ property.address|default:property.city }}</p>
-            <p class="price">
-                ${{ property.price|floatformat:0|intcomma }} COP
-                {% if property.listing_type == "sale" %}
-                    <small class="price-period">{% trans "sale price" %}</small>
-                {% elif property.listing_type == "short_term" %}
-                    <small class="price-period">{% trans "/night" %}</small>
-                {% else %}
-                    <small class="price-period">{% trans "/mo" %}</small>
-                {% endif %}
-            </p>
-            <p class="detail-description">{{ property.description|default:"No description provided." }}</p>
-
-            {% if user.is_authenticated and not has_sale_contract %}
-                <form method="post" action="{% url 'properties:toggle_saved_property' property.pk %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.path }}">
-                    <button type="submit" class="cta-btn">
-                        {% if is_saved %}
-                            {% trans "Remove from saved" %}
-                        {% else %}
-                            {% if property.listing_type == "sale" %}
-                                {% trans "Save to wishlist" %}
-                            {% else %}
-                                {% trans "Save to favorites" %}
-                            {% endif %}
-                        {% endif %}
-                    </button>
-                </form>
-            {% elif not user.is_authenticated and not has_sale_contract %}
-                <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">{% trans "Log in to save this property" %}</a>
-            {% endif %}
-
-            <div class="contact-owner" style="margin-top:20px;">
-                {% if request.user.is_authenticated and request.user != property.owner.user and can_contact_owner %}
-                    <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
-                        {% csrf_token %}
-                        <button type="submit" class="cta-btn">{% trans "Contact Owner" %}</button>
-                    </form>
-                {% elif not request.user.is_authenticated and property.listing_type == "sale" and not has_sale_contract %}
-                    <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}" class="cta-btn">{% trans "Log in to contact owner" %}</a>
-                {% endif %}
-            </div>
-
-            <div class="specs">
-                <span>{% blocktrans with rooms=property.rooms %}{{ rooms }} rooms{% endblocktrans %}</span>
-                <span>{% blocktrans with baths=property.bathrooms %}{{ baths }} baths{% endblocktrans %}</span>
-                <span>{% blocktrans with m2=property.square_meters|default:"--" %}{{ m2 }} m²{% endblocktrans %}</span>
-                <span>{% blocktrans with guests=property.capacity %}{{ guests }} guests{% endblocktrans %}</span>
-                <span>{{ property.availability_dates|default:_("All dates available") }}</span>
-            </div>
-
-            {% if property.latitude and property.longitude %}
-                <section class="location-section">
-                    <h2 class="location-section-title">{% trans "Where is it located?" %}</h2>
-                    <p class="location-section-text">{{ property.address|default:property.city }}</p>
-                    <div id="detail-map"></div>
-                </section>
-            {% endif %}
-        </div>
-    </div>
-
-    {% if property.listing_type == "sale" %}
-        <div class="detail-booking-card">
-            <div class="cal-header">
-                <div class="cal-title">{% trans "Sale details" %}</div>
-            </div>
-            <p class="sub" style="margin-top:10px;">
-                {% blocktrans with price=property.price|floatformat:0|intcomma %}Final price: ${{ price }} COP{% endblocktrans %}
-            </p>
-            {% if has_purchased_property %}
-                <p class="sub" style="font-weight:700;">{% trans "This property is already part of your purchase history." %}</p>
-            {% elif has_sale_contract %}
-                <p class="sub" style="font-weight:700;">{% trans "This property has already been sold." %}</p>
-            {% elif not user.is_authenticated %}
-                <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">{% trans "Log in to contact the owner" %}</a>
-            {% elif request.user == property.owner.user %}
-                <p class="sub" style="font-weight:700;">{% trans "You are the owner of this property." %}</p>
-            {% elif can_contact_owner %}
-                <form method="post" action="{% url 'comunication:start_conversation' property.pk %}">
-                    {% csrf_token %}
-                    <button class="cta-btn" type="submit">{% trans "Contact owner about this property" %}</button>
-                </form>
-            {% else %}
-                <p class="sub" style="font-weight:700;">{% trans "This property is available, but you need to log in to contact the owner." %}</p>
-            {% endif %}
-        </div>
-    {% else %}
-        <div class="detail-booking-card">
-            <div class="cal-header">
-                <div class="cal-title">{% trans "Reserve property" %}</div>
-                <div class="legend">
-                    <span><span class="dot detail-dot-available"></span> {% trans "Available" %}</span>
-                    <span><span class="dot detail-dot-occupied"></span> {% trans "Unavailable" %}</span>
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <a href="{% url 'properties:list_properties' %}" class="back-link">{% trans "Back to Properties" %}</a>
+    <section class="detail-wrap">
+        <div class="media-card">
+            <div class="hero-media"
+                 style="background-image:url('{% if property.image %}{{ property.image.url }}{% elif property.image_url %}{{ property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80{% endif %}')">
+                <div class="pill-row">
+                    <span class="pill pill-blue">{{ availability_label }}</span>
+                    <span class="pill pill-dark">{{ property.get_listing_type_display }}</span>
                 </div>
             </div>
-            <form method="POST" action="{% url 'transactions:create_booking' property.id %}">
-                {% csrf_token %}
-                <input id="calendar" type="text">
-                <p class="sub" style="margin-top:10px;">{% trans "Green days are available. Red days are unavailable." %}</p>
-                <p class="detail-capacity">{% blocktrans with capacity=property.capacity %}Capacity: {{ capacity }} guests{% endblocktrans %}</p>
-                <input type="hidden" name="check_in" id="check_in" required>
-                <input type="hidden" name="check_out" id="check_out" required>
-                <button class="cta-btn" type="submit">{% trans "Request booking" %}</button>
-                {% if messages %}
-                    {% for message in messages %}
-                        <p style="color:red; margin-top:10px;">{{ message }}</p>
-                    {% endfor %}
+            <div class="media-body">
+                <h1 class="title">{{ property.title }}</h1>
+                <p class="owner">{% trans "Owner" %}: {{ property.owner.user.first_name }} {{ property.owner.user.last_name }}</p>
+                <p class="sub">{{ property.address|default:property.city }}</p>
+                <p class="price">
+                    ${{ property.price|floatformat:0|intcomma }} COP
+                    {% if property.listing_type == "sale" %}
+                        <small class="price-period">{% trans "sale price" %}</small>
+                    {% elif property.listing_type == "short_term" %}
+                        <small class="price-period">{% trans "/night" %}</small>
+                    {% else %}
+                        <small class="price-period">{% trans "/mo" %}</small>
+                    {% endif %}
+                </p>
+                <p class="detail-description">{{ property.description|default:"No description provided." }}</p>
+                {% if user.is_authenticated and not has_sale_contract %}
+                    <form method="post"
+                          action="{% url 'properties:toggle_saved_property' property.pk %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.path }}">
+                        <button type="submit" class="cta-btn">
+                            {% if is_saved %}
+                                {% trans "Remove from saved" %}
+                            {% else %}
+                                {% if property.listing_type == "sale" %}
+                                    {% trans "Save to wishlist" %}
+                                {% else %}
+                                    {% trans "Save to favorites" %}
+                                {% endif %}
+                            {% endif %}
+                        </button>
+                    </form>
+                {% elif not user.is_authenticated and not has_sale_contract %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">{% trans "Log in to save this property" %}</a>
                 {% endif %}
-            </form>
+                <div class="contact-owner" style="margin-top:20px;">
+                    {% if request.user.is_authenticated and request.user != property.owner.user and can_contact_owner %}
+                        <form method="post"
+                              action="{% url 'comunication:start_conversation' property.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="cta-btn">{% trans "Contact Owner" %}</button>
+                        </form>
+                    {% elif not request.user.is_authenticated and property.listing_type == "sale" and not has_sale_contract %}
+                        <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}"
+                           class="cta-btn">{% trans "Log in to contact owner" %}</a>
+                    {% endif %}
+                </div>
+                <div class="specs">
+                    <span>{% blocktrans with rooms=property.rooms %}{{ rooms }} rooms{% endblocktrans %}</span>
+                    <span>{% blocktrans with baths=property.bathrooms %}{{ baths }} baths{% endblocktrans %}</span>
+                    <span>{% blocktrans with m2=property.square_meters|default:"--" %}{{ m2 }} m²{% endblocktrans %}</span>
+                    <span>{% blocktrans with guests=property.capacity %}{{ guests }} guests{% endblocktrans %}</span>
+                    <span>{{ property.availability_dates|default:_("All dates available") }}</span>
+                </div>
+                {% if property.latitude and property.longitude %}
+                    <section class="location-section">
+                        <h2 class="location-section-title">{% trans "Where is it located?" %}</h2>
+                        <p class="location-section-text">{{ property.address|default:property.city }}</p>
+                        <div id="detail-map"></div>
+                    </section>
+                {% endif %}
+            </div>
         </div>
-    {% endif %}
-</section>
-
-<script>
+        {% if property.listing_type == "sale" %}
+            <div class="detail-booking-card">
+                <div class="cal-header">
+                    <div class="cal-title">{% trans "Sale details" %}</div>
+                </div>
+                <p class="sub" style="margin-top:10px;">
+                    {% blocktrans with price=property.price|floatformat:0|intcomma %}Final price: ${{ price }} COP{% endblocktrans %}
+                </p>
+                {% if has_purchased_property %}
+                    <p class="sub" style="font-weight:700;">{% trans "This property is already part of your purchase history." %}</p>
+                {% elif has_sale_contract %}
+                    <p class="sub" style="font-weight:700;">{% trans "This property has already been sold." %}</p>
+                {% elif not user.is_authenticated %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">{% trans "Log in to contact the owner" %}</a>
+                {% elif request.user == property.owner.user %}
+                    <p class="sub" style="font-weight:700;">{% trans "You are the owner of this property." %}</p>
+                {% elif can_contact_owner %}
+                    <form method="post"
+                          action="{% url 'comunication:start_conversation' property.pk %}">
+                        {% csrf_token %}
+                        <button class="cta-btn" type="submit">{% trans "Contact owner about this property" %}</button>
+                    </form>
+                {% else %}
+                    <p class="sub" style="font-weight:700;">
+                        {% trans "This property is available, but you need to log in to contact the owner." %}
+                    </p>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="detail-booking-card">
+                <div class="cal-header">
+                    <div class="cal-title">{% trans "Reserve property" %}</div>
+                    <div class="legend">
+                        <span><span class="dot detail-dot-available"></span> {% trans "Available" %}</span>
+                        <span><span class="dot detail-dot-occupied"></span> {% trans "Unavailable" %}</span>
+                    </div>
+                </div>
+                <form method="POST"
+                      action="{% url 'transactions:create_booking' property.id %}">
+                    {% csrf_token %}
+                    <input id="calendar" type="text">
+                    <p class="sub" style="margin-top:10px;">{% trans "Green days are available. Red days are unavailable." %}</p>
+                    <p class="detail-capacity">
+                        {% blocktrans with capacity=property.capacity %}Capacity: {{ capacity }} guests{% endblocktrans %}
+                    </p>
+                    <input type="hidden" name="check_in" id="check_in" required>
+                    <input type="hidden" name="check_out" id="check_out" required>
+                    <button class="cta-btn" type="submit">{% trans "Request booking" %}</button>
+                    {% if messages %}
+                        {% for message in messages %}<p style="color:red; margin-top:10px;">{{ message }}</p>{% endfor %}
+                    {% endif %}
+                </form>
+            </div>
+        {% endif %}
+    </section>
+    <script>
 const blockedDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
 const reservedDates = JSON.parse('{{ reserved_dates_json|escapejs }}');
 const allDaysAvailable = JSON.parse('{{ all_days_available|yesno:"true,false"|escapejs }}');
@@ -178,11 +181,10 @@ if (calendarElement) {
         }
     });
 }
-</script>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-{% if property.latitude and property.longitude %}
-<script>
+    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    {% if property.latitude and property.longitude %}
+        <script>
 document.addEventListener("DOMContentLoaded", function () {
     const lat = parseFloat("{{ property.latitude|default:'0' }}");
     const lng = parseFloat("{{ property.longitude|default:'0' }}");
@@ -196,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .openPopup();
     setTimeout(function () { map.invalidateSize(); }, 200);
 });
-</script>
-{% endif %}
-
+        </script>
+    {% endif %}
 {% endblock %}

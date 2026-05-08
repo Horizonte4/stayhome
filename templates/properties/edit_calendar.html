@@ -1,36 +1,36 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block title %}{% trans "Edit calendar" %} - {{ property.title }}{% endblock %}
+{% block title %}
+    {% trans "Edit calendar" %} - {{ property.title }}
+{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
-<div class="form-card" style="max-width:720px; margin:0 auto">
-    <h2 class="form-title">{% trans "Availability Calendar" %}</h2>
-    <p class="form-sub">
-        {% trans "Select the days you want to block. If you leave the calendar blank, all days will remain available." %}
-    </p>
-
-    <form method="post" class="form-grid" novalidate>
-        {% csrf_token %}
-        <div class="field">
-            <label for="availability-calendar">{% trans "Blocked Dates" %}</label>
-            <input id="availability-calendar"
-                   name="availability_dates"
-                   class="form-input"
-                   placeholder="{% trans 'Select dates to block' %}">
-            <small class="form-sub">
-                {% trans "Only the selected dates will be blocked. No selection means all dates stay available." %}
-            </small>
-        </div>
-        <div class="submit-bar" style="display:flex; gap:10px;">
-            <button type="submit" class="cta-btn">{% trans "Save Calendar" %}</button>
-            <button type="button" id="clear-dates" class="btn-secondary">{% trans "Free All Days" %}</button>
-        </div>
-    </form>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <div class="form-card" style="max-width:720px; margin:0 auto">
+        <h2 class="form-title">{% trans "Availability Calendar" %}</h2>
+        <p class="form-sub">
+            {% trans "Select the days you want to block. If you leave the calendar blank, all days will remain available." %}
+        </p>
+        <form method="post" class="form-grid" novalidate>
+            {% csrf_token %}
+            <div class="field">
+                <label for="availability-calendar">{% trans "Blocked Dates" %}</label>
+                <input id="availability-calendar"
+                       name="availability_dates"
+                       class="form-input"
+                       placeholder="{% trans 'Select dates to block' %}">
+                <small class="form-sub">
+                    {% trans "Only the selected dates will be blocked. No selection means all dates stay available." %}
+                </small>
+            </div>
+            <div class="submit-bar" style="display:flex; gap:10px;">
+                <button type="submit" class="cta-btn">{% trans "Save Calendar" %}</button>
+                <button type="button" id="clear-dates" class="btn-secondary">{% trans "Free All Days" %}</button>
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
 const initialDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
 const fp = flatpickr("#availability-calendar", {
     mode: "multiple",
@@ -39,5 +39,5 @@ const fp = flatpickr("#availability-calendar", {
     defaultDate: initialDates,
 });
 document.getElementById("clear-dates").addEventListener("click", () => fp.clear());
-</script>
+    </script>
 {% endblock %}
