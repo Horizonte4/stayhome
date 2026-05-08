@@ -4,15 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('properties', '0011_remove_property_active_listing_remove_property_state_and_more'),
+        (
+            "properties",
+            "0011_remove_property_active_listing_remove_property_state_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='property',
-            name='price',
+            model_name="property",
+            name="price",
             field=models.DecimalField(decimal_places=0, max_digits=12),
         ),
     ]
