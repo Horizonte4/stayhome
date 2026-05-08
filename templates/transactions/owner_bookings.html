@@ -1,137 +1,154 @@
 {% extends "base.html" %}
-{% load static i18n %}
+{% load static i18n humanize %}
 {% block content %}
-    <section class="container">
-        <h1>My properties reservations</h1>
-        <p class="sub">Manage the bookings for your properties.</p>
-        <div class="booking-tabs">
-            <div class="tab active" onclick="showTab(event, 'pending')">
-                Pending
-                {% if pending %}<span class="badge">{{ pending|length }}</span>{% endif %}
-            </div>
-            <div class="tab" onclick="showTab(event, 'upcoming')">
-                Upcoming
-                {% if upcoming %}<span class="badge">{{ upcoming|length }}</span>{% endif %}
-            </div>
-            <div class="tab" onclick="showTab(event, 'rejected')">
-                Rejected
-                {% if rejected %}<span class="badge">{{ rejected|length }}</span>{% endif %}
-            </div>
-            <div class="tab" onclick="showTab(event, 'past')">
-                Past
-                {% if past %}<span class="badge">{{ past|length }}</span>{% endif %}
-            </div>
-        </div>
-        <div id="pending" class="tab-content">
-            {% for booking in pending %}
-                <div class="booking-card">
-                    <div class="booking-image">
-                        <img src="{% if booking.property.image %}{{ booking.property.image.url }}{% elif booking.property.image_url %}{{ booking.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}" />
-                    </div>
-                    <div class="booking-info">
-                        <h3>{{ booking.property.title }}</h3>
-                        <span class="status pending">Pending</span>
-                        <div class="booking-dates">
-                            <div>
-                                <strong>Check-in</strong>
-                                <p>{{ booking.check_in|date:"F j, Y" }}</p>
-                            </div>
-                            <div>
-                                <strong>Check-out</strong>
-                                <p>{{ booking.check_out|date:"F j, Y" }}</p>
-                            </div>
+<section class="container bookings-page">
+    <h1>{% trans "My properties reservations" %}</h1>
+    <p class="sub">{% trans "Manage the bookings for your properties." %}</p>
+
+    <div class="booking-tabs">
+        <button class="tab active" onclick="showTab(event, 'pending')">
+            {% trans "Pending" %}<span class="badge">{{ pending|length }}</span>
+        </button>
+        <button class="tab" onclick="showTab(event, 'upcoming')">
+            {% trans "Upcoming" %}<span class="badge">{{ upcoming|length }}</span>
+        </button>
+        <button class="tab" onclick="showTab(event, 'rejected')">
+            {% trans "Rejected" %}<span class="badge">{{ rejected|length }}</span>
+        </button>
+        <button class="tab" onclick="showTab(event, 'past')">
+            {% trans "Past" %}<span class="badge">{{ past|length }}</span>
+        </button>
+    </div>
+
+    <div id="pending" class="tab-content">
+        {% for booking in pending %}
+            <div class="booking-card">
+                <div class="booking-image">
+                    <img src="{% if booking.property.image %}{{ booking.property.image.url }}{% elif booking.property.image_url %}{{ booking.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}">
+                </div>
+                <div class="booking-main">
+                    <h3>{{ booking.property.title }}</h3>
+                    <span class="status pending">{% trans "Pending" %}</span>
+                    <div class="booking-details">
+                        <div class="detail">
+                            <span>{% trans "Check-in" %}</span>
+                            <p>{{ booking.check_in|date:"F j, Y" }}</p>
                         </div>
-                        <p class="sub">Client: {{ booking.user.email }}</p>
-                        <p class="sub">{{ booking.property.capacity }} guests</p>
-                        <p class="sub">Booked {{ booking.created_at|date:"F j, Y" }}</p>
-                    </div>
-                    <div class="booking-price">
-                        <h2>${{ booking.total_price }}</h2>
-                        <p class="sub">{{ booking.nights }} nights</p>
-                        <div class="actions">
-                            <a class="approve-btn"
-                               href="{% url 'transactions:change_booking_status' booking.id 'approved' %}">Approve</a>
-                            <a class="reject-btn"
-                               href="{% url 'transactions:change_booking_status' booking.id 'rejected' %}">Reject</a>
+                        <div class="detail">
+                            <span>{% trans "Check-out" %}</span>
+                            <p>{{ booking.check_out|date:"F j, Y" }}</p>
                         </div>
                     </div>
+                    <p class="guests">{% blocktrans with email=booking.user.email %}Client: {{ email }}{% endblocktrans %}</p>
+                    <p class="guests">{% blocktrans with guests=booking.property.capacity %}{{ guests }} guests{% endblocktrans %}</p>
+                    <p class="booking-date">{% blocktrans with date=booking.created_at|date:"F j, Y" %}Booked {{ date }}{% endblocktrans %}</p>
                 </div>
-            {% empty %}
-                <div class="empty-state">
-                    <p>You do not have pending reservations.</p>
-                </div>
-            {% endfor %}
-        </div>
-        <div id="upcoming" class="tab-content" style="display: none">
-            {% for booking in upcoming %}
-                <div class="booking-card">
-                    <div class="booking-image">
-                        <img src="{% if booking.property.image %}{{ booking.property.image.url }}{% elif booking.property.image_url %}{{ booking.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}" />
+                <div class="booking-price">
+                    <h2>${{ booking.total_price|floatformat:0|intcomma }}</h2>
+                    <p>{% blocktrans with nights=booking.nights %}{{ nights }} nights{% endblocktrans %}</p>
+                    <div class="actions">
+                        <a class="approve-btn" href="{% url 'transactions:change_booking_status' booking.id 'approved' %}">{% trans "Approve" %}</a>
+                        <a class="reject-btn" href="{% url 'transactions:change_booking_status' booking.id 'rejected' %}">{% trans "Reject" %}</a>
                     </div>
-                    <div class="booking-info">
-                        <h3>{{ booking.property.title }}</h3>
-                        <span class="status approved">Approved</span>
-                        <p class="sub">Client: {{ booking.user.email }}</p>
-                        <div class="booking-dates">
-                            <div>
-                                <strong>Check-in</strong>
-                                <p>{{ booking.check_in|date:"F j, Y" }}</p>
-                            </div>
-                            <div>
-                                <strong>Check-out</strong>
-                                <p>{{ booking.check_out|date:"F j, Y" }}</p>
-                            </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="empty">{% trans "You do not have pending reservations." %}</p>
+        {% endfor %}
+    </div>
+
+    <div id="upcoming" class="tab-content" style="display:none;">
+        {% for booking in upcoming %}
+            <div class="booking-card">
+                <div class="booking-image">
+                    <img src="{% if booking.property.image %}{{ booking.property.image.url }}{% elif booking.property.image_url %}{{ booking.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}">
+                </div>
+                <div class="booking-main">
+                    <h3>{{ booking.property.title }}</h3>
+                    <span class="status approved">{% trans "Approved" %}</span>
+                    <div class="booking-details">
+                        <div class="detail">
+                            <span>{% trans "Check-in" %}</span>
+                            <p>{{ booking.check_in|date:"F j, Y" }}</p>
+                        </div>
+                        <div class="detail">
+                            <span>{% trans "Check-out" %}</span>
+                            <p>{{ booking.check_out|date:"F j, Y" }}</p>
                         </div>
                     </div>
-                    <div class="booking-price">
-                        <h2>${{ booking.total_price }}</h2>
-                        <p class="sub">{{ booking.nights }} nights</p>
+                    <p class="guests">{% blocktrans with email=booking.user.email %}Client: {{ email }}{% endblocktrans %}</p>
+                </div>
+                <div class="booking-price">
+                    <h2>${{ booking.total_price|floatformat:0|intcomma }}</h2>
+                    <p>{% blocktrans with nights=booking.nights %}{{ nights }} nights{% endblocktrans %}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p class="empty">{% trans "No upcoming reservations." %}</p>
+        {% endfor %}
+    </div>
+
+    <div id="rejected" class="tab-content" style="display:none;">
+        {% for booking in rejected %}
+            <div class="booking-card">
+                <div class="booking-main">
+                    <h3>{{ booking.property.title }}</h3>
+                    <span class="status rejected">{% trans "Rejected" %}</span>
+                    <div class="booking-details">
+                        <div class="detail">
+                            <span>{% trans "Check-in" %}</span>
+                            <p>{{ booking.check_in|date:"F j, Y" }}</p>
+                        </div>
+                        <div class="detail">
+                            <span>{% trans "Check-out" %}</span>
+                            <p>{{ booking.check_out|date:"F j, Y" }}</p>
+                        </div>
                     </div>
                 </div>
-            {% empty %}
-                <p>No upcoming reservations.</p>
-            {% endfor %}
-        </div>
-        <div id="rejected" class="tab-content" style="display: none">
-            {% for booking in rejected %}
-                <div class="booking-card">
-                    <div class="booking-info">
-                        <h3>{{ booking.property.title }}</h3>
-                        <span class="status rejected">Rejected</span>
-                        <p class="sub">{{ booking.check_in }} to {{ booking.check_out }}</p>
+                <div class="booking-price">
+                    <h2>${{ booking.total_price|floatformat:0|intcomma }}</h2>
+                </div>
+            </div>
+        {% empty %}
+            <p class="empty">{% trans "No rejected reservations." %}</p>
+        {% endfor %}
+    </div>
+
+    <div id="past" class="tab-content" style="display:none;">
+        {% for booking in past %}
+            <div class="booking-card">
+                <div class="booking-main">
+                    <h3>{{ booking.property.title }}</h3>
+                    <span class="status past">{% trans "Finished" %}</span>
+                    <div class="booking-details">
+                        <div class="detail">
+                            <span>{% trans "Check-in" %}</span>
+                            <p>{{ booking.check_in|date:"F j, Y" }}</p>
+                        </div>
+                        <div class="detail">
+                            <span>{% trans "Check-out" %}</span>
+                            <p>{{ booking.check_out|date:"F j, Y" }}</p>
+                        </div>
                     </div>
                 </div>
-            {% empty %}
-                <p>No rejected reservations.</p>
-            {% endfor %}
-        </div>
-        <div id="past" class="tab-content" style="display: none">
-            {% for booking in past %}
-                <div class="booking-card">
-                    <div class="booking-info">
-                        <h3>{{ booking.property.title }}</h3>
-                        <span class="status past">Finished</span>
-                        <p class="sub">{{ booking.check_in }} to {{ booking.check_out }}</p>
-                    </div>
-                    <div class="booking-price">
-                        <h2>${{ booking.total_price }}</h2>
-                    </div>
+                <div class="booking-price">
+                    <h2>${{ booking.total_price|floatformat:0|intcomma }}</h2>
                 </div>
-            {% empty %}
-                <p>No past reservations.</p>
-            {% endfor %}
-        </div>
-    </section>
-    <script>
-  function showTab(event, tab) {
+            </div>
+        {% empty %}
+            <p class="empty">{% trans "No past reservations." %}</p>
+        {% endfor %}
+    </div>
+
+</section>
+<script>
+function showTab(event, tab) {
     const contents = document.querySelectorAll(".tab-content");
     const tabs = document.querySelectorAll(".tab");
-
-    contents.forEach((content) => (content.style.display = "none"));
-    tabs.forEach((tabItem) => tabItem.classList.remove("active"));
-
+    contents.forEach((c) => (c.style.display = "none"));
+    tabs.forEach((t) => t.classList.remove("active"));
     document.getElementById(tab).style.display = "block";
     event.target.classList.add("active");
-  }
-    </script>
+}
+</script>
 {% endblock %}

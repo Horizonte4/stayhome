@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StayHome\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 16:12-0500\n"
+"POT-Creation-Date: 2026-05-08 16:47-0500\n"
 "PO-Revision-Date: 2026-03-24 19:49+0000\n"
 "Last-Translator: StayHome\n"
 "Language-Team: Spanish\n"
@@ -224,6 +224,7 @@ msgid "%(m2)s m2"
 msgstr "%(m2)s m2"
 
 #: templates/partials/featured_property_card.html:22
+#: templates/transactions/owner_bookings.html:45
 #, python-format
 msgid "%(guests)s guests"
 msgstr "%(guests)s Capacidad"
@@ -667,16 +668,21 @@ msgstr "Administra tus reservas y propiedades compradas"
 
 #: templates/transactions/my_bookings.html:9
 #: templates/transactions/my_bookings.html:32
+#: templates/transactions/owner_bookings.html:9
+#: templates/transactions/owner_bookings.html:33
 msgid "Pending"
 msgstr "Pendiente"
 
 #: templates/transactions/my_bookings.html:12
 #: templates/transactions/my_bookings.html:60
+#: templates/transactions/owner_bookings.html:73
 msgid "Approved"
 msgstr "Aprobado"
 
 #: templates/transactions/my_bookings.html:15
 #: templates/transactions/my_bookings.html:94
+#: templates/transactions/owner_bookings.html:17
+#: templates/transactions/owner_bookings.html:102
 msgid "Rejected"
 msgstr "Rechazado"
 
@@ -693,6 +699,8 @@ msgstr "Compra"
 #: templates/transactions/my_bookings.html:63
 #: templates/transactions/my_bookings.html:97
 #: templates/transactions/my_bookings.html:122
+#: templates/transactions/owner_bookings.html:36
+#: templates/transactions/owner_bookings.html:77
 msgid "Check-in"
 msgstr "Check-in"
 
@@ -700,6 +708,8 @@ msgstr "Check-in"
 #: templates/transactions/my_bookings.html:67
 #: templates/transactions/my_bookings.html:101
 #: templates/transactions/my_bookings.html:126
+#: templates/transactions/owner_bookings.html:40
+#: templates/transactions/owner_bookings.html:81
 msgid "Check-out"
 msgstr "Check-out"
 
@@ -754,6 +764,73 @@ msgstr "Contactar propietario"
 #: templates/transactions/my_bookings.html:172
 msgid "Here your purchased properties will appear"
 msgstr "Aquí aparecerán tus propiedades compradas"
+
+#: templates/transactions/owner_bookings.html:5
+msgid "My properties reservations"
+msgstr "Reservas de mis propiedades"
+
+#: templates/transactions/owner_bookings.html:6
+msgid "Manage the bookings for your properties."
+msgstr "Administra las reservas de tus propiedades"
+
+#: templates/transactions/owner_bookings.html:13
+msgid "Upcoming"
+msgstr "Próximas"
+
+#: templates/transactions/owner_bookings.html:21
+msgid "Past"
+msgstr "Pasadas"
+
+#: templates/transactions/owner_bookings.html:44
+#: templates/transactions/owner_bookings.html:74
+#, python-format
+msgid "Client: %(email)s"
+msgstr "Cliente: %(email)s"
+
+#: templates/transactions/owner_bookings.html:46
+#, python-format
+msgid "Booked %(date)s"
+msgstr "Reservado el %(date)s"
+
+#: templates/transactions/owner_bookings.html:50
+#: templates/transactions/owner_bookings.html:88
+#, python-format
+msgid "%(nights)s nights"
+msgstr "%(nights)s noches"
+
+#: templates/transactions/owner_bookings.html:53
+msgid "Approve"
+msgstr "Aprobado"
+
+#: templates/transactions/owner_bookings.html:55
+msgid "Reject"
+msgstr "Rechazar"
+
+#: templates/transactions/owner_bookings.html:61
+msgid "You do not have pending reservations."
+msgstr "No tienes reservas pendientes"
+
+#: templates/transactions/owner_bookings.html:93
+msgid "No upcoming reservations."
+msgstr "No tienes reservas próximas"
+
+#: templates/transactions/owner_bookings.html:104
+#: templates/transactions/owner_bookings.html:121
+#, python-format
+msgid "%(checkin)s to %(checkout)s"
+msgstr "%(checkin)s hasta %(checkout)s"
+
+#: templates/transactions/owner_bookings.html:110
+msgid "No rejected reservations."
+msgstr "No tienes reservaciones rechazadas."
+
+#: templates/transactions/owner_bookings.html:119
+msgid "Finished"
+msgstr "Finalizado"
+
+#: templates/transactions/owner_bookings.html:130
+msgid "No past reservations."
+msgstr "No tienes reservas pasadas"
 
 #: templates/users/board.html:18
 msgid "Member since"
@@ -953,44 +1030,17 @@ msgstr "Cliente"
 #~ "%(state)s\n"
 #~ "                                            "
 
-#~ msgid "My properties reservations"
-#~ msgstr "Reservas de mis propiedades"
-
 #~ msgid "Manage your reservations"
 #~ msgstr "Administra tus reservas"
-
-#~ msgid "Upcoming"
-#~ msgstr "Próximas"
-
-#~ msgid "Past"
-#~ msgstr "Pasadas"
 
 #~ msgid "Client:"
 #~ msgstr "Cliente:"
 
-#~ msgid "Approve"
-#~ msgstr "Aprobado"
-
-#~ msgid "Reject"
-#~ msgstr "Rechazar"
-
 #~ msgid "cancell"
 #~ msgstr "Cancelar"
 
-#~ msgid "No upcoming reservations"
-#~ msgstr "No tienes reservas próximas"
-
 #~ msgid "rejected"
 #~ msgstr "rechazado"
-
-#~ msgid "No cancelled reservations"
-#~ msgstr "No tienes reservas canceladas"
-
-#~ msgid "Finished"
-#~ msgstr "Finalizado"
-
-#~ msgid "No past reservations"
-#~ msgstr "No tienes reservas pasadas"
 
 #~ msgid "Accept"
 #~ msgstr "Aceptar"
