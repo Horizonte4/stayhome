@@ -1,7 +1,7 @@
 from datetime import timedelta
 
 from django.utils import timezone
-
+from django.conf import settings
 from .models import Booking
 from .selectors import get_client_bookings_context
 
@@ -67,11 +67,12 @@ class BookingService:
 
         if new_status == Booking.STATUS_CANCELLED:
             today = timezone.localdate()
-            limit_date = booking.check_in - timedelta(days=5)
-            if today > limit_date:
-                raise ValueError(
-                    "You can only cancel a booking at least 5 days before check-in."
-                )
+            cancel_days_limit = settings.BOOKING_CANCEL_DAYS_LIMIT
+            limit_date = booking.check_in - timedelta(days=cancel_days_limit)
+        if today > limit_date:
+            raise ValueError(
+                f"You can only cancel a booking at least {cancel_days_limit} days before check-in."
+            )
 
         booking.status = new_status
         booking.save(update_fields=["status", "updated_at"])
