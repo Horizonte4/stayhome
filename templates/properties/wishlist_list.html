@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static i18n %}
+{% load humanize %}
 {% block title %}Your Wishlist{% endblock %}
 {% block content %}
     <section class="container favorites-page">
@@ -34,9 +35,9 @@
                                 <span>{{ saved.property_obj.square_meters|default:"--" }} m²</span>
                             </div>
                             <div class="favorite-footer">
-                                <div class="favorite-price">${{ saved.property_obj.price }}</div>
+                                <div class="favorite-price">${{ saved.property_obj.price|floatformat:0|intcomma }} COP</div>
                                 <a href="{% url 'properties:property_detail' saved.property_obj.pk %}"
-                                   class="details-btn">{% trans "View details" %}</a>
+                                   class="property-card-details-btn">{% trans "View details" %}</a>
                             </div>
                         </div>
                     </div>

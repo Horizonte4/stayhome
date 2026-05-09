@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static i18n %}
+{% load static i18n humanize %}
 {% block content %}
     <section class="container bookings-page">
         <h1>{% trans "My Bookings" %}</h1>
@@ -44,8 +45,8 @@
                         <p class="booking-date">{% trans "Requested on " %} {{ booking.created_at|date:"F j, Y" }}</p>
                     </div>
                     <div class="booking-price">
-                        <h2>${{ booking.total_price }}</h2>
-                        <p>{{ booking.nights }} nights</p>
+                        <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
+                        <p>{% blocktrans with nights=booking.nights %}{{ nights }} nights{% endblocktrans %}</p>
                     </div>
                 </div>
             {% empty %}
@@ -78,7 +79,7 @@
                         </div>
                     </div>
                     <div class="booking-price">
-                        <h2>${{ booking.total_price }}</h2>
+                        <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
                         <p>{{ booking.nights }} {% trans "nights" %}</p>
                     </div>
                 </div>
@@ -104,7 +105,7 @@
                         </div>
                     </div>
                     <div class="booking-price">
-                        <h2>${{ booking.total_price }}</h2>
+                        <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
                     </div>
                 </div>
             {% empty %}
@@ -129,7 +130,7 @@
                         </div>
                     </div>
                     <div class="booking-price">
-                        <h2>${{ booking.total_price }}</h2>
+                        <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
                     </div>
                 </div>
             {% empty %}

@@ -1,6 +1,6 @@
-# Librerías externas
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class UsuarioManager(BaseUserManager):
@@ -35,9 +35,9 @@ class RoleCheckerMixin:
     @property
     def role(self):
         if self.is_owner:
-            return "owner"
+            return _("owner")
         if self.is_client:
-            return "client"
+            return _("client")
         return "unknown"
 
 

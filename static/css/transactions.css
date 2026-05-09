@@ -140,13 +140,19 @@
 }
 
 .cta-btn {
-  padding: 10px 14px;
+  width: 100%;
+  background: #2563eb;
+  color: #fff;
+  border: none;
   border-radius: 12px;
-  font-weight: 700;
-  border: 1px solid #0f172a;
-  background: #0f172a;
-  color: white;
+  padding: 14px;
+  font-weight: 800;
   cursor: pointer;
+  margin-top: 14px;
+}
+
+.cta-btn:hover {
+  background: #1d4ed8;
 }
 
 .cancel-btn {

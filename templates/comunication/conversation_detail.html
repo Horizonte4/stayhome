@@ -1,13 +1,8 @@
 {% extends "base.html" %}
 {% load static i18n %}
-{% block title %}
-    Messages |
-    StayHome
-{% endblock %}
 {% block nav_messages %}active{% endblock %}
 {% block content %}
     <section class="messages-layout">
-        <!-- SIDEBAR -->
         <div class="messages-sidebar">
             <h2 class="messages-title">{% trans "Messages" %}</h2>
             {% for row in conversation_rows %}
@@ -33,7 +28,6 @@
                 </a>
             {% endfor %}
         </div>
-        <!-- CHAT -->
         <div class="messages-chat">
             <header class="chat-header">
                 <div class="chat-user">
@@ -49,9 +43,9 @@
                         <p class="chat-property">{% trans "About:" %} {{ conversation.property.title }}</p>
                     </div>
                 </div>
-                <a href="{% url 'properties:property_detail' conversation.property.pk %}">{% trans "View property" %}</a>
+                <a href="{% url 'properties:property_detail' conversation.property.pk %}"
+                   class="explore-details-btn">{% trans "View property" %}</a>
             </header>
-            <!-- MESSAGES -->
             <div class="chat-messages">
                 {% for message in messages_list %}
                     <div class="chat-message {% if message.sender == request.user %}own{% else %}other{% endif %}">
@@ -60,15 +54,14 @@
                     </div>
                 {% endfor %}
             </div>
-            <!-- INPUT -->
             <form method="post"
                   action="{% url 'comunication:send_message' conversation.pk %}"
                   class="chat-input">
                 {% csrf_token %}
                 <input type="text"
                        name="content"
-                       placeholder="Type your message..."
-                       required />
+                       placeholder="{% trans 'Type your message...' %}"
+                       required>
                 <button type="submit">➤</button>
             </form>
         </div>

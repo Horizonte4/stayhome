@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% load static i18n %}
 {% block title %}
-    Inbox |
-    StayHome
+    {% trans "Inbox" %} | StayHome
 {% endblock %}
 {% block nav_messages %}active{% endblock %}
 {% block content %}
@@ -27,7 +26,7 @@
                                     <span class="chat-property">{{ row.property.title }}</span>
                                 </div>
                                 {% if row.last_message_created_at %}
-                                    <small class="chat-date">{{ row.last_message_created_at|date:"d M" }}</small>
+                                    <small class="chat-date">{{ row.last_message_created_at|date:"j N" }}</small>
                                 {% endif %}
                             </div>
                             <div class="chat-preview-row">
