@@ -117,3 +117,5 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 BOOKING_CANCEL_DAYS_LIMIT = 5
+
+PRODUCT_API_URL = os.getenv("PRODUCT_API_URL", "")

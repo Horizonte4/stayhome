@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.i18n import i18n_patterns
 from .views import home
+from products.views import products_view
 
 urlpatterns = [
     path("i18n/", include("django.conf.urls.i18n")),  # ← maneja cambio de idioma
@@ -16,11 +17,11 @@ urlpatterns += i18n_patterns(
     path("properties/", include("properties.urls")),
     path("transactions/", include("transactions.urls")),
     path("chat/", include("comunication.urls")),
+    path("api/productos-aliados/", include("products.urls")),
+    path("productos-aliados/", products_view, name="productos_api"),
     prefix_default_language=False,
 )
-urlpatterns += [
-    path("api/productos-aliados/", include("products.urls")),
-]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

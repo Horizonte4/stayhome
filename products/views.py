@@ -1,8 +1,8 @@
 from django.shortcuts import render
-
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from properties.models import Property
+from .services import get_products
 
 
 @require_GET
@@ -14,12 +14,6 @@ def stayhome_api(request):
         "id",
         "title",
         "city",
-        "price",
-        "rooms",
-        "bathrooms",
-        "capacity",
-        "listing_type",
-        "image_url",
     )
     data = []
     for prop in properties:
@@ -30,3 +24,11 @@ def stayhome_api(request):
             }
         )
     return JsonResponse({"properties": data}, safe=False)
+
+
+@require_GET
+def products_view(request):
+    """Consume el servicio de la api de otro equipo."""
+    items = get_products()
+    print(f"Items: {items}")
+    return render(request, "api/products.html", {"items": items})

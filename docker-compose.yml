@@ -32,6 +32,7 @@ services:
       DB_PASSWORD: password123
       DB_HOST: db
       DB_PORT: 5432
+      PRODUCT_API_URL : ${PRODUCT_API_URL}
 
 volumes:
   postgres_data:
