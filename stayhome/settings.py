@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "core",
     "transactions",
     "comunication",
+    "aichat",
 ]
 
 MIDDLEWARE = [
@@ -119,3 +120,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 BOOKING_CANCEL_DAYS_LIMIT = 5
 
 PRODUCT_API_URL = os.getenv("PRODUCT_API_URL", "")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
