@@ -156,5 +156,5 @@ class StartConversationTests(TestCase):
             "comunication:start_conversation",
             kwargs={"property_id": self.property_obj.pk},
         )
-        response = client.post(url)
+        client.post(url)
         self.assertEqual(Conversation.objects.count(), 0)

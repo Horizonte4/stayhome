@@ -9,7 +9,7 @@ class RegisterViewTests(TestCase):
     def test_registro_crea_usuario_con_rol_client(self):
         """Al registrarse como cliente se crea el usuario y su perfil Client."""
         client = Client()
-        response = client.post(
+        client.post(
             reverse("registration"),
             {
                 "email": "cliente@example.com",
