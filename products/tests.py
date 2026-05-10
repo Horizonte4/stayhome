@@ -9,7 +9,6 @@ from users.models import Owner
 
 
 class StayhomeApiTests(TestCase):
-
     def setUp(self):
         user_model = get_user_model()
         self.owner_user = user_model.objects.create_user(
@@ -47,7 +46,6 @@ class StayhomeApiTests(TestCase):
 
 
 class ProductsViewTests(TestCase):
-
     @patch(
         "products.views.get_products",
         return_value=[{"name": "Item 1"}, {"name": "Item 2"}],

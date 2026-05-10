@@ -6,7 +6,6 @@ from users.models import Client as ClientProfile, Owner
 
 
 class RegisterViewTests(TestCase):
-
     def test_registro_crea_usuario_con_rol_client(self):
         """Al registrarse como cliente se crea el usuario y su perfil Client."""
         client = Client()
@@ -39,7 +38,6 @@ class RegisterViewTests(TestCase):
 
 
 class LoginViewTests(TestCase):
-
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             email="user@example.com",

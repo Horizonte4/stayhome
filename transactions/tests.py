@@ -16,7 +16,6 @@ def make_user(email):
 
 
 class CreateBookingTests(TestCase):
-
     def setUp(self):
         self.owner_user = make_user("owner@example.com")
         self.owner = Owner.objects.create(user=self.owner_user)
@@ -59,7 +58,6 @@ class CreateBookingTests(TestCase):
 
 
 class ChangeBookingStatusTests(TestCase):
-
     def setUp(self):
         self.owner_user = make_user("owner@example.com")
         self.owner = Owner.objects.create(user=self.owner_user)

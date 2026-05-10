@@ -8,7 +8,6 @@ from users.models import Owner
 
 
 class InboxAnonTest(TestCase):
-
     def test_anonimo_no_puede_ver_inbox(self):
         """Un usuario anónimo es redirigido al login al intentar ver el inbox."""
         client = Client()
@@ -18,7 +17,6 @@ class InboxAnonTest(TestCase):
 
 
 class ConversationIntruderTest(TestCase):
-
     def setUp(self):
         user_model = get_user_model()
 
@@ -65,7 +63,6 @@ class ConversationIntruderTest(TestCase):
 
 
 class SendMessageTests(TestCase):
-
     def setUp(self):
         user_model = get_user_model()
 
@@ -134,7 +131,6 @@ class SendMessageTests(TestCase):
 
 
 class StartConversationTests(TestCase):
-
     def setUp(self):
         user_model = get_user_model()
 
