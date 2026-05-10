@@ -1,11 +1,11 @@
 # Spanish translations for StayHome
 # Copyright (C) 2026
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: StayHome\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-10 03:19+0000\n"
+"POT-Creation-Date: 2026-05-10 17:34-0500\n"
 "PO-Revision-Date: 2026-03-24 19:49+0000\n"
 "Last-Translator: StayHome\n"
 "Language-Team: Spanish\n"
@@ -44,25 +44,27 @@ msgstr "Inglés"
 msgid "Spanish"
 msgstr "Español"
 
-#: templates/aichat/widget.html:8
+#: templates/aichat/widget.html:11
 msgid "Open chat assistant"
 msgstr "Abrir asistente"
 
-#: templates/aichat/widget.html:17
+#: templates/aichat/widget.html:19
 msgid "StayHome Assistant"
 msgstr "Asistente StayHome"
 
-#: templates/aichat/widget.html:18
+#: templates/aichat/widget.html:23
 msgid "Close chat"
 msgstr "Cerrar chat"
 
-#: templates/aichat/widget.html:23
+#: templates/aichat/widget.html:27
 msgid ""
 "Hi! I'm your StayHome assistant. Ask me about cities, neighborhoods, or how "
 "to use the platform."
-msgstr "¡Hola! Soy tu asistente de StayHome. Pregúntame sobre ciudades, barrios o cómo usar la plataforma."
+msgstr ""
+"¡Hola! Soy tu asistente de StayHome. Pregúntame sobre ciudades, barrios o "
+"cómo usar la plataforma."
 
-#: templates/aichat/widget.html:33
+#: templates/aichat/widget.html:35
 #: templates/comunication/conversation_detail.html:63
 msgid "Type your message..."
 msgstr "Escribe tu mensaje"
@@ -190,6 +192,10 @@ msgstr "Explorar propiedades"
 #: templates/base.html:152
 msgid "List Your Property"
 msgstr "Publicar tu propiedad"
+
+#: templates/base.html:153
+msgid "View Allies"
+msgstr "Ver aliados"
 
 #: templates/comunication/conversation_detail.html:43
 msgid "About:"
