@@ -13,3 +13,5 @@ env/
 media/
 
 .ruff_cache
+
+.env

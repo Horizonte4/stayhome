@@ -4,3 +4,4 @@ gunicorn
 python-dotenv
 Pillow
 requests
+google-genai

@@ -199,32 +199,6 @@ def conversation_detail(request, conversation_id):
 
     return render(request, "comunication/conversation_detail.html", context)
 
-    #
-    # @login_required
-    # def conversation_detail(request, conversation_id):
-    conversation = _get_conversation_for_user_or_404(conversation_id, request.user)
-
-    messages_qs = (
-        conversation.messages.with_related()
-        .select_related("sender")
-        .order_by("created_at")
-    )
-
-    conversation.messages.filter(is_read=False).exclude(sender=request.user).update(
-        is_read=True
-    )
-
-    other_user = (
-        conversation.owner if conversation.buyer == request.user else conversation.buyer
-    )
-
-    context = {
-        "conversation": conversation,
-        "messages_list": messages_qs,
-        "other_user": other_user,
-    }
-    return render(request, "comunication/conversation_detail.html", context)
-
 
 @login_required
 def send_message(request, conversation_id):

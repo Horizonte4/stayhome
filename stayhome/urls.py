@@ -17,6 +17,7 @@ urlpatterns += i18n_patterns(
     path("properties/", include("properties.urls")),
     path("transactions/", include("transactions.urls")),
     path("chat/", include("comunication.urls")),
+    path("ai/", include("aichat.urls")),
     path("api/productos-aliados/", include("products.urls")),
     path("productos-aliados/", products_view, name="productos_api"),
     prefix_default_language=False,
