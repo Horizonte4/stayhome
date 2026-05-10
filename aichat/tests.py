@@ -95,11 +95,8 @@ class AssistantServiceTests(TestCase):
             )
 
     def test_passes_history_to_gemini_in_chronological_order(self):
-        self.assertEqual(history[0]["content"], "primero")
         session = AssistantSession.objects.create(user=self.user)
-        AssistantMessage.objects.create(
-            session=session, role="user", content="primero"
-        )
+        AssistantMessage.objects.create(session=session, role="user", content="primero")
         AssistantMessage.objects.create(
             session=session, role="assistant", content="respuesta1"
         )

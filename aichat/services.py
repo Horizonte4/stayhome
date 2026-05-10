@@ -315,6 +315,5 @@ class AssistantService:
         # reversed() para devolver de más antiguo a más reciente,
         # que es el orden que espera Gemini.
         return [
-            {"role": m.role, "content": m.content}
-            for m in reversed(list(recent_qs))
+            {"role": m.role, "content": m.content} for m in reversed(list(recent_qs))
         ]

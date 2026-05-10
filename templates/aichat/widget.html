@@ -5,40 +5,39 @@
      data-login-url="{% url 'login' %}?next={{ request.path|urlencode }}"
      data-history-url="{% url 'aichat:history' %}"
      data-language="{{ LANGUAGE_CODE }}">
-    <button id="aichat-toggle" class="aichat-toggle" type="button" aria-label="{% trans 'Open chat assistant' %}">
+    <button id="aichat-toggle"
+            class="aichat-toggle"
+            type="button"
+            aria-label="{% trans 'Open chat assistant' %}">
         <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 11H7v-2h10v2zm0-3H7V8h10v2z"/>
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-3 11H7v-2h10v2zm0-3H7V8h10v2z" />
         </svg>
     </button>
-
     {% if request.user.is_authenticated %}
-    <div id="aichat-panel" class="aichat-panel">
-        <header class="aichat-header">
-            <span class="aichat-title">{% trans "StayHome Assistant" %}</span>
-            <button id="aichat-close" class="aichat-close" type="button" aria-label="{% trans 'Close chat' %}">×</button>
-        </header>
-
-        <div id="aichat-messages" class="aichat-messages" aria-live="polite">
-            <div class="aichat-message aichat-message--assistant">
-                {% trans "Hi! I'm your StayHome assistant. Ask me about cities, neighborhoods, or how to use the platform." %}
+        <div id="aichat-panel" class="aichat-panel">
+            <header class="aichat-header">
+                <span class="aichat-title">{% trans "StayHome Assistant" %}</span>
+                <button id="aichat-close"
+                        class="aichat-close"
+                        type="button"
+                        aria-label="{% trans 'Close chat' %}">×</button>
+            </header>
+            <div id="aichat-messages" class="aichat-messages" aria-live="polite">
+                <div class="aichat-message aichat-message--assistant">
+                    {% trans "Hi! I'm your StayHome assistant. Ask me about cities, neighborhoods, or how to use the platform." %}
+                </div>
             </div>
+            <form id="aichat-form" class="aichat-form" autocomplete="off">
+                {% csrf_token %}
+                <input id="aichat-input"
+                       type="text"
+                       name="message"
+                       placeholder="{% trans 'Type your message...' %}"
+                       maxlength="1000"
+                       required>
+                <button type="submit" class="aichat-send">{% trans "Send" %}</button>
+            </form>
         </div>
-
-        <form id="aichat-form" class="aichat-form" autocomplete="off">
-            {% csrf_token %}
-            <input
-                id="aichat-input"
-                type="text"
-                name="message"
-                placeholder="{% trans 'Type your message...' %}"
-                maxlength="1000"
-                required
-            >
-            <button type="submit" class="aichat-send">
-                {% trans "Send" %}
-            </button>
-        </form>
-    </div>
     {% endif %}
 </div>
 <link rel="stylesheet" href="{% static 'css/aichat.css' %}">
