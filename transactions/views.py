@@ -7,8 +7,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from properties.models import Property
 
 from .mixins import BookingOwnerMixin
-from .models import Booking
-from .services import BookingService
+from .models import Booking, Purchase
+from .services import BookingService, PurchaseService
 
 
 @login_required
@@ -64,8 +64,13 @@ def my_bookings(request):
 def owner_bookings(request):
     if not hasattr(request.user, "owner"):
         return redirect("board")
-
     context = BookingService.get_owner_bookings(request.user.owner)
+    context["purchases"] = Purchase.objects.for_owner(request.user.owner).filter(
+        status=Purchase.STATUS_PENDING
+    )
+    context["completed_purchases"] = Purchase.objects.for_owner(
+        request.user.owner
+    ).exclude(status=Purchase.STATUS_PENDING)
     return render(request, "transactions/owner_bookings.html", context)
 
 
@@ -90,3 +95,40 @@ def change_booking_status(request, booking_id, new_status):
     if is_owner:
         return redirect("transactions:owner_bookings")
     return redirect("transactions:my_bookings")
+
+
+@login_required
+def request_purchase(request, property_id):
+    property_obj = get_object_or_404(Property, id=property_id)
+
+    if request.method != "POST":
+        return redirect("properties:property_detail", pk=property_obj.id)
+
+    try:
+        PurchaseService.request_purchase(property_obj, request.user)
+        messages.success(request, "Purchase request sent successfully.")
+    except ValueError as exc:
+        messages.error(request, str(exc))
+
+    return redirect("properties:property_detail", pk=property_obj.id)
+
+
+@login_required
+def change_purchase_status(request, purchase_id, new_status):
+    purchase = get_object_or_404(Purchase, id=purchase_id)
+
+    if purchase.property.owner.user != request.user:
+        messages.error(request, "You are not allowed to change this purchase.")
+        return redirect("transactions:owner_bookings")
+
+    try:
+        if new_status == Purchase.STATUS_APPROVED:
+            PurchaseService.approve_purchase(purchase)
+        elif new_status == Purchase.STATUS_REJECTED:
+            PurchaseService.reject_purchase(purchase)
+        else:
+            raise ValueError(f"Invalid status: {new_status}")
+    except ValueError as exc:
+        messages.error(request, str(exc))
+
+    return redirect("transactions:owner_bookings")

@@ -4,8 +4,6 @@ from django.db import transaction
 from django.db.models import OuterRef, Q, Subquery
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
-from transactions.models import Booking
-from transactions.selectors import has_sale_contract
 
 
 from properties.models import Property
@@ -42,26 +40,6 @@ def start_conversation(request, property_id):
     if buyer_user == owner_user:
         messages.error(request, "You cannot start a chat with yourself.")
         return redirect("properties:property_detail", pk=property_obj.pk)
-
-    # -----------------------------
-    # VALIDAR BOOKING APROBADO
-    # -----------------------------
-
-    approved_booking = Booking.objects.filter(
-        property=property_obj,
-        user=buyer_user,
-        status=Booking.STATUS_APPROVED,
-    ).exists()
-
-    purchased_property = has_sale_contract(property_obj, buyer=buyer_user)
-
-    if not approved_booking and not purchased_property:
-        messages.error(
-            request,
-            "You can only contact the owner after an approved booking or a completed purchase.",
-        )
-        return redirect("transactions:my_bookings")
-
     # -----------------------------
     # CREAR / OBTENER CONVERSACIÓN
     # -----------------------------

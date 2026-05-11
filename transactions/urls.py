@@ -13,4 +13,12 @@ urlpatterns = [
         views.change_booking_status,
         name="change_booking_status",
     ),
+    path(
+        "purchase/<int:property_id>/", views.request_purchase, name="request_purchase"
+    ),
+    path(
+        "purchase/<int:purchase_id>/status/<str:new_status>/",
+        views.change_purchase_status,
+        name="change_purchase_status",
+    ),
 ]

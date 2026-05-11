@@ -17,6 +17,9 @@
             <button class="tab" onclick="showTab(event, 'past')">
                 {% trans "Past" %}<span class="badge">{{ past|length }}</span>
             </button>
+            <button class="tab" onclick="showTab(event, 'purchases')">
+                {% trans "Purchase Requests" %}<span class="badge">{{ purchases|length }}</span>
+            </button>
         </div>
         <div id="pending" class="tab-content">
             {% for booking in pending %}
@@ -137,6 +140,53 @@
             {% empty %}
                 <p class="empty">{% trans "No past reservations." %}</p>
             {% endfor %}
+        </div>
+        <div id="purchases" class="tab-content" style="display:none;">
+            {% for purchase in purchases %}
+                <div class="booking-card">
+                    <div class="booking-main">
+                        <h3>{{ purchase.property.title }}</h3>
+                        <span class="status pending">{% trans "Pending" %}</span>
+                        <p class="guests">{% blocktrans with email=purchase.buyer.email %}Buyer: {{ email }}{% endblocktrans %}</p>
+                        <p class="booking-date">
+                            {% blocktrans with date=purchase.created_at|date:"F j, Y" %}Requested {{ date }}{% endblocktrans %}
+                        </p>
+                    </div>
+                    <div class="booking-price">
+                        <h2>${{ purchase.total_value|floatformat:0|intcomma }}</h2>
+                        <div class="actions">
+                            <a class="approve-btn"
+                               href="{% url 'transactions:change_purchase_status' purchase.id 'approved' %}">{% trans "Approve" %}</a>
+                            <a class="reject-btn"
+                               href="{% url 'transactions:change_purchase_status' purchase.id 'rejected' %}">{% trans "Reject" %}</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="empty">{% trans "No pending purchase requests." %}</p>
+            {% endfor %}
+            {% if completed_purchases %}
+                <h3 style="margin-top:24px;">{% trans "Completed" %}</h3>
+                {% for purchase in completed_purchases %}
+                    <div class="booking-card">
+                        <div class="booking-main">
+                            <h3>{{ purchase.property.title }}</h3>
+                            {% if purchase.status == "approved" %}
+                                <span class="status approved">{% trans "Approved" %}</span>
+                            {% else %}
+                                <span class="status rejected">{% trans "Rejected" %}</span>
+                            {% endif %}
+                            <p class="guests">{% blocktrans with email=purchase.buyer.email %}Buyer: {{ email }}{% endblocktrans %}</p>
+                            <p class="booking-date">
+                                {% blocktrans with date=purchase.created_at|date:"F j, Y" %}Requested {{ date }}{% endblocktrans %}
+                            </p>
+                        </div>
+                        <div class="booking-price">
+                            <h2>${{ purchase.total_value|floatformat:0|intcomma }}</h2>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </section>
     <script>

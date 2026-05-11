@@ -19,7 +19,7 @@
                 {% trans "Cancelled" %}<span class="badge">{{ cancelled|length }}</span>
             </button>
             <button class="tab" onclick="showTab(event,'purchase')">
-                {% trans "Purchase" %} <span class="badge">{{ purchased_contracts|length }}</span>
+                {% trans "Purchases" %} <span class="badge">{{ purchased_properties|length }}</span>
             </button>
         </div>
         <div id="pending" class="tab-content">
@@ -138,52 +138,46 @@
             {% endfor %}
         </div>
         <div id="purchase" class="tab-content" style="display:none;">
-            {% if purchased_contracts %}
-                <div class="purchased-grid">
-                    {% for contract in purchased_contracts %}
-                        <article class="purchase-card">
-                            <div class="purchase-image">
-                                <img src="{% if contract.property.image %}{{ contract.property.image.url }}{% elif contract.property.image_url %}{{ contract.property.image_url }}{% else %}https://images.unsplash.com/photo-1505691938895-1758d7feb511{% endif %}">
+            {% for purchase in purchased_properties %}
+                <div class="booking-card">
+                    <div class="booking-main">
+                        <h3>{{ purchase.property.title }}</h3>
+                        {% if purchase.status == "pending" %}
+                            <span class="status pending">{% trans "Pending" %}</span>
+                        {% elif purchase.status == "approved" %}
+                            <span class="status approved">{% trans "Approved" %}</span>
+                        {% else %}
+                            <span class="status rejected">{% trans "Rejected" %}</span>
+                        {% endif %}
+                        <p class="sub">
+                            {% trans "Owner" %}: {{ purchase.property.owner.user.first_name }} {{ purchase.property.owner.user.last_name }}
+                        </p>
+                        <p class="booking-date">{% trans "Requested on " %} {{ purchase.created_at|date:"F j, Y" }}</p>
+                    </div>
+                    <div class="booking-price">
+                        <h2>${{ purchase.total_value|floatformat:0|intcomma }} COP</h2>
+                        <p class="sub">{% trans "Sale price" %}</p>
+                        {% if purchase.status == "approved" %}
+                            <div style="margin-top:12px;">
+                                <a href="{% url 'properties:property_detail' pk=purchase.property.pk %}"
+                                   class="cta-btn">{% trans "View property" %}</a>
                             </div>
-                            <div class="purchase-card-body">
-                                <h3>{{ contract.property.title }}</h3>
-                                <span class="status approved">{% trans "Accepted" %}</span>
-                                <p class="sub purchase-request-buyer">
-                                    {% trans "Owner" %}: {{ contract.property.owner.user.first_name }} {{ contract.property.owner.user.last_name }}
-                                </p>
-                                <p class="sub">{% trans "Purchased on " %} {{ contract.created_at|date:"F j, Y" }}</p>
-                            </div>
-                            <div class="booking-price purchase-request-price">
-                                <h2>${{ contract.total_value }}</h2>
-                                <p class="sub">{% trans "Sale price" %}</p>
-                                <div class="purchase-actions">
-                                    <a href="{% url 'properties:property_detail' pk=contract.property.pk %}"
-                                       class="purchase-primary">{% trans "View property" %}</a>
-                                    <form method="post"
-                                          action="{% url 'comunication:start_conversation' contract.property.pk %}">
-                                        {% csrf_token %}
-                                        <button type="submit" class="purchase-secondary">{% trans "Contact owner" %}</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </article>
-                    {% endfor %}
+                        {% endif %}
+                    </div>
                 </div>
-            {% else %}
-                <p class="empty">{% trans "Here your purchased properties will appear" %}.</p>
-            {% endif %}
+            {% empty %}
+                <p class="empty">{% trans "No purchase requests." %}</p>
+            {% endfor %}
         </div>
     </section>
     <script>
 function showTab(event,tab){
-const contents=document.querySelectorAll(".tab-content")
-const tabs=document.querySelectorAll(".tab")
-
-contents.forEach(c=>c.style.display="none")
-tabs.forEach(t=>t.classList.remove("active"))
-
-document.getElementById(tab).style.display="block"
-event.target.classList.add("active")
+    const contents=document.querySelectorAll(".tab-content")
+    const tabs=document.querySelectorAll(".tab")
+    contents.forEach(c=>c.style.display="none")
+    tabs.forEach(t=>t.classList.remove("active"))
+    document.getElementById(tab).style.display="block"
+    event.target.classList.add("active")
 }
     </script>
 {% endblock %}
