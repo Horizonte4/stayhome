@@ -5,7 +5,7 @@ from . import views
 app_name = "transactions"
 
 urlpatterns = [
-    path("", views.my_bookings, name="my_bookings"),
+    path("my/", views.my_bookings, name="my_bookings"),
     path("create/<int:property_id>/", views.create_booking, name="create_booking"),
     path("owner/", views.owner_bookings, name="owner_bookings"),
     path(

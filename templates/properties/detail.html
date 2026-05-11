@@ -67,11 +67,11 @@
                     {% endif %}
                 </div>
                 <div class="specs">
+                    <h2 class="location-section-title">{% trans "Details:" %}</h2>
                     <span>{% blocktrans with rooms=property.rooms %}{{ rooms }} rooms{% endblocktrans %}</span>
                     <span>{% blocktrans with baths=property.bathrooms %}{{ baths }} baths{% endblocktrans %}</span>
                     <span>{% blocktrans with m2=property.square_meters|default:"--" %}{{ m2 }} m²{% endblocktrans %}</span>
                     <span>{% blocktrans with guests=property.capacity %}{{ guests }} guests{% endblocktrans %}</span>
-                    <span>{{ property.availability_dates|default:_("All dates available") }}</span>
                 </div>
                 {% if property.latitude and property.longitude %}
                     <section class="location-section">
@@ -114,30 +114,35 @@
             <div class="detail-booking-card">
                 <div class="cal-header">
                     <div class="cal-title">{% trans "Reserve property" %}</div>
-                    <div class="legend">
-                        <span><span class="dot detail-dot-available"></span> {% trans "Available" %}</span>
-                        <span><span class="dot detail-dot-occupied"></span> {% trans "Unavailable" %}</span>
+                    <div class="cal-header">
+                        {% if property.listing_type == "long_term" %}
+                            <p class="sub" style="margin-top:6px;">{% trans "Long term rentals require a minimum stay of 30 days." %}</p>
+                        {% endif %}
+                        <div class="legend">
+                            <div class="legend">
+                                <span><span class="dot detail-dot-available"></span> {% trans "Available" %}</span>
+                                <span><span class="dot detail-dot-occupied"></span> {% trans "Unavailable" %}</span>
+                            </div>
+                        </div>
+                        <form method="POST"
+                              action="{% url 'transactions:create_booking' property.id %}">
+                            {% csrf_token %}
+                            <input id="calendar" type="text">
+                            <p class="sub" style="margin-top:10px;">{% trans "Green days are available. Red days are unavailable." %}</p>
+                            <p class="detail-capacity">
+                                {% blocktrans with capacity=property.capacity %}Capacity: {{ capacity }} guests{% endblocktrans %}
+                            </p>
+                            <input type="hidden" name="check_in" id="check_in" required>
+                            <input type="hidden" name="check_out" id="check_out" required>
+                            <button class="cta-btn" type="submit">{% trans "Request booking" %}</button>
+                            {% if messages %}
+                                {% for message in messages %}<p style="color:red; margin-top:10px;">{{ message }}</p>{% endfor %}
+                            {% endif %}
+                        </form>
                     </div>
-                </div>
-                <form method="POST"
-                      action="{% url 'transactions:create_booking' property.id %}">
-                    {% csrf_token %}
-                    <input id="calendar" type="text">
-                    <p class="sub" style="margin-top:10px;">{% trans "Green days are available. Red days are unavailable." %}</p>
-                    <p class="detail-capacity">
-                        {% blocktrans with capacity=property.capacity %}Capacity: {{ capacity }} guests{% endblocktrans %}
-                    </p>
-                    <input type="hidden" name="check_in" id="check_in" required>
-                    <input type="hidden" name="check_out" id="check_out" required>
-                    <button class="cta-btn" type="submit">{% trans "Request booking" %}</button>
-                    {% if messages %}
-                        {% for message in messages %}<p style="color:red; margin-top:10px;">{{ message }}</p>{% endfor %}
-                    {% endif %}
-                </form>
-            </div>
-        {% endif %}
-    </section>
-    <script>
+                {% endif %}
+            </section>
+            <script>
 const blockedDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
 const reservedDates = JSON.parse('{{ reserved_dates_json|escapejs }}');
 const allDaysAvailable = JSON.parse('{{ all_days_available|yesno:"true,false"|escapejs }}');
@@ -181,10 +186,10 @@ if (calendarElement) {
         }
     });
 }
-    </script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    {% if property.latitude and property.longitude %}
-        <script>
+            </script>
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            {% if property.latitude and property.longitude %}
+                <script>
 document.addEventListener("DOMContentLoaded", function () {
     const lat = parseFloat("{{ property.latitude|default:'0' }}");
     const lng = parseFloat("{{ property.longitude|default:'0' }}");
@@ -198,6 +203,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .openPopup();
     setTimeout(function () { map.invalidateSize(); }, 200);
 });
-        </script>
-    {% endif %}
-{% endblock %}
+                </script>
+            {% endif %}
+        {% endblock %}
