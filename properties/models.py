@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from .managers import PropertyManager
+from transactions.models import Booking
 
 
 class Property(models.Model):
@@ -70,34 +71,9 @@ class Property(models.Model):
 
         return blocked_dates
 
-    def has_sale_contract(self, buyer=None):
-        from transactions.models import Contract
-
-        contracts = Contract.objects.filter(
-            property=self,
-            type=Contract.TYPE_SALE,
-        )
-        if buyer is not None:
-            contracts = contracts.filter(tenant=buyer)
-        return contracts.exists()
-
-    def can_be_accessed_by(self, user):
-        if not self.has_sale_contract():
-            return True
-
-        if not getattr(user, "is_authenticated", False):
-            return False
-
-        if self.owner and self.owner.user_id == user.id:
-            return True
-
-        return self.has_sale_contract(buyer=user)
-
     def has_approved_booking_overlap(self, start_date, end_date):
         if self.listing_type == "sale":
             return False
-
-        from transactions.models import Booking
 
         return self.bookings.filter(
             status=Booking.STATUS_APPROVED,
@@ -120,9 +96,6 @@ class Property(models.Model):
         return False
 
     def is_available(self, start_date=None, end_date=None):
-        if self.has_sale_contract():
-            return False
-
         if self.listing_type == "sale":
             return True
 
@@ -137,9 +110,6 @@ class Property(models.Model):
 
     @property
     def availability_label(self):
-        if self.has_sale_contract():
-            return "Sold"
-
         if self.listing_type == "sale":
             return _("Available")
 

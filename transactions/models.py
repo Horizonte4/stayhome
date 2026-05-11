@@ -5,64 +5,6 @@ from django.utils import timezone
 from core.models import SoftDeleteModel, TimeStampedModel
 
 
-class ContractQuerySet(models.QuerySet):
-    def with_property_details(self):
-        return self.select_related(
-            "property",
-            "property__owner",
-            "property__owner__user",
-        )
-
-    def purchased_by(self, user):
-        return (
-            self.filter(tenant=user, type=Contract.TYPE_SALE)
-            .with_property_details()
-            .order_by("-created_at")
-        )
-
-
-class Contract(TimeStampedModel, SoftDeleteModel):
-    TYPE_RENTAL = "rental"
-    TYPE_SALE = "sale"
-
-    TYPE_CHOICES = (
-        (TYPE_RENTAL, "Rental"),
-        (TYPE_SALE, "Sale"),
-    )
-
-    property = models.ForeignKey(
-        "properties.Property",
-        on_delete=models.CASCADE,
-        related_name="contracts",
-    )
-    tenant = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name="contracts",
-    )
-    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-    status = models.CharField(max_length=30, default="pending_signature")
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
-    monthly_value = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        null=True,
-        blank=True,
-    )
-    total_value = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        null=True,
-        blank=True,
-    )
-
-    objects = ContractQuerySet.as_manager()
-
-    def __str__(self):
-        return f"Contract {self.pk} - {self.type} - {self.property}"
-
-
 class BookingQuerySet(models.QuerySet):
     def with_property_details(self):
         return self.select_related(
@@ -131,3 +73,58 @@ class Booking(TimeStampedModel):
 
     def __str__(self):
         return f"{self.user} - {self.property} ({self.check_in} -> {self.check_out})"
+
+
+class PurchaseQuerySet(models.QuerySet):
+    def with_property_details(self):
+        return self.select_related(
+            "property",
+            "property__owner",
+            "property__owner__user",
+        )
+
+    def for_buyer(self, user):
+        return self.filter(buyer=user).with_property_details().order_by("-created_at")
+
+    def for_owner(self, owner):
+        return (
+            self.filter(property__owner=owner)
+            .with_property_details()
+            .order_by("-created_at")
+        )
+
+
+class Purchase(TimeStampedModel):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+
+    STATUS_PENDING = Status.PENDING
+    STATUS_APPROVED = Status.APPROVED
+    STATUS_REJECTED = Status.REJECTED
+
+    property = models.ForeignKey(
+        "properties.Property",
+        on_delete=models.CASCADE,
+        related_name="purchases",
+    )
+    buyer = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="purchases",
+    )
+    total_value = models.DecimalField(max_digits=12, decimal_places=2)
+    status = models.CharField(
+        max_length=20,
+        choices=Status,
+        default=Status.PENDING,
+    )
+
+    objects = PurchaseQuerySet.as_manager()
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.buyer} - {self.property} ({self.status})"

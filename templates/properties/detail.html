@@ -34,7 +34,7 @@
                     {% endif %}
                 </p>
                 <p class="detail-description">{{ property.description|default:"No description provided." }}</p>
-                {% if user.is_authenticated and not has_sale_contract %}
+                {% if user.is_authenticated %}
                     <form method="post"
                           action="{% url 'properties:toggle_saved_property' property.pk %}">
                         {% csrf_token %}
@@ -51,7 +51,7 @@
                             {% endif %}
                         </button>
                     </form>
-                {% elif not user.is_authenticated and not has_sale_contract %}
+                {% else %}
                     <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">{% trans "Log in to save this property" %}</a>
                 {% endif %}
                 <div class="contact-owner" style="margin-top:20px;">
@@ -61,7 +61,7 @@
                             {% csrf_token %}
                             <button type="submit" class="cta-btn">{% trans "Contact Owner" %}</button>
                         </form>
-                    {% elif not request.user.is_authenticated and property.listing_type == "sale" and not has_sale_contract %}
+                    {% elif not request.user.is_authenticated and property.listing_type == "sale" %}
                         <a href="{% url 'login' %}?next={% url 'properties:property_detail' property.pk %}"
                            class="cta-btn">{% trans "Log in to contact owner" %}</a>
                     {% endif %}
@@ -90,59 +90,53 @@
                 <p class="sub" style="margin-top:10px;">
                     {% blocktrans with price=property.price|floatformat:0|intcomma %}Final price: ${{ price }} COP{% endblocktrans %}
                 </p>
-                {% if has_purchased_property %}
-                    <p class="sub" style="font-weight:700;">{% trans "This property is already part of your purchase history." %}</p>
-                {% elif has_sale_contract %}
-                    <p class="sub" style="font-weight:700;">{% trans "This property has already been sold." %}</p>
-                {% elif not user.is_authenticated %}
-                    <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">{% trans "Log in to contact the owner" %}</a>
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" class="cta-btn">{% trans "Log in to buy this property" %}</a>
                 {% elif request.user == property.owner.user %}
                     <p class="sub" style="font-weight:700;">{% trans "You are the owner of this property." %}</p>
-                {% elif can_contact_owner %}
-                    <form method="post"
-                          action="{% url 'comunication:start_conversation' property.pk %}">
-                        {% csrf_token %}
-                        <button class="cta-btn" type="submit">{% trans "Contact owner about this property" %}</button>
-                    </form>
+                {% elif has_approved_purchase %}
+                    <p class="sub" style="font-weight:700;">{% trans "This property has already been sold." %}</p>
+                {% elif has_pending_purchase %}
+                    <p class="sub" style="font-weight:700;">{% trans "Your purchase request is pending approval." %}</p>
                 {% else %}
-                    <p class="sub" style="font-weight:700;">
-                        {% trans "This property is available, but you need to log in to contact the owner." %}
-                    </p>
+                    <form method="post"
+                          action="{% url 'transactions:request_purchase' property.id %}">
+                        {% csrf_token %}
+                        <button class="cta-btn" type="submit">{% trans "Request purchase" %}</button>
+                    </form>
                 {% endif %}
             </div>
         {% else %}
             <div class="detail-booking-card">
                 <div class="cal-header">
                     <div class="cal-title">{% trans "Reserve property" %}</div>
-                    <div class="cal-header">
-                        {% if property.listing_type == "long_term" %}
-                            <p class="sub" style="margin-top:6px;">{% trans "Long term rentals require a minimum stay of 30 days." %}</p>
-                        {% endif %}
-                        <div class="legend">
-                            <div class="legend">
-                                <span><span class="dot detail-dot-available"></span> {% trans "Available" %}</span>
-                                <span><span class="dot detail-dot-occupied"></span> {% trans "Unavailable" %}</span>
-                            </div>
-                        </div>
-                        <form method="POST"
-                              action="{% url 'transactions:create_booking' property.id %}">
-                            {% csrf_token %}
-                            <input id="calendar" type="text">
-                            <p class="sub" style="margin-top:10px;">{% trans "Green days are available. Red days are unavailable." %}</p>
-                            <p class="detail-capacity">
-                                {% blocktrans with capacity=property.capacity %}Capacity: {{ capacity }} guests{% endblocktrans %}
-                            </p>
-                            <input type="hidden" name="check_in" id="check_in" required>
-                            <input type="hidden" name="check_out" id="check_out" required>
-                            <button class="cta-btn" type="submit">{% trans "Request booking" %}</button>
-                            {% if messages %}
-                                {% for message in messages %}<p style="color:red; margin-top:10px;">{{ message }}</p>{% endfor %}
-                            {% endif %}
-                        </form>
+                    {% if property.listing_type == "long_term" %}
+                        <p class="sub" style="margin-top:6px;">{% trans "Long term rentals require a minimum stay of 30 days." %}</p>
+                    {% endif %}
+                    <div class="legend">
+                        <span><span class="dot detail-dot-available"></span> {% trans "Available" %}</span>
+                        <span><span class="dot detail-dot-occupied"></span> {% trans "Unavailable" %}</span>
                     </div>
-                {% endif %}
-            </section>
-            <script>
+                </div>
+                <form method="POST"
+                      action="{% url 'transactions:create_booking' property.id %}">
+                    {% csrf_token %}
+                    <input id="calendar" type="text">
+                    <p class="sub" style="margin-top:10px;">{% trans "Green days are available. Red days are unavailable." %}</p>
+                    <p class="detail-capacity">
+                        {% blocktrans with capacity=property.capacity %}Capacity: {{ capacity }} guests{% endblocktrans %}
+                    </p>
+                    <input type="hidden" name="check_in" id="check_in" required>
+                    <input type="hidden" name="check_out" id="check_out" required>
+                    <button class="cta-btn" type="submit">{% trans "Request booking" %}</button>
+                    {% if messages %}
+                        {% for message in messages %}<p style="color:red; margin-top:10px;">{{ message }}</p>{% endfor %}
+                    {% endif %}
+                </form>
+            </div>
+        {% endif %}
+    </section>
+    <script>
 const blockedDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
 const reservedDates = JSON.parse('{{ reserved_dates_json|escapejs }}');
 const allDaysAvailable = JSON.parse('{{ all_days_available|yesno:"true,false"|escapejs }}');
@@ -186,10 +180,10 @@ if (calendarElement) {
         }
     });
 }
-            </script>
-            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-            {% if property.latitude and property.longitude %}
-                <script>
+    </script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    {% if property.latitude and property.longitude %}
+        <script>
 document.addEventListener("DOMContentLoaded", function () {
     const lat = parseFloat("{{ property.latitude|default:'0' }}");
     const lng = parseFloat("{{ property.longitude|default:'0' }}");
@@ -203,6 +197,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .openPopup();
     setTimeout(function () { map.invalidateSize(); }, 200);
 });
-                </script>
-            {% endif %}
-        {% endblock %}
+        </script>
+    {% endif %}
+{% endblock %}

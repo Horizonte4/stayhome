@@ -4,6 +4,7 @@ from decimal import Decimal, InvalidOperation
 from django.db import models
 from django.db.models import Exists, OuterRef, Q
 from django.utils import timezone
+from transactions.models import Booking, Purchase
 
 
 def _parse_date(date_string):
@@ -44,21 +45,32 @@ class PropertyQuerySet(models.QuerySet):
         return self.select_related("owner", "owner__user")
 
     def available(self, start_date=None, end_date=None):
-        from transactions.models import Booking, Contract
 
         if start_date is None or end_date is None:
             start_date = timezone.localdate()
             end_date = start_date + timedelta(days=1)
 
-        sold_contracts = Contract.objects.filter(
+        sold_purchases = Purchase.objects.filter(
             property_id=OuterRef("pk"),
-            type=Contract.TYPE_SALE,
+            status=Purchase.STATUS_APPROVED,
         )
         approved_booking_conflicts = Booking.objects.filter(
             property_id=OuterRef("pk"),
             status=Booking.STATUS_APPROVED,
             check_in__lt=end_date,
             check_out__gt=start_date,
+        )
+
+        return (
+            self.annotate(
+                has_approved_purchase_flag=Exists(sold_purchases),
+                has_booking_conflict_flag=Exists(approved_booking_conflicts),
+            )
+            .filter(has_approved_purchase_flag=False)
+            .exclude(
+                listing_type__in=["short_term", "long_term"],
+                has_booking_conflict_flag=True,
+            )
         )
 
         return (

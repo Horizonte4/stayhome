@@ -2,7 +2,8 @@ from datetime import timedelta
 
 from django.utils import timezone
 from django.conf import settings
-from .models import Booking
+from .models import Booking, Purchase
+
 from .selectors import get_client_bookings_context
 
 
@@ -110,3 +111,53 @@ class BookingService:
                 check_out__lt=today,
             ),
         }
+
+
+class PurchaseService:
+    @staticmethod
+    def request_purchase(property_obj, user):
+        if property_obj.listing_type != "sale":
+            raise ValueError("This property is not for sale.")
+
+        if property_obj.owner and property_obj.owner.user_id == user.id:
+            raise ValueError("You cannot buy your own property.")
+
+        if Purchase.objects.filter(
+            property=property_obj,
+            status=Purchase.STATUS_APPROVED,
+        ).exists():
+            raise ValueError("This property has already been sold.")
+
+        if Purchase.objects.filter(
+            property=property_obj,
+            buyer=user,
+        ).exists():
+            raise ValueError("You already have a purchase request for this property.")
+
+        return Purchase.objects.create(
+            property=property_obj,
+            buyer=user,
+            total_value=property_obj.price,
+            status=Purchase.STATUS_PENDING,
+        )
+
+    @staticmethod
+    def approve_purchase(purchase):
+        if Purchase.objects.filter(
+            property=purchase.property,
+            status=Purchase.STATUS_APPROVED,
+        ).exists():
+            raise ValueError("This property has already been sold.")
+
+        purchase.status = Purchase.STATUS_APPROVED
+        purchase.save(update_fields=["status", "updated_at"])
+        return purchase
+
+    @staticmethod
+    def reject_purchase(purchase):
+        if purchase.status != Purchase.STATUS_PENDING:
+            raise ValueError("Only pending purchases can be rejected.")
+
+        purchase.status = Purchase.STATUS_REJECTED
+        purchase.save(update_fields=["status", "updated_at"])
+        return purchase
