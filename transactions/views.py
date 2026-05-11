@@ -72,7 +72,6 @@ def owner_bookings(request):
 @login_required
 def change_booking_status(request, booking_id, new_status):
     booking = get_object_or_404(Booking, id=booking_id)
-
     is_owner = BookingOwnerMixin.is_booking_owner(request, booking)
     is_client = booking.user == request.user and new_status == Booking.STATUS_CANCELLED
 
@@ -84,8 +83,10 @@ def change_booking_status(request, booking_id, new_status):
         BookingService.change_status(booking, new_status)
     except ValueError as exc:
         messages.error(request, str(exc))
+        if is_owner:
+            return redirect("transactions:owner_bookings")
+        return redirect("transactions:my_bookings")
 
     if is_owner:
         return redirect("transactions:owner_bookings")
-
     return redirect("transactions:my_bookings")
