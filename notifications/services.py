@@ -24,10 +24,13 @@ class NotificationService:
             f"Check-out: {booking.check_out}"
         )
 
-        send_mail(
-            subject=subject,
-            message=message,
-            from_email=None,
-            recipient_list=[owner_email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=None,
+                recipient_list=[owner_email],
+                fail_silently=False,
+            )
+        except Exception as exc:
+            raise ValueError("The booking request email could not be sent.") from exc
