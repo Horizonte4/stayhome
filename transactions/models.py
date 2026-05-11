@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 
-from core.models import SoftDeleteModel, TimeStampedModel
+from core.models import TimeStampedModel
 
 
 class BookingQuerySet(models.QuerySet):
