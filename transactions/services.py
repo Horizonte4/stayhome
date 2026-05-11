@@ -24,6 +24,15 @@ class BookingService:
         if property_obj.listing_type == "sale":
             raise ValueError("Sale properties cannot receive bookings.")
 
+        duration = (check_out - check_in).days
+        if property_obj.listing_type == "long_term":
+            if duration < 30:
+                raise ValueError("Long term rentals require a minimum stay of 30 days.")
+            if duration % 30 != 0:
+                raise ValueError(
+                    "Long term rentals must be booked in complete months (30, 60, 90 days...)."
+                )
+
         if not property_obj.is_available(check_in, check_out):
             raise ValueError("The property is not available for those dates.")
 
