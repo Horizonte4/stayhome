@@ -1,64 +1,8 @@
+{% load static %}
 {% extends "admin/base_site.html" %}
 {% block extrastyle %}
     {{ block.super }}
-    <style>
-  .reports-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 16px;
-    margin: 20px 0;
-  }
-  .report-card, .report-panel {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px;
-  }
-  .report-card__label {
-    color: #666;
-    font-size: 12px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .report-card__value {
-    font-size: 28px;
-    font-weight: 700;
-  }
-  .reports-panels {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
-  .bar-list {
-    display: grid;
-    gap: 12px;
-    margin-top: 16px;
-  }
-  .bar-item__row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 4px;
-    font-size: 13px;
-  }
-  .bar-item__track {
-    background: #eee;
-    border-radius: 999px;
-    height: 12px;
-    overflow: hidden;
-  }
-  .bar-item__fill {
-    background: #417690;
-    height: 12px;
-  }
-  .report-details {
-    display: grid;
-    gap: 8px;
-    margin-top: 12px;
-  }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/transactions_admin.css' %}">
 {% endblock %}
 {% block content %}
     <div id="content-main">
@@ -101,9 +45,9 @@
                                     <span>{{ item.title }}</span>
                                     <strong>{{ item.bookings_count }}</strong>
                                 </div>
-                                <div class="bar-item__track">
-                                    <div class="bar-item__fill" style="width: {{ item.bar_width }}%;"></div>
-                                </div>
+                                <progress class="bar-item__progress"
+                                          value="{{ item.bookings_count }}"
+                                          max="{{ report_data.top_booked_properties.0.bookings_count }}"></progress>
                             </div>
                         {% endfor %}
                     </div>
@@ -121,9 +65,9 @@
                                     <span>{{ item.title }}</span>
                                     <strong>{{ item.sales_count }}</strong>
                                 </div>
-                                <div class="bar-item__track">
-                                    <div class="bar-item__fill" style="width: {{ item.bar_width }}%;"></div>
-                                </div>
+                                <progress class="bar-item__progress"
+                                          value="{{ item.sales_count }}"
+                                          max="{{ report_data.top_properties_by_sales.0.sales_count }}"></progress>
                             </div>
                         {% endfor %}
                     </div>
