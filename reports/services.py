@@ -35,7 +35,9 @@ class ReportService:
                 }
 
         last_booking_obj = (
-            Booking.objects.select_related("property", "user").order_by("-created_at").first()
+            Booking.objects.select_related("property", "user")
+            .order_by("-created_at")
+            .first()
         )
         last_booking = None
         if last_booking_obj:
