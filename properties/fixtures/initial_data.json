@@ -1,0 +1,377 @@
+[
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$lkbooBStSWPiz4jX2tCmgL$mCWNrF27kIWmi534DWFD4MVK2/gS7+c61+V5dYm/Aeo=",
+    "last_login": "2026-05-10T04:47:05.919Z",
+    "is_superuser": false,
+    "first_name": "mateo",
+    "last_name": "cadavid",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-21T03:03:06.229Z",
+    "email": "cadavidmateo90@gmail.com",
+    "phone": "3237982909",
+    "registration_date": "2026-03-21T03:03:06.446Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$GN4MtnVN9XFTKp3PvjRv9p$dYk1+4tLJNMPwRTaxExLQdS0cVvzJXud5atIX2VT+fw=",
+    "last_login": "2026-05-11T22:42:27.829Z",
+    "is_superuser": false,
+    "first_name": "kevin",
+    "last_name": "quiceno",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-03-21T03:06:49.653Z",
+    "email": "kevinplaythings@gmail.com",
+    "phone": "3237982909",
+    "registration_date": "2026-03-21T03:06:49.841Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$rE3W79p9BUB7K2uvzMkvxX$Cgj2/DDou6i7Bg0fm9QaF/YZ9rnJAN272qj7v/JYoDw=",
+    "last_login": "2026-03-25T01:19:34.875Z",
+    "is_superuser": true,
+    "first_name": "mateo",
+    "last_name": "cadavid",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-03-25T01:18:48.244Z",
+    "email": "cadavidmateo9@gmail.com",
+    "phone": null,
+    "registration_date": "2026-03-25T01:18:48.407Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$XEDWk3FKD1eqhkMiGWGNmS$7uEvcSkqM1JTEd5voM2POY8KP4nSlGoTaRWnme54tS8=",
+    "last_login": "2026-05-10T04:45:58.694Z",
+    "is_superuser": false,
+    "first_name": "Sarah",
+    "last_name": "Leon",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-05-10T04:45:49.457Z",
+    "email": "ssleona@gmail.com",
+    "phone": "3193902463",
+    "registration_date": "2026-05-10T04:45:49.654Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.owner",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "cadavidmateo90@gmail.com"
+    ]
+  }
+},
+{
+  "model": "users.client",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "kevinplaythings@gmail.com"
+    ]
+  }
+},
+{
+  "model": "users.client",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "ssleona@gmail.com"
+    ]
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 1,
+  "fields": {
+    "owner": 1,
+    "title": "Acogedora Suite, vista al océano en Cartagena 921",
+    "description": "Espléndido apartamento en Cartagena frente al mar, Vista privilegiada a las playa, te podrás relajar escuchando las olas y sintiendo la brisa del mar. Vive una experiencia única en clima cálido y perfecto para vacaciones o viaje de negocios.\r\nEl apartamento cuenta con amplia cocina, cama king, espacio cómodos y confortables. El conjunto ofrece dos piscinas al aire libre, jacuzzi, zonas húmedas con turco y áreas comunes diseñadas para el descanso. Todo para que tu estadía sea inolvidable.",
+    "address": "Cartagena de Indias, Dique, Bolívar, RAP Caribe, Colombia",
+    "city": "Cartagena de Indias",
+    "latitude": "10.426557",
+    "longitude": "-75.544167",
+    "price": "1000000",
+    "listing_type": "sale",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 79,
+    "capacity": 2,
+    "image": "properties/4bdd6be8-c69b-466a-8a8a-b3a0e15f6055_QSjTGct.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-21T03:04:35.705Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 2,
+  "fields": {
+    "owner": 1,
+    "title": "cogedora Suite, vista al océano en Cartagena 921",
+    "description": "Espléndido apartamento en Cartagena frente al mar, Vista privilegiada a las playa, te podrás relajar escuchando las olas y sintiendo la brisa del mar. Vive una experiencia única en clima cálido y perfecto para vacaciones o viaje de negocios.\r\nEl apartamento cuenta con amplia cocina, cama king, espacio cómodos y confortables. El conjunto ofrece dos piscinas al aire libre, jacuzzi, zonas húmedas con turco y áreas comunes diseñadas para el descanso. Todo para que tu estadía sea inolvidable.",
+    "address": "Cartagena de Indias, Dique, Bolívar, RAP Caribe, Colombia",
+    "city": "Cartagena de Indias",
+    "latitude": "10.426557",
+    "longitude": "-75.544167",
+    "price": "691",
+    "listing_type": "short_term",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 73,
+    "capacity": 2,
+    "image": "properties/fbe45f7c-791e-4a05-8ac3-c050de1b4d21_MUjcuoQ.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-22T04:30:26.176Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 3,
+  "fields": {
+    "owner": 1,
+    "title": "Cabaña F2 Rodadero S. Marta",
+    "description": "Relájate con toda la familia en este alojamiento donde vas a estar tranquilo, cómodo ,dónde cada detalle de esta cabaña fue diseñado para ti, para que te sientas como en casa;  cuando regreses al Rodadero vas a querer repetir la experiencia de ser nuestro huésped y nos vas a súper recomendar con tus amigos, familiares y conocidos, Estamos ubicados a solo 300 metros de la playa del Rodadero , cerca al centro comercial Arrecife, supermercados Olímpica y D1.",
+    "address": "Perímetro Urbano Santa Marta, Santa Marta, Magdalena, RAP Caribe, Colombia",
+    "city": "Perímetro Urbano Santa Marta",
+    "latitude": "11.232094",
+    "longitude": "-74.195092",
+    "price": "700",
+    "listing_type": "short_term",
+    "rooms": 3,
+    "bathrooms": 2,
+    "square_meters": 100,
+    "capacity": 1,
+    "image": "properties/4bdd6be8-c69b-466a-8a8a-b3a0e15f6055_4ctnKCl.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-22T04:45:12.820Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 4,
+  "fields": {
+    "owner": 1,
+    "title": "Casa Serena",
+    "description": "Loft moderno con jacuzzi climatizado y vista panorámica a Medellín. Diseño elegante, privacidad total y naturaleza a solo 25 min del Poblado.",
+    "address": "Comuna 14 - El Poblado, Perímetro Urbano Medellín, Medellín, Valle de Aburrá, Antioquia, RAP del Agua y la Montaña, Colombia",
+    "city": "Perímetro Urbano Medellín",
+    "latitude": "6.200620",
+    "longitude": "-75.563683",
+    "price": "1168000",
+    "listing_type": "sale",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 83,
+    "capacity": 2,
+    "image": "properties/d31ec84b-fd0a-4eff-bc7f-2c9969d36c88.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-24T03:56:22.796Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 5,
+  "fields": {
+    "owner": 1,
+    "title": "Hotel/Aeropuerto/Desayuno/Embajada/T. Buses/AV 26",
+    "description": "El espacio está ubicado en un rango de 10 a 15 minutos de sitios como el aeropuerto, el centro histórico, la embajada americana, el jardín botánico, la Virgilio Barco, varios parques recreativos y centros comerciales. El lugar cuenta con una zona común amplia y una elegante recepción. Cada habitación es completamente privada con su respectivo baño y dotadas de todas las comodidades. Contamos con un personal muy servicial y atento a responder cualquiera de sus inquietudes.",
+    "address": "Fontibón, UPZs de Bogotá, Localidad Fontibón, Bogotá, Bogotá, Distrito Capital, RAP (Especial) Central, 110921, Colombia",
+    "city": "Bogotá",
+    "latitude": "4.673294",
+    "longitude": "-74.144746",
+    "price": "154",
+    "listing_type": "short_term",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 73,
+    "capacity": 2,
+    "image": "properties/9428f9c2-a609-4063-910c-9b9f24217abe.jpg",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:29:59.236Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 6,
+  "fields": {
+    "owner": 1,
+    "title": "Cabaña de lujo con jacuzzi Malbec-La Cava Lodge",
+    "description": "Ubicada en el majestuoso bosque de Santa Elena, esta cabaña rústica moderna fusiona lo mejor de la tradición y el diseño contemporáneo. Construida con materiales naturales como madera y piedra, ofrece un ambiente cálido y acogedor, mientras que sus amplios ventanales permiten disfrutar del paisaje. Ideal para desconectar, brindando una experiencia única de tranquilidad y confort en la naturaleza. Un refugio perfecto para quienes buscan escapar y relajarse en armonía con el entorno.",
+    "address": "Parque Arví, Calle 86, Piedras Blancas - Matasano, Santa Elena, Medellín, Valle de Aburrá, Antioquia, RAP del Agua y la Montaña, 050017, Colombia",
+    "city": "Medellín",
+    "latitude": "6.281397",
+    "longitude": "-75.502688",
+    "price": "3000000",
+    "listing_type": "long_term",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 60,
+    "capacity": 2,
+    "image": "properties/a359a04f-aff9-457f-b71f-3c788128c655.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:32:51.086Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 7,
+  "fields": {
+    "owner": 1,
+    "title": "Escapada con estilo a Santa Teresita – Corazón de Cali",
+    "description": "Descubre la comodidad y el estilo en este apartamento de una habitación con dos camas, ubicado en el exclusivo barrio Santa Teresita, en Cali. Con una decoración moderna y acogedora, es el espacio perfecto tanto para viajes de descanso como de negocios.",
+    "address": "Santa Teresita, Comuna 2, Cali ciudad, Cali, Sur, Valle del Cauca, RAP Pacífico, Colombia",
+    "city": "Cali ciudad",
+    "latitude": "3.452401",
+    "longitude": "-76.547703",
+    "price": "294",
+    "listing_type": "short_term",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 50,
+    "capacity": 4,
+    "image": "properties/b3a5d496-2b8f-42fc-8a4a-8dc2f31fa783.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:34:45.860Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 8,
+  "fields": {
+    "owner": 1,
+    "title": "D603-Estudio Con Excelente Ubicación",
+    "description": "Hermoso estudio con todas las comodidades para sus vacaciones o viaje de negocios. Ubicado sobre la via principal de Barranquilla, con fácil desplazamiento a cualquier punto de la ciudad.  Estámoa situados a solo 5 minutos de centros comerciales, restaurantes, y bancos. El edificio cuenta con lobby, parqueadero, salas de coworking, Salón de juegos y TV, Gimnasio,  jacuzzi y vigilancia las 24 horas.  Para su comodidad ofrecemos servicio de mini bar por un costo adicional.",
+    "address": "Parque Venezuela, La Campiña, Localidad Norte - Centro Histórico, Perímetro Urbano Barranquilla, Barranquilla, Atlántico, Colombia",
+    "city": "Perímetro Urbano Barranquilla",
+    "latitude": "11.001456",
+    "longitude": "-74.824172",
+    "price": "1200000",
+    "listing_type": "sale",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 73,
+    "capacity": 3,
+    "image": "properties/88592c50-2294-490b-b22e-f5d09fcc4a35.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:38:23.851Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 9,
+  "fields": {
+    "owner": 1,
+    "title": "Atardecer llanero",
+    "description": "Disfruta tu estadía en un apartamento con piscina, cancha de fútbol, parque infantil y rutas para caminar. Frente al centro comercial Rosa Blanca y cerca a Capachos. Desde el apartamento podrás admirar las hermosas vistas del atardecer llanero.",
+    "address": "Soceagro Airport, Villanueva, Casanare, RAP Llanos, Colombia",
+    "city": "Villanueva",
+    "latitude": "4.484565",
+    "longitude": "-72.824114",
+    "price": "352",
+    "listing_type": "short_term",
+    "rooms": 3,
+    "bathrooms": 2,
+    "square_meters": 105,
+    "capacity": 6,
+    "image": "properties/f85aab87-e5df-40e1-a17d-9480e1819d4a.jpg",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:40:57.656Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 10,
+  "fields": {
+    "owner": 1,
+    "title": "Aparta Hotel en San Gil",
+    "description": "Aparta Hotel dentro del centro comercial San Gil Plaza, dispone de piscina, sauna, turco. Además de que el centro comercial dispone de supermercado, zona de comidas, cafetería, cine, etc.",
+    "address": "San Gil, Guanentá, Santander, RAP Gran Santander, Colombia",
+    "city": "San Gil",
+    "latitude": "6.555286",
+    "longitude": "-73.131235",
+    "price": "2000000",
+    "listing_type": "long_term",
+    "rooms": 1,
+    "bathrooms": 2,
+    "square_meters": 96,
+    "capacity": 5,
+    "image": "properties/60e64208-7466-410b-9bd3-abba039e8caf.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:43:04.276Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 11,
+  "fields": {
+    "owner": 1,
+    "title": "Apartamento nuevo tipo loft #8 cabecera",
+    "description": "Moderno apartamento  en altos de cabecera, cerca de universidades y centros comerciales, ideal para descansar, trabajar o turistear, cuenta con una habitación con cama queen, sabanas 300 hilos, aire acondicionado, sala con cama doble y sofa cama, ventilador, cocina equipada, zona de trabajo, sala con tv. Area comun acceso a terraza, lavandería, parqueadero no cubierto,  maquina dispensadora de snack y bebidas. Cerradura digital. Bienvenidos!",
+    "address": "La Concordia, San Miguel, Comuna 6 - La Concordia, Perímetro Urbano Bucaramanga, Bucaramanga, Metropolitana, Santander, RAP Gran Santander, 680003, Colombia",
+    "city": "Perímetro Urbano Bucaramanga",
+    "latitude": "7.112534",
+    "longitude": "-73.119156",
+    "price": "800000000",
+    "listing_type": "sale",
+    "rooms": 1,
+    "bathrooms": 1,
+    "square_meters": 107,
+    "capacity": 5,
+    "image": "properties/f9171548-1c27-47a8-a9c6-34d4bfdcd87e.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:45:36.615Z"
+  }
+},
+{
+  "model": "properties.property",
+  "pk": 12,
+  "fields": {
+    "owner": 1,
+    "title": "Apt Moderno |A pie Zona Rosa, Cafés y Restaurantes",
+    "description": "Apartamento con estilo ideal para la diversión, el trabajo remoto y el descanso, en la zona más turística y central de Pereira. A dos cuadras de la Av. Circunvalar\r\n\r\n✪ Check-in autónomo\r\n✪ Espacio de trabajo con internet de alta velocidad\r\n✪ Cerca de restaurantes\r\n✪ La mejor vida nocturna, bares y discotecas\r\n✪ Centros comerciales\r\n✪ Bancos\r\n✪ Supermercados\r\n\r\n✪ Aire acondicionado",
+    "address": "Dosquebradas, Risaralda, RAP Eje Cafetero, Colombia",
+    "city": "Dosquebradas",
+    "latitude": "4.833955",
+    "longitude": "-75.671301",
+    "price": "110",
+    "listing_type": "short_term",
+    "rooms": 2,
+    "bathrooms": 1,
+    "square_meters": 84,
+    "capacity": 4,
+    "image": "properties/04c34571-dddf-4fc3-b3b7-b2e7a9b6dc2e.avif",
+    "image_url": "",
+    "availability_dates": "",
+    "created_at": "2026-03-25T05:47:55.259Z"
+  }
+}
+]
