@@ -72,28 +72,54 @@ class BookingService:
             ):
                 raise ValueError("These dates are already booked.")
 
-            booking.status = Booking.STATUS_APPROVED
-            booking.save(update_fields=["status", "updated_at"])
+            with transaction.atomic():
+                booking.status = Booking.STATUS_APPROVED
+                booking.save(update_fields=["status", "updated_at"])
 
-            Booking.objects.filter(
-                property=booking.property,
-                status=Booking.STATUS_PENDING,
-                check_in__lt=booking.check_out,
-                check_out__gt=booking.check_in,
-            ).exclude(pk=booking.pk).update(status=Booking.STATUS_REJECTED)
+                overlapping_bookings = list(
+                    Booking.objects.filter(
+                        property=booking.property,
+                        status=Booking.STATUS_PENDING,
+                        check_in__lt=booking.check_out,
+                        check_out__gt=booking.check_in,
+                    )
+                    .exclude(pk=booking.pk)
+                    .select_related("property", "user")
+                )
+                for overlapping_booking in overlapping_bookings:
+                    overlapping_booking.status = Booking.STATUS_REJECTED
+                    overlapping_booking.save(update_fields=["status", "updated_at"])
+
+            try:
+                NotificationService.send_booking_approved_email(booking)
+            except ValueError:
+                pass
+
+            for overlapping_booking in overlapping_bookings:
+                try:
+                    NotificationService.send_booking_rejected_email(overlapping_booking)
+                except ValueError:
+                    pass
             return booking
 
         if new_status == Booking.STATUS_CANCELLED:
             today = timezone.localdate()
             cancel_days_limit = settings.BOOKING_CANCEL_DAYS_LIMIT
             limit_date = booking.check_in - timedelta(days=cancel_days_limit)
-        if today > limit_date:
-            raise ValueError(
-                f"You can only cancel a booking at least {cancel_days_limit} days before check-in."
-            )
+            if today > limit_date:
+                raise ValueError(
+                    f"You can only cancel a booking at least {cancel_days_limit} days before check-in."
+                )
 
         booking.status = new_status
         booking.save(update_fields=["status", "updated_at"])
+
+        if new_status == Booking.STATUS_REJECTED:
+            try:
+                NotificationService.send_booking_rejected_email(booking)
+            except ValueError:
+                pass
+
         return booking
 
     @staticmethod
