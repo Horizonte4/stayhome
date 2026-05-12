@@ -1,9 +1,10 @@
 from datetime import timedelta
 
+from django.db import transaction
 from django.utils import timezone
 from django.conf import settings
+from notifications.services import NotificationService
 from .models import Booking, Purchase
-
 from .selectors import get_client_bookings_context
 
 
@@ -37,13 +38,16 @@ class BookingService:
         if not property_obj.is_available(check_in, check_out):
             raise ValueError("The property is not available for those dates.")
 
-        return Booking.objects.create(
-            property=property_obj,
-            user=user,
-            check_in=check_in,
-            check_out=check_out,
-            status=Booking.STATUS_PENDING,
-        )
+        with transaction.atomic():
+            booking = Booking.objects.create(
+                property=property_obj,
+                user=user,
+                check_in=check_in,
+                check_out=check_out,
+                status=Booking.STATUS_PENDING,
+            )
+            NotificationService.send_booking_request_email(booking)
+            return booking
 
     @staticmethod
     def change_status(booking, new_status):
