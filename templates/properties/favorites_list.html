@@ -8,7 +8,9 @@
     <section class="container favorites-page">
         <div class="favorites-header">
             <h1>{% trans "Your Favorites" %}</h1>
-            <p class="sub">{% blocktrans with count=favorites|length %}{{ count }} saved properties{% endblocktrans %}</p>
+            {% with count=saved_properties|length %}
+                {% blocktrans %}{{ count }} saved properties{% endblocktrans %}
+            {% endwith %}
         </div>
         {% if saved_properties %}
             <div class="favorites-grid">
