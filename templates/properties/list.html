@@ -7,7 +7,9 @@
         <div class="explore-header">
             <h1 class="explore-title">{% trans "Explore Properties" %}</h1>
             <p class="explore-subtitle">
-                {% blocktrans with count=properties.paginator.count|default:properties|length %}Browse through {{ count }} available properties{% endblocktrans %}
+                {% with count=properties.paginator.count %}
+                    {% blocktrans %}Browse through {{ count }} available properties{% endblocktrans %}
+                {% endwith %}
             </p>
         </div>
         <div class="explore-layout">
@@ -113,7 +115,9 @@
                         <input type="hidden" name="check_out" value="{{ filters.check_out }}">
                     </form>
                     <p class="explore-results-count">
-                        {% blocktrans with shown=properties|length total=properties.paginator.count|default:properties|length %}Showing {{ shown }} of {{ total }} properties{% endblocktrans %}
+                        {% with shown=properties|length total=properties.paginator.count %}
+                            {% blocktrans %}Showing {{ shown }} of {{ total }} properties{% endblocktrans %}
+                        {% endwith %}
                     </p>
                     {% if properties %}
                         <div class="explore-cards-grid">
