@@ -56,12 +56,48 @@
                         </a>
                     {% endif %}
                     {% if request.user.is_authenticated and request.user.is_owner %}
-                        <a href="{% url 'transactions:owner_bookings' %}">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zM7 10h5v5H7z" />
-                            </svg>
-                            {% trans "My Bookings" %}
-                        </a>
+                        <li style="position: relative;">
+                            <a href="#" id="bookings-trigger">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H5V8h14v13zM7 10h5v5H7z" />
+                                </svg>
+                                {% trans "My Bookings" %}
+                            </a>
+                            <ul id="bookings-menu"
+                                style="display:none;
+                                       position:absolute;
+                                       top:100%;
+                                       left:0;
+                                       background:white;
+                                       border:1px solid #e5e7eb;
+                                       border-radius:8px;
+                                       padding:8px 0;
+                                       min-width:200px;
+                                       z-index:9999;
+                                       box-shadow:0 4px 12px rgba(0,0,0,0.1);
+                                       list-style:none">
+                                <li>
+                                    <a href="{% url 'transactions:my_bookings' %}"
+                                       style="display:block;
+                                              padding:8px 16px;
+                                              color:#374151;
+                                              text-decoration:none">{% trans "My Bookings" %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'transactions:owner_bookings' %}"
+                                       style="display:block;
+                                              padding:8px 16px;
+                                              color:#374151;
+                                              text-decoration:none">{% trans "My Properties Bookings" %}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <script>
+        const trigger = document.getElementById('bookings-trigger');
+        const menu = document.getElementById('bookings-menu');
+        trigger.addEventListener('mouseenter', () => menu.style.display = 'block');
+        trigger.closest('li').addEventListener('mouseleave', () => menu.style.display = 'none');
+                        </script>
                     {% endif %}
                 </li>
                 <li>
@@ -150,6 +186,7 @@
                     <a href="/properties/" class="cta-btn-primary">{% trans "Browse Properties" %}</a>
                     <a href="{% url 'properties:create_property' %}"
                        class="cta-btn-secondary">{% trans "List Your Property" %}</a>
+                    <a href="{% url 'productos_api' %}" class="cta-btn-primary">{% trans "View Allies" %}</a>
                 </div>
             </section>
         {% endblock %}

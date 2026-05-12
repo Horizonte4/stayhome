@@ -3,8 +3,7 @@ from datetime import datetime, timedelta
 
 from django.utils import timezone
 
-from transactions.models import Booking, Contract
-from transactions.selectors import can_access_property
+from transactions.models import Booking, Purchase
 
 from .models import SavedProperty
 
@@ -155,15 +154,12 @@ class PropertyService:
         }
 
     @staticmethod
-    def can_access_property(user, property_obj):
-        return can_access_property(user, property_obj)
-
-    @staticmethod
     def build_property_detail_context(user, property_obj):
         calendar_payload = build_calendar_payload(property_obj)
 
         is_saved = False
-        has_purchased_property = False
+        has_approved_purchase = False
+        has_pending_purchase = False
         has_approved_booking = False
         can_contact_owner = False
 
@@ -172,32 +168,32 @@ class PropertyService:
                 user=user,
                 property_obj=property_obj,
             ).exists()
-            has_purchased_property = Contract.objects.filter(
-                property=property_obj,
-                tenant=user,
-                type=Contract.TYPE_SALE,
-            ).exists()
             has_approved_booking = Booking.objects.filter(
                 property=property_obj,
                 user=user,
                 status=Booking.STATUS_APPROVED,
             ).exists()
+            has_approved_purchase = Purchase.objects.filter(
+                property=property_obj,
+                status=Purchase.STATUS_APPROVED,
+            ).exists()
+            has_pending_purchase = Purchase.objects.filter(
+                property=property_obj,
+                buyer=user,
+                status=Purchase.STATUS_PENDING,
+            ).exists()
             can_contact_owner = (
                 property_obj.owner is not None
                 and user != property_obj.owner.user
-                and (
-                    property_obj.listing_type == "sale"
-                    or has_approved_booking
-                    or has_purchased_property
-                )
+                and (property_obj.listing_type == "sale" or has_approved_booking)
             )
 
         return {
             "property": property_obj,
             "is_saved": is_saved,
             "availability_label": property_obj.availability_label,
-            "has_sale_contract": property_obj.has_sale_contract(),
-            "has_purchased_property": has_purchased_property,
+            "has_approved_purchase": has_approved_purchase,
+            "has_pending_purchase": has_pending_purchase,
             "has_approved_booking": has_approved_booking,
             "can_contact_owner": can_contact_owner,
             "month_label": timezone.localdate().strftime("%B %Y"),

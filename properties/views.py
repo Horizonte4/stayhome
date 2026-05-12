@@ -177,12 +177,6 @@ def list_properties(request):
 def toggle_saved_property(request, pk):
     property_obj = get_object_or_404(Property, pk=pk)
 
-    if not PropertyService.can_access_property(
-        user=request.user,
-        property_obj=property_obj,
-    ):
-        raise Http404
-
     result = PropertyService.toggle_saved_property(
         user=request.user,
         property_obj=property_obj,
@@ -222,12 +216,6 @@ def property_detail(request, pk):
     property_obj = get_property_detail(pk=pk)
     if property_obj is None:
         raise Http404("Property not found.")
-
-    if not PropertyService.can_access_property(
-        user=request.user,
-        property_obj=property_obj,
-    ):
-        raise Http404
 
     context = PropertyService.build_property_detail_context(
         user=request.user,

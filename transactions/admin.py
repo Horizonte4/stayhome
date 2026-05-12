@@ -1,9 +1,8 @@
 from django.contrib import admin
 
-from .models import Booking, Contract
+from .models import Booking
 
 
-@admin.register(Contract)
 class ContractAdmin(admin.ModelAdmin):
     list_display = [
         "id",
