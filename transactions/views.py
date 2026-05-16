@@ -132,3 +132,19 @@ def change_purchase_status(request, purchase_id, new_status):
         messages.error(request, str(exc))
 
     return redirect("transactions:owner_bookings")
+
+
+@login_required
+def cancel_booking(request, booking_id):
+    if request.method != "POST":
+        return redirect("transactions:my_bookings")
+
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+
+    try:
+        BookingService.change_status(booking, Booking.STATUS_CANCELLED)
+        messages.success(request, "Booking cancelled successfully.")
+    except ValueError as exc:
+        messages.error(request, str(exc))
+
+    return redirect("transactions:my_bookings")

@@ -83,10 +83,10 @@ class BookingService:
             today = timezone.localdate()
             cancel_days_limit = settings.BOOKING_CANCEL_DAYS_LIMIT
             limit_date = booking.check_in - timedelta(days=cancel_days_limit)
-        if today > limit_date:
-            raise ValueError(
-                f"You can only cancel a booking at least {cancel_days_limit} days before check-in."
-            )
+            if today > limit_date:
+                raise ValueError(
+                    f"You can only cancel a booking at least {cancel_days_limit} days before check-in."
+                )
 
         booking.status = new_status
         booking.save(update_fields=["status", "updated_at"])
@@ -109,7 +109,9 @@ class BookingService:
                 status=Booking.STATUS_APPROVED,
                 check_out__gte=today,
             ),
-            "rejected": bookings.filter(status=Booking.STATUS_REJECTED),
+            "rejected": bookings.filter(
+                status__in=[Booking.STATUS_REJECTED, Booking.STATUS_CANCELLED]
+            ),
             "past": bookings.filter(
                 status=Booking.STATUS_APPROVED,
                 check_out__lt=today,
