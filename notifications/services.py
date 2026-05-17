@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.utils.translation import gettext as _
 
 
 class NotificationService:
@@ -7,7 +8,7 @@ class NotificationService:
         client_email = getattr(booking.user, "email", None)
 
         if not client_email:
-            raise ValueError("The booking client must have an email address.")
+            raise ValueError(_("The booking client must have an email address."))
 
         try:
             send_mail(
@@ -18,7 +19,7 @@ class NotificationService:
                 fail_silently=False,
             )
         except Exception as exc:
-            raise ValueError("The booking status email could not be sent.") from exc
+            raise ValueError(_("The booking status email could not be sent.")) from exc
 
     @staticmethod
     def send_booking_request_email(booking):
@@ -26,7 +27,7 @@ class NotificationService:
         owner_email = getattr(owner, "email", None)
 
         if not owner or not owner_email:
-            raise ValueError("The property owner must have an email address.")
+            raise ValueError(_("The property owner must have an email address."))
 
         requester_name = (
             f"{booking.user.first_name} {booking.user.last_name}".strip()
@@ -51,7 +52,7 @@ class NotificationService:
                 fail_silently=False,
             )
         except Exception as exc:
-            raise ValueError("The booking request email could not be sent.") from exc
+            raise ValueError(_("The booking request email could not be sent.")) from exc
 
     @staticmethod
     def send_booking_approved_email(booking):

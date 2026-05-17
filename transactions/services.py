@@ -3,6 +3,7 @@ from datetime import timedelta
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import Count
+from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.conf import settings
 from notifications.services import NotificationService
@@ -25,22 +26,26 @@ class BookingService:
     @staticmethod
     def create_booking(property_obj, user, check_in, check_out):
         if property_obj.owner and property_obj.owner.user_id == user.id:
-            raise ValueError("Owners cannot book their own properties.")
+            raise ValueError(_("Owners cannot book their own properties."))
 
         if property_obj.listing_type == "sale":
-            raise ValueError("Sale properties cannot receive bookings.")
+            raise ValueError(_("Sale properties cannot receive bookings."))
 
         duration = (check_out - check_in).days
         if property_obj.listing_type == "long_term":
             if duration < 30:
-                raise ValueError("Long term rentals require a minimum stay of 30 days.")
+                raise ValueError(
+                    _("Long term rentals require a minimum stay of 30 days.")
+                )
             if duration % 30 != 0:
                 raise ValueError(
-                    "Long term rentals must be booked in complete months (30, 60, 90 days...)."
+                    _(
+                        "Long term rentals must be booked in complete months (30, 60, 90 days...)."
+                    )
                 )
 
         if not property_obj.is_available(check_in, check_out):
-            raise ValueError("The property is not available for those dates.")
+            raise ValueError(_("The property is not available for those dates."))
 
         with transaction.atomic():
             booking = Booking.objects.create(
@@ -62,7 +67,7 @@ class BookingService:
         }
 
         if new_status not in valid_statuses:
-            raise ValueError(f"Invalid status: {new_status}")
+            raise ValueError(_("Invalid status: %(status)s") % {"status": new_status})
 
         if new_status == Booking.STATUS_APPROVED:
             if BookingService.has_conflict(
@@ -70,7 +75,7 @@ class BookingService:
                 booking.check_in,
                 booking.check_out,
             ):
-                raise ValueError("These dates are already booked.")
+                raise ValueError(_("These dates are already booked."))
 
             with transaction.atomic():
                 booking.status = Booking.STATUS_APPROVED
@@ -108,7 +113,10 @@ class BookingService:
             limit_date = booking.check_in - timedelta(days=cancel_days_limit)
             if today > limit_date:
                 raise ValueError(
-                    f"You can only cancel a booking at least {cancel_days_limit} days before check-in."
+                    _(
+                        "You can only cancel a booking at least %(days)s days before check-in."
+                    )
+                    % {"days": cancel_days_limit}
                 )
 
         booking.status = new_status
@@ -151,22 +159,24 @@ class PurchaseService:
     @staticmethod
     def request_purchase(property_obj, user):
         if property_obj.listing_type != "sale":
-            raise ValueError("This property is not for sale.")
+            raise ValueError(_("This property is not for sale."))
 
         if property_obj.owner and property_obj.owner.user_id == user.id:
-            raise ValueError("You cannot buy your own property.")
+            raise ValueError(_("You cannot buy your own property."))
 
         if Purchase.objects.filter(
             property=property_obj,
             status=Purchase.STATUS_APPROVED,
         ).exists():
-            raise ValueError("This property has already been sold.")
+            raise ValueError(_("This property has already been sold."))
 
         if Purchase.objects.filter(
             property=property_obj,
             buyer=user,
         ).exists():
-            raise ValueError("You already have a purchase request for this property.")
+            raise ValueError(
+                _("You already have a purchase request for this property.")
+            )
 
         return Purchase.objects.create(
             property=property_obj,
@@ -181,7 +191,7 @@ class PurchaseService:
             property=purchase.property,
             status=Purchase.STATUS_APPROVED,
         ).exists():
-            raise ValueError("This property has already been sold.")
+            raise ValueError(_("This property has already been sold."))
 
         purchase.status = Purchase.STATUS_APPROVED
         purchase.save(update_fields=["status", "updated_at"])
@@ -190,7 +200,7 @@ class PurchaseService:
     @staticmethod
     def reject_purchase(purchase):
         if purchase.status != Purchase.STATUS_PENDING:
-            raise ValueError("Only pending purchases can be rejected.")
+            raise ValueError(_("Only pending purchases can be rejected."))
 
         purchase.status = Purchase.STATUS_REJECTED
         purchase.save(update_fields=["status", "updated_at"])

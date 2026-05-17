@@ -1040,6 +1040,76 @@ msgstr "Propietario"
 msgid "client"
 msgstr "Cliente"
 
+#: notifications/services.py:11
+msgid "The booking client must have an email address."
+msgstr "El cliente de la reserva debe tener un correo electrónico."
+
+#: notifications/services.py:22
+msgid "The booking status email could not be sent."
+msgstr "No se pudo enviar el correo del estado de la reserva."
+
+#: notifications/services.py:30
+msgid "The property owner must have an email address."
+msgstr "El propietario de la propiedad debe tener un correo electrónico."
+
+#: notifications/services.py:55
+msgid "The booking request email could not be sent."
+msgstr "No se pudo enviar el correo de solicitud de reserva."
+
+#: transactions/services.py:25
+msgid "Owners cannot book their own properties."
+msgstr "Los propietarios no pueden reservar sus propias propiedades."
+
+#: transactions/services.py:28
+msgid "Sale properties cannot receive bookings."
+msgstr "Las propiedades en venta no pueden recibir reservas."
+
+#: transactions/services.py:33
+msgid "Long term rentals require a minimum stay of 30 days."
+msgstr "Los arriendos de larga duración requieren una estadía mínima de 30 días."
+
+#: transactions/services.py:37
+msgid "Long term rentals must be booked in complete months (30, 60, 90 days...)."
+msgstr "Los arriendos de larga duración deben reservarse en meses completos (30, 60, 90 días...)."
+
+#: transactions/services.py:44
+msgid "The property is not available for those dates."
+msgstr "La propiedad no está disponible para esas fechas."
+
+#: transactions/services.py:66 transactions/views.py:130
+#, python-format
+msgid "Invalid status: %(status)s"
+msgstr "Estado inválido: %(status)s"
+
+#: transactions/services.py:74 transactions/views.py:40
+msgid "These dates are already booked."
+msgstr "Estas fechas ya están reservadas."
+
+#: transactions/services.py:111
+#, python-format
+msgid "You can only cancel a booking at least %(days)s days before check-in."
+msgstr "Solo puedes cancelar una reserva al menos %(days)s días antes del check-in."
+
+#: transactions/services.py:155
+msgid "This property is not for sale."
+msgstr "Esta propiedad no está en venta."
+
+#: transactions/services.py:158
+msgid "You cannot buy your own property."
+msgstr "No puedes comprar tu propia propiedad."
+
+#: transactions/services.py:164 transactions/services.py:185
+msgid "This property has already been sold."
+msgstr "Esta propiedad ya ha sido vendida."
+
+#: transactions/services.py:170
+msgid "You already have a purchase request for this property."
+msgstr "Ya tienes una solicitud de compra para esta propiedad."
+
+#: transactions/services.py:194
+msgid "Only pending purchases can be rejected."
+msgstr "Solo se pueden rechazar compras pendientes."
+
 #~ msgid "Stay "
 #~ msgstr "Stay "
 
