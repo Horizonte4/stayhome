@@ -46,7 +46,11 @@
                     </div>
                     <div class="booking-price">
                         <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
-                        <p>{% blocktrans with nights=booking.nights %}{{ nights }} nights{% endblocktrans %}</p>
+                        {% if booking.property.listing_type == "long_term" %}
+                            <p>{{ booking.months }} {% trans "months" %}</p>
+                        {% else %}
+                            <p>{{ booking.nights }} {% trans "nights" %}</p>
+                        {% endif %}
                     </div>
                 </div>
             {% empty %}
@@ -80,7 +84,20 @@
                     </div>
                     <div class="booking-price">
                         <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
-                        <p>{{ booking.nights }} {% trans "nights" %}</p>
+                        {% if booking.property.listing_type == "long_term" %}
+                            <p>{{ booking.months }} {% trans "months" %}</p>
+                        {% else %}
+                            <p>{{ booking.nights }} {% trans "nights" %}</p>
+                        {% endif %}
+                        {% if booking.can_cancel %}
+                            <form method="post"
+                                  action="{% url 'transactions:cancel_booking' booking.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="cta-btn cancel">{% trans "Cancel booking" %}</button>
+                            </form>
+                        {% else %}
+                            <p class="sub">{% trans "Cancellation not available (less than 5 days before check-in)" %}</p>
+                        {% endif %}
                     </div>
                 </div>
             {% empty %}

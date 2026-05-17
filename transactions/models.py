@@ -68,8 +68,19 @@ class Booking(TimeStampedModel):
     def nights(self):
         return (self.check_out - self.check_in).days
 
+    def months(self):
+        return self.nights() // 30
+
     def total_price(self):
+        if self.property.listing_type == "long_term":
+            months = self.nights() // 30
+            return months * self.property.price
         return self.nights() * self.property.price
+
+    def can_cancel(self):
+        today = timezone.localdate()
+        cancel_days_limit = getattr(settings, "BOOKING_CANCEL_DAYS_LIMIT", 5)
+        return (self.check_in - today).days > cancel_days_limit
 
     def __str__(self):
         return f"{self.user} - {self.property} ({self.check_in} -> {self.check_out})"

@@ -83,8 +83,12 @@
                         <p class="guests">{% blocktrans with email=booking.user.email %}Client: {{ email }}{% endblocktrans %}</p>
                     </div>
                     <div class="booking-price">
-                        <h2>${{ booking.total_price|floatformat:0|intcomma }}</h2>
-                        <p>{% blocktrans with nights=booking.nights %}{{ nights }} nights{% endblocktrans %}</p>
+                        <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
+                        {% if booking.property.listing_type == "long_term" %}
+                            <p>{{ booking.months }} {% trans "months" %}</p>
+                        {% else %}
+                            <p>{{ booking.nights }} {% trans "nights" %}</p>
+                        {% endif %}
                     </div>
                 </div>
             {% empty %}
@@ -96,7 +100,11 @@
                 <div class="booking-card">
                     <div class="booking-main">
                         <h3>{{ booking.property.title }}</h3>
-                        <span class="status rejected">{% trans "Rejected" %}</span>
+                        {% if booking.status == "cancelled" %}
+                            <span class="status cancelled">{% trans "Cancelled by client" %}</span>
+                        {% else %}
+                            <span class="status rejected">{% trans "Rejected" %}</span>
+                        {% endif %}
                         <div class="booking-details">
                             <div class="detail">
                                 <span>{% trans "Check-in" %}</span>
@@ -134,7 +142,12 @@
                         </div>
                     </div>
                     <div class="booking-price">
-                        <h2>${{ booking.total_price|floatformat:0|intcomma }}</h2>
+                        <h2>${{ booking.total_price|floatformat:0|intcomma }} COP</h2>
+                        {% if booking.property.listing_type == "long_term" %}
+                            <p>{{ booking.months }} {% trans "months" %}</p>
+                        {% else %}
+                            <p>{{ booking.nights }} {% trans "nights" %}</p>
+                        {% endif %}
                     </div>
                 </div>
             {% empty %}
