@@ -138,8 +138,17 @@ class PropertyQuerySet(models.QuerySet):
         if capacity is not None:
             queryset = queryset.filter(capacity__gte=capacity)
 
-        queryset = queryset.available(check_in, check_out)
-        queryset = filter_properties_by_availability(queryset, check_in, check_out)
+        if check_in and check_out:
+            queryset = queryset.available(check_in, check_out)
+            queryset = filter_properties_by_availability(queryset, check_in, check_out)
+        else:
+            sold_purchases = Purchase.objects.filter(
+                property_id=OuterRef("pk"),
+                status=Purchase.STATUS_APPROVED,
+            )
+            queryset = queryset.annotate(
+                has_approved_purchase_flag=Exists(sold_purchases),
+            ).filter(has_approved_purchase_flag=False)
 
         return queryset.order_by("-created_at")
 

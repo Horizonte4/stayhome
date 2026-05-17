@@ -139,7 +139,9 @@ class BookingService:
                 status=Booking.STATUS_APPROVED,
                 check_out__gte=today,
             ),
-            "rejected": bookings.filter(status=Booking.STATUS_REJECTED),
+            "rejected": bookings.filter(
+                status__in=[Booking.STATUS_REJECTED, Booking.STATUS_CANCELLED]
+            ),
             "past": bookings.filter(
                 status=Booking.STATUS_APPROVED,
                 check_out__lt=today,
