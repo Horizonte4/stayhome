@@ -1,6 +1,9 @@
 from django.contrib import admin
+from django.template.response import TemplateResponse
+from django.urls import path
 
 from .models import Booking
+from .services import ReportService
 
 
 class ContractAdmin(admin.ModelAdmin):
@@ -22,6 +25,7 @@ class ContractAdmin(admin.ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
+    change_list_template = "admin/transactions/booking/change_list.html"
     list_display = [
         "id",
         "user",
@@ -37,6 +41,29 @@ class BookingAdmin(admin.ModelAdmin):
     search_fields = ["user__email", "property__title"]
     readonly_fields = ["created_at", "nights_display"]
     ordering = ["-created_at"]
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                "reports/",
+                self.admin_site.admin_view(self.reports_dashboard_view),
+                name="transactions_booking_reports",
+            ),
+        ]
+        return custom_urls + urls
+
+    def reports_dashboard_view(self, request):
+        context = {
+            **self.admin_site.each_context(request),
+            "title": "Transactions reports",
+            "report_data": ReportService.get_admin_dashboard_data(),
+        }
+        return TemplateResponse(
+            request,
+            "admin/transactions/reports_dashboard.html",
+            context,
+        )
 
     @admin.display(description="Nights")
     def nights_display(self, obj):

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StayHome\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-12 10:15-0500\n"
+"POT-Creation-Date: 2026-05-10 17:34-0500\n"
 "PO-Revision-Date: 2026-03-24 19:49+0000\n"
 "Last-Translator: StayHome\n"
 "Language-Team: Spanish\n"
@@ -15,24 +15,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: properties/models.py:13
+#: properties/models.py:12
 msgid "Short-term rental"
 msgstr "Arriendo corto plazo"
 
-#: properties/models.py:14
+#: properties/models.py:13
 msgid "Long-term rental"
 msgstr "Arriendo largo plazo"
 
-#: properties/models.py:15 templates/properties/list.html:33
+#: properties/models.py:14
 msgid "Sale"
 msgstr "Venta"
 
-#: properties/models.py:114 properties/models.py:116
-#: templates/properties/detail.html:117
+#: properties/models.py:144 properties/models.py:146
+#: templates/properties/detail.html:118
 msgid "Available"
 msgstr "Disponible"
 
-#: properties/models.py:116 templates/properties/detail.html:118
+#: properties/models.py:146 templates/properties/detail.html:119
 msgid "Unavailable"
 msgstr "No Disponible"
 
@@ -139,49 +139,45 @@ msgstr "Casa"
 msgid "Property"
 msgstr "Propiedades"
 
-#: templates/base.html:55 templates/base.html:64 templates/base.html:68
+#: templates/base.html:55 templates/base.html:63
 #: templates/transactions/my_bookings.html:6
 msgid "My Bookings"
 msgstr "Mis reservas"
 
-#: templates/base.html:71
-msgid "My Properties Bookings"
-msgstr "Mis reservas de propiedades"
-
-#: templates/base.html:89
+#: templates/base.html:73
 msgid "Favorites"
 msgstr "Favoritos"
 
-#: templates/base.html:98
+#: templates/base.html:82
 msgid "Wishlist"
 msgstr "Lista de deseos"
 
-#: templates/base.html:107 templates/comunication/conversation_detail.html:7
+#: templates/base.html:91 templates/comunication/conversation_detail.html:7
 #: templates/comunication/inbox.html:9
 msgid "Messages"
 msgstr "Mensajes"
 
-#: templates/base.html:117
+#: templates/base.html:101
 msgid "List Property"
 msgstr "Publicar propiedad"
 
-#: templates/base.html:126 templates/users/board.html:4
+#: templates/base.html:110 templates/users/board.html:4
 msgid "Profile"
 msgstr "Perfil"
 
-#: templates/base.html:133 templates/users/board.html:100
+#: templates/base.html:117 templates/users/board.html:100
 msgid "Login"
 msgstr "Iniciar sesión"
 
-#: templates/base.html:160
+#: templates/base.html:144
 msgid "Join StayHome"
 msgstr "Unete a stayhome"
 
-#: templates/base.html:161
+#: templates/base.html:145
 msgid "Ready to Find Your Perfect Home?"
 msgstr "¿Listo para encontrar tu hogar ideal?"
 
-#: templates/base.html:163
+#: templates/base.html:147
 msgid ""
 "Join thousands of satisfied users who found their dream properties through "
 "StayHome."
@@ -189,15 +185,15 @@ msgstr ""
 "Únete a miles de usuarios satisfechos que encontraron su propiedad ideal en "
 "StayHome."
 
-#: templates/base.html:166
+#: templates/base.html:150
 msgid "Browse Properties"
 msgstr "Explorar propiedades"
 
-#: templates/base.html:168
+#: templates/base.html:152
 msgid "List Your Property"
 msgstr "Publicar tu propiedad"
 
-#: templates/base.html:169
+#: templates/base.html:153
 msgid "View Allies"
 msgstr "Ver aliados"
 
@@ -206,7 +202,7 @@ msgid "About:"
 msgstr "Sobre:"
 
 #: templates/comunication/conversation_detail.html:47
-#: templates/transactions/my_bookings.html:180
+#: templates/transactions/my_bookings.html:161
 msgid "View property"
 msgstr "Ver propiedad"
 
@@ -259,13 +255,13 @@ msgid "No available properties"
 msgstr "No hay propiedades disponibles"
 
 #: templates/partials/featured_property_card.html:19
-#: templates/properties/detail.html:71 templates/properties/list.html:149
+#: templates/properties/detail.html:70 templates/properties/list.html:140
 #, python-format
 msgid "%(rooms)s rooms"
 msgstr "%(rooms)s Habitaciones"
 
 #: templates/partials/featured_property_card.html:20
-#: templates/properties/detail.html:72 templates/properties/list.html:150
+#: templates/properties/detail.html:71 templates/properties/list.html:141
 #, python-format
 msgid "%(baths)s baths"
 msgstr "%(baths)s Baños"
@@ -276,8 +272,8 @@ msgid "%(m2)s m2"
 msgstr "%(m2)s m2"
 
 #: templates/partials/featured_property_card.html:22
-#: templates/properties/detail.html:74 templates/properties/list.html:164
-#: templates/transactions/owner_bookings.html:44
+#: templates/properties/detail.html:73 templates/properties/list.html:155
+#: templates/transactions/owner_bookings.html:41
 #, python-format
 msgid "%(guests)s guests"
 msgstr "%(guests)s Capacidad"
@@ -288,8 +284,8 @@ msgstr "Venta"
 
 #: templates/partials/featured_property_card.html:30
 #: templates/properties/detail.html:33
-#: templates/properties/favorites_list.html:50
-#: templates/properties/list.html:160
+#: templates/properties/favorites_list.html:48
+#: templates/properties/list.html:151
 msgid "/mo"
 msgstr "/mes"
 
@@ -336,7 +332,7 @@ msgid "Rooms"
 msgstr "Habitaciones"
 
 #: templates/properties/create.html:57 templates/properties/edit.html:51
-#: templates/properties/list.html:56 templates/properties/list.html:61
+#: templates/properties/list.html:49 templates/properties/list.html:54
 msgid "Bathrooms"
 msgstr "Baños"
 
@@ -346,7 +342,7 @@ msgstr "Área"
 
 #: templates/properties/create.html:65
 #: templates/transactions/my_bookings.html:44
-#: templates/transactions/my_bookings.html:76
+#: templates/transactions/my_bookings.html:72
 msgid "Guests capacity"
 msgstr "Capacidad de huéspedes"
 
@@ -418,7 +414,7 @@ msgid "Back to Properties"
 msgstr "volver a propiedades"
 
 #: templates/properties/detail.html:24
-#: templates/transactions/my_bookings.html:170
+#: templates/transactions/my_bookings.html:152
 msgid "Owner"
 msgstr "Propietario"
 
@@ -427,8 +423,8 @@ msgid "sale price"
 msgstr "precio de venta"
 
 #: templates/properties/detail.html:31
-#: templates/properties/favorites_list.html:48
-#: templates/properties/list.html:158
+#: templates/properties/favorites_list.html:46
+#: templates/properties/list.html:149
 msgid "/night"
 msgstr "/noche"
 
@@ -449,7 +445,7 @@ msgid "Log in to save this property"
 msgstr "inicia sesion para Guardar propiedad"
 
 #: templates/properties/detail.html:62
-#: templates/transactions/my_bookings.html:81
+#: templates/transactions/my_bookings.html:77
 msgid "Contact Owner"
 msgstr "Contactar propietario"
 
@@ -457,14 +453,14 @@ msgstr "Contactar propietario"
 msgid "Log in to contact owner"
 msgstr "Inicia sesion para Contactar propietario"
 
-#: templates/properties/detail.html:70
-msgid "Details:"
-msgstr "Detalles:"
-
-#: templates/properties/detail.html:73 templates/properties/list.html:151
+#: templates/properties/detail.html:72 templates/properties/list.html:142
 #, python-format
 msgid "%(m2)s m²"
 msgstr "%(m2)s m2"
+
+#: templates/properties/detail.html:74
+msgid "All dates available"
+msgstr "Todas las fechas disponibles"
 
 #: templates/properties/detail.html:78
 msgid "Where is it located?"
@@ -480,43 +476,44 @@ msgid "Final price: $%(price)s COP"
 msgstr "Precio final: $%(price)s COP"
 
 #: templates/properties/detail.html:94
-msgid "Log in to buy this property"
-msgstr "inicia sesion para Guardar propiedad"
+msgid "This property is already part of your purchase history."
+msgstr "Esta propiedad está en tu historial de compras"
 
 #: templates/properties/detail.html:96
-msgid "You are the owner of this property."
-msgstr "Eres el propietario"
-
-#: templates/properties/detail.html:98
 msgid "This property has already been sold."
 msgstr "Esta propiedad ha sido vendida"
 
+#: templates/properties/detail.html:98
+msgid "Log in to contact the owner"
+msgstr "inicia sesion Contactar al propietario"
+
 #: templates/properties/detail.html:100
-msgid "Your purchase request is pending approval."
-msgstr "Tu solicitud de compra está pendiente de aprobación"
+msgid "You are the owner of this property."
+msgstr "Eres el propietario"
 
 #: templates/properties/detail.html:105
-msgid "Request purchase"
-msgstr "solicitar compra"
+msgid "Contact owner about this property"
+msgstr "contacta el propietario de esta propiedad"
 
-#: templates/properties/detail.html:112
+#: templates/properties/detail.html:109
+msgid ""
+"This property is available, but you need to log in to contact the owner."
+msgstr "Propiedad disponible, inicia session para contactar al propietario"
+
+#: templates/properties/detail.html:116
 msgid "Reserve property"
 msgstr "Reservar propiedad"
 
-#: templates/properties/detail.html:114
-msgid "Long term rentals require a minimum stay of 30 days."
-msgstr "Estadias largar requieren un minimo de 30 dias"
-
-#: templates/properties/detail.html:125
+#: templates/properties/detail.html:126
 msgid "Green days are available. Red days are unavailable."
 msgstr "Dias en verde estan disponible. rojos no disponible"
 
-#: templates/properties/detail.html:127
+#: templates/properties/detail.html:128
 #, python-format
 msgid "Capacity: %(capacity)s guests"
 msgstr "Capacidad: %(capacity)s Capacidad"
 
-#: templates/properties/detail.html:131
+#: templates/properties/detail.html:132
 msgid "Request booking"
 msgstr "Solicitar reserva "
 
@@ -551,7 +548,7 @@ msgstr ""
 msgid "Save Changes"
 msgstr "Guardar cambios"
 
-#: templates/properties/edit_calendar.html:4 templates/properties/list.html:178
+#: templates/properties/edit_calendar.html:4 templates/properties/list.html:169
 #: templates/users/board.html:80
 msgid "Edit calendar"
 msgstr "Editar calendario"
@@ -593,44 +590,44 @@ msgstr "Todos los dias libres"
 msgid "Your Favorites"
 msgstr "Tus favoritos"
 
-#: templates/properties/favorites_list.html:12
+#: templates/properties/favorites_list.html:11
 #, python-format
 msgid "%(count)s saved properties"
 msgstr "%(count)s propiedades guardadas"
 
-#: templates/properties/favorites_list.html:25
+#: templates/properties/favorites_list.html:23
 #: templates/properties/wishlist_list.html:20
 msgid "For Sale"
 msgstr "En venta"
 
-#: templates/properties/favorites_list.html:27
+#: templates/properties/favorites_list.html:25
 msgid "For Rent"
 msgstr "En arriendo"
 
-#: templates/properties/favorites_list.html:34
+#: templates/properties/favorites_list.html:32
 msgid "Remove from favorites"
 msgstr "Quitar de favoritos"
 
-#: templates/properties/favorites_list.html:41
+#: templates/properties/favorites_list.html:39
 #: templates/properties/wishlist_list.html:33
 msgid "bed"
 msgstr "habitación"
 
-#: templates/properties/favorites_list.html:42
+#: templates/properties/favorites_list.html:40
 #: templates/properties/wishlist_list.html:34
 msgid "bath"
 msgstr "baño"
 
-#: templates/properties/favorites_list.html:56
+#: templates/properties/favorites_list.html:54
 #: templates/properties/wishlist_list.html:40
 msgid "View details"
 msgstr "Ver detalles"
 
-#: templates/properties/favorites_list.html:64
+#: templates/properties/favorites_list.html:62
 msgid "You haven t saved any properties yet."
 msgstr "Aún no has guardado ninguna propiedad."
 
-#: templates/properties/favorites_list.html:65
+#: templates/properties/favorites_list.html:63
 #: templates/properties/wishlist_list.html:49
 msgid "Browse properties"
 msgstr "Explorar propiedades"
@@ -639,97 +636,89 @@ msgstr "Explorar propiedades"
 msgid "Explore Properties"
 msgstr "Explorar propiedades"
 
-#: templates/properties/list.html:11
+#: templates/properties/list.html:10
 #, python-format
 msgid "Browse through %(count)s available properties"
 msgstr "Explora %(count)s propiedades disponibles"
 
-#: templates/properties/list.html:18
+#: templates/properties/list.html:16
 msgid "Filters"
 msgstr "Filtros"
 
-#: templates/properties/list.html:20
+#: templates/properties/list.html:18
 msgid "Property Type"
 msgstr "Tipo de propiedad"
 
-#: templates/properties/list.html:22
+#: templates/properties/list.html:20
 msgid "All Types"
 msgstr "Todos los tipos"
 
-#: templates/properties/list.html:25
-msgid "Short Term"
-msgstr ""
-
-#: templates/properties/list.html:29
-msgid "Long Term"
-msgstr ""
-
-#: templates/properties/list.html:37
+#: templates/properties/list.html:30
 msgid "Bedrooms"
 msgstr "Habitaciones"
 
-#: templates/properties/list.html:39
+#: templates/properties/list.html:32
 msgid "Any"
 msgstr "Cualquiera"
 
-#: templates/properties/list.html:48 templates/users/board.html:39
+#: templates/properties/list.html:41 templates/users/board.html:39
 msgid "Location"
 msgstr "Ubicación"
 
-#: templates/properties/list.html:51
+#: templates/properties/list.html:44
 msgid "Search location"
 msgstr "Buscar ubicación"
 
-#: templates/properties/list.html:66
+#: templates/properties/list.html:59
 msgid "Guests"
 msgstr "Huéspedes"
 
-#: templates/properties/list.html:71
+#: templates/properties/list.html:64
 msgid "Min guests"
 msgstr "Mínimo de huéspedes"
 
-#: templates/properties/list.html:76
+#: templates/properties/list.html:69
 msgid "Availability"
 msgstr "Disponibilidad"
 
-#: templates/properties/list.html:79
+#: templates/properties/list.html:72
 msgid "Select date range"
 msgstr "Selecciona un rango de fechas"
 
-#: templates/properties/list.html:93
+#: templates/properties/list.html:86
 msgid "Apply Filters"
 msgstr "Aplicar filtros"
 
-#: templates/properties/list.html:95
+#: templates/properties/list.html:88
 msgid "Clear Filters"
 msgstr "Limpiar filtros"
 
-#: templates/properties/list.html:104
+#: templates/properties/list.html:97
 msgid "Search by title, location, or city..."
 msgstr "Buscar por título, ubicación o ciudad..."
 
-#: templates/properties/list.html:119
+#: templates/properties/list.html:111
 #, python-format
 msgid "Showing %(shown)s of %(total)s properties"
 msgstr "Mostrando %(shown)s de %(total)s propiedades"
 
-#: templates/properties/list.html:136
+#: templates/properties/list.html:127
 msgid "No image available"
 msgstr "Sin imagen disponible"
 
-#: templates/properties/list.html:168
+#: templates/properties/list.html:159
 msgid "View Details"
 msgstr "Ver detalles"
 
-#: templates/properties/list.html:174
+#: templates/properties/list.html:165
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/properties/list.html:182
+#: templates/properties/list.html:173
 msgid "Delete"
 msgstr "Eliminar"
 
-#: templates/properties/list.html:191
+#: templates/properties/list.html:182
 msgid "No properties found with the selected filters."
 msgstr "No se encontraron propiedades con los filtros seleccionados."
 
@@ -826,113 +815,105 @@ msgstr "Administra tus reservas y propiedades compradas"
 
 #: templates/transactions/my_bookings.html:10
 #: templates/transactions/my_bookings.html:33
-#: templates/transactions/my_bookings.html:163
 #: templates/transactions/owner_bookings.html:9
-#: templates/transactions/owner_bookings.html:32
-#: templates/transactions/owner_bookings.html:162
+#: templates/transactions/owner_bookings.html:29
 msgid "Pending"
 msgstr "Pendiente"
 
 #: templates/transactions/my_bookings.html:13
-#: templates/transactions/my_bookings.html:65
-#: templates/transactions/my_bookings.html:165
-#: templates/transactions/owner_bookings.html:72
-#: templates/transactions/owner_bookings.html:188
+#: templates/transactions/my_bookings.html:61
+#: templates/transactions/owner_bookings.html:69
 msgid "Approved"
 msgstr "Aprobado"
 
 #: templates/transactions/my_bookings.html:16
-#: templates/transactions/my_bookings.html:112
-#: templates/transactions/my_bookings.html:167
+#: templates/transactions/my_bookings.html:95
 #: templates/transactions/owner_bookings.html:15
-#: templates/transactions/owner_bookings.html:106
-#: templates/transactions/owner_bookings.html:190
+#: templates/transactions/owner_bookings.html:96
 msgid "Rejected"
 msgstr "Rechazado"
 
 #: templates/transactions/my_bookings.html:19
-#: templates/transactions/my_bookings.html:137
+#: templates/transactions/my_bookings.html:120
 msgid "Cancelled"
 msgstr "Cancelado"
 
 #: templates/transactions/my_bookings.html:22
-msgid "Purchases"
+msgid "Purchase"
 msgstr "Compra"
 
 #: templates/transactions/my_bookings.html:36
-#: templates/transactions/my_bookings.html:68
-#: templates/transactions/my_bookings.html:115
-#: templates/transactions/my_bookings.html:140
-#: templates/transactions/owner_bookings.html:35
-#: templates/transactions/owner_bookings.html:75
-#: templates/transactions/owner_bookings.html:110
-#: templates/transactions/owner_bookings.html:135
+#: templates/transactions/my_bookings.html:64
+#: templates/transactions/my_bookings.html:98
+#: templates/transactions/my_bookings.html:123
+#: templates/transactions/owner_bookings.html:32
+#: templates/transactions/owner_bookings.html:72
+#: templates/transactions/owner_bookings.html:99
+#: templates/transactions/owner_bookings.html:124
 msgid "Check-in"
 msgstr "Check-in"
 
 #: templates/transactions/my_bookings.html:40
-#: templates/transactions/my_bookings.html:72
-#: templates/transactions/my_bookings.html:119
-#: templates/transactions/my_bookings.html:144
-#: templates/transactions/owner_bookings.html:39
-#: templates/transactions/owner_bookings.html:79
-#: templates/transactions/owner_bookings.html:114
-#: templates/transactions/owner_bookings.html:139
+#: templates/transactions/my_bookings.html:68
+#: templates/transactions/my_bookings.html:102
+#: templates/transactions/my_bookings.html:127
+#: templates/transactions/owner_bookings.html:36
+#: templates/transactions/owner_bookings.html:76
+#: templates/transactions/owner_bookings.html:103
+#: templates/transactions/owner_bookings.html:128
 msgid "Check-out"
 msgstr "Check-out"
 
 #: templates/transactions/my_bookings.html:45
-#: templates/transactions/my_bookings.html:172
 msgid "Requested on "
 msgstr "Solicitado el "
 
-#: templates/transactions/my_bookings.html:50
-#: templates/transactions/my_bookings.html:88
-#: templates/transactions/owner_bookings.html:88
-#: templates/transactions/owner_bookings.html:147
-msgid "months"
-msgstr ""
+#: templates/transactions/my_bookings.html:49
+#: templates/transactions/owner_bookings.html:48
+#: templates/transactions/owner_bookings.html:84
+#, python-format
+msgid "%(nights)s nights"
+msgstr "%(nights)s noches"
 
-#: templates/transactions/my_bookings.html:52
-#: templates/transactions/my_bookings.html:90
-#: templates/transactions/owner_bookings.html:90
-#: templates/transactions/owner_bookings.html:149
-msgid "nights"
-msgstr "noches"
-
-#: templates/transactions/my_bookings.html:57
+#: templates/transactions/my_bookings.html:53
 msgid "You have no pending bookings"
 msgstr "No tienes reservas pendientes"
 
-#: templates/transactions/my_bookings.html:96
-#, fuzzy
-#| msgid "No cancelled bookings"
-msgid "Cancel booking"
-msgstr "No tienes reservas canceladas"
+#: templates/transactions/my_bookings.html:83
+msgid "nights"
+msgstr "noches"
 
-#: templates/transactions/my_bookings.html:99
-msgid "Cancellation not available (less than 5 days before check-in)"
-msgstr ""
-
-#: templates/transactions/my_bookings.html:104
+#: templates/transactions/my_bookings.html:87
 msgid "You have no approved bookings"
 msgstr "No tienes reservas aprobadas"
 
-#: templates/transactions/my_bookings.html:129
+#: templates/transactions/my_bookings.html:112
 msgid "No rejected bookings"
 msgstr "No tienes reservas rechazadas"
 
-#: templates/transactions/my_bookings.html:154
+#: templates/transactions/my_bookings.html:137
 msgid "No cancelled bookings"
 msgstr "No tienes reservas canceladas"
 
-#: templates/transactions/my_bookings.html:176
+#: templates/transactions/my_bookings.html:150
+msgid "Accepted"
+msgstr "Aceptado"
+
+#: templates/transactions/my_bookings.html:154
+msgid "Purchased on "
+msgstr "Comprado el "
+
+#: templates/transactions/my_bookings.html:158
 msgid "Sale price"
 msgstr "Precio de venta"
 
-#: templates/transactions/my_bookings.html:186
-msgid "No purchase requests."
-msgstr "Aún no hay solicitudes de compra"
+#: templates/transactions/my_bookings.html:165
+msgid "Contact owner"
+msgstr "Contactar propietario"
+
+#: templates/transactions/my_bookings.html:173
+msgid "Here your purchased properties will appear"
+msgstr "Aquí aparecerán tus propiedades compradas"
 
 #: templates/transactions/owner_bookings.html:5
 msgid "My properties reservations"
@@ -950,79 +931,44 @@ msgstr "Próximas"
 msgid "Past"
 msgstr "Pasadas"
 
-#: templates/transactions/owner_bookings.html:21
-msgid "Purchase Requests"
-msgstr "Solicitud de compra"
-
-#: templates/transactions/owner_bookings.html:43
-#: templates/transactions/owner_bookings.html:83
+#: templates/transactions/owner_bookings.html:40
+#: templates/transactions/owner_bookings.html:80
 #, python-format
 msgid "Client: %(email)s"
 msgstr "Cliente: %(email)s"
 
-#: templates/transactions/owner_bookings.html:46
+#: templates/transactions/owner_bookings.html:43
 #, python-format
 msgid "Booked %(date)s"
 msgstr "Reservado el %(date)s"
 
 #: templates/transactions/owner_bookings.html:51
-#, python-format
-msgid "%(nights)s nights"
-msgstr "%(nights)s noches"
-
-#: templates/transactions/owner_bookings.html:54
-#: templates/transactions/owner_bookings.html:172
 msgid "Approve"
 msgstr "Aprovar"
 
-#: templates/transactions/owner_bookings.html:56
-#: templates/transactions/owner_bookings.html:174
+#: templates/transactions/owner_bookings.html:53
 msgid "Reject"
 msgstr "Rechazar"
 
-#: templates/transactions/owner_bookings.html:61
+#: templates/transactions/owner_bookings.html:58
 msgid "You do not have pending reservations."
 msgstr "No tienes reservas pendientes"
 
-#: templates/transactions/owner_bookings.html:95
+#: templates/transactions/owner_bookings.html:88
 msgid "No upcoming reservations."
 msgstr "No tienes reservas próximas"
 
-#: templates/transactions/owner_bookings.html:104
-msgid "Cancelled by client"
-msgstr "Cancelado por el Cliente"
-
-#: templates/transactions/owner_bookings.html:124
+#: templates/transactions/owner_bookings.html:113
 msgid "No rejected reservations."
 msgstr "No tienes reservaciones rechazadas."
 
-#: templates/transactions/owner_bookings.html:132
+#: templates/transactions/owner_bookings.html:121
 msgid "Finished"
 msgstr "Finalizado"
 
-#: templates/transactions/owner_bookings.html:154
+#: templates/transactions/owner_bookings.html:138
 msgid "No past reservations."
 msgstr "No tienes reservas pasadas"
-
-#: templates/transactions/owner_bookings.html:163
-#: templates/transactions/owner_bookings.html:192
-#, python-format
-msgid "Buyer: %(email)s"
-msgstr "Comprador: %(email)s"
-
-#: templates/transactions/owner_bookings.html:165
-#: templates/transactions/owner_bookings.html:194
-#, python-format
-msgid "Requested %(date)s"
-msgstr "Solicitado el %(date)s"
-
-#: templates/transactions/owner_bookings.html:179
-msgid "No pending purchase requests."
-msgstr "Aún no hay solicitudes de compra"
-
-#: templates/transactions/owner_bookings.html:182
-msgid "Completed"
-msgstr "Completado"
 
 #: templates/users/board.html:17
 msgid "Member since"
@@ -1037,8 +983,10 @@ msgid "Contact Information"
 msgstr "Informacion del perfil"
 
 #: templates/users/board.html:34
+#, fuzzy
+#| msgid "Approved"
 msgid "Not provided"
-msgstr "No proveido"
+msgstr "Aprobado"
 
 #: templates/users/board.html:45
 msgid "Joined"
@@ -1092,33 +1040,75 @@ msgstr "Propietario"
 msgid "client"
 msgstr "Cliente"
 
-#~ msgid "All dates available"
-#~ msgstr "Todas las fechas disponibles"
+#: notifications/services.py:11
+msgid "The booking client must have an email address."
+msgstr "El cliente de la reserva debe tener un correo electrónico."
 
-#~ msgid "This property is already part of your purchase history."
-#~ msgstr "Esta propiedad está en tu historial de compras"
+#: notifications/services.py:22
+msgid "The booking status email could not be sent."
+msgstr "No se pudo enviar el correo del estado de la reserva."
 
-#~ msgid "Log in to contact the owner"
-#~ msgstr "inicia sesion Contactar al propietario"
+#: notifications/services.py:30
+msgid "The property owner must have an email address."
+msgstr "El propietario de la propiedad debe tener un correo electrónico."
 
-#~ msgid "Contact owner about this property"
-#~ msgstr "contacta el propietario de esta propiedad"
+#: notifications/services.py:55
+msgid "The booking request email could not be sent."
+msgstr "No se pudo enviar el correo de solicitud de reserva."
 
-#~ msgid ""
-#~ "This property is available, but you need to log in to contact the owner."
-#~ msgstr "Propiedad disponible, inicia session para contactar al propietario"
+#: transactions/services.py:25
+msgid "Owners cannot book their own properties."
+msgstr "Los propietarios no pueden reservar sus propias propiedades."
 
-#~ msgid "Accepted"
-#~ msgstr "Aceptado"
+#: transactions/services.py:28
+msgid "Sale properties cannot receive bookings."
+msgstr "Las propiedades en venta no pueden recibir reservas."
 
-#~ msgid "Purchased on "
-#~ msgstr "Comprado el "
+#: transactions/services.py:33
+msgid "Long term rentals require a minimum stay of 30 days."
+msgstr "Los arriendos de larga duración requieren una estadía mínima de 30 días."
 
-#~ msgid "Contact owner"
-#~ msgstr "Contactar propietario"
+#: transactions/services.py:37
+msgid "Long term rentals must be booked in complete months (30, 60, 90 days...)."
+msgstr "Los arriendos de larga duración deben reservarse en meses completos (30, 60, 90 días...)."
 
-#~ msgid "Here your purchased properties will appear"
-#~ msgstr "Aquí aparecerán tus propiedades compradas"
+#: transactions/services.py:44
+msgid "The property is not available for those dates."
+msgstr "La propiedad no está disponible para esas fechas."
+
+#: transactions/services.py:66 transactions/views.py:130
+#, python-format
+msgid "Invalid status: %(status)s"
+msgstr "Estado inválido: %(status)s"
+
+#: transactions/services.py:74 transactions/views.py:40
+msgid "These dates are already booked."
+msgstr "Estas fechas ya están reservadas."
+
+#: transactions/services.py:111
+#, python-format
+msgid "You can only cancel a booking at least %(days)s days before check-in."
+msgstr "Solo puedes cancelar una reserva al menos %(days)s días antes del check-in."
+
+#: transactions/services.py:155
+msgid "This property is not for sale."
+msgstr "Esta propiedad no está en venta."
+
+#: transactions/services.py:158
+msgid "You cannot buy your own property."
+msgstr "No puedes comprar tu propia propiedad."
+
+#: transactions/services.py:164 transactions/services.py:185
+msgid "This property has already been sold."
+msgstr "Esta propiedad ya ha sido vendida."
+
+#: transactions/services.py:170
+msgid "You already have a purchase request for this property."
+msgstr "Ya tienes una solicitud de compra para esta propiedad."
+
+#: transactions/services.py:194
+msgid "Only pending purchases can be rejected."
+msgstr "Solo se pueden rechazar compras pendientes."
 
 #~ msgid "Stay "
 #~ msgstr "Stay "
@@ -1155,6 +1145,12 @@ msgstr "Cliente"
 #~ msgid "where will you go"
 #~ msgstr "¿a dónde irás?"
 
+#~ msgid "Purchase request"
+#~ msgstr "Solicitud de compra"
+
+#~ msgid "Your purchase request is pending owner approval"
+#~ msgstr "Tu solicitud de compra está pendiente de aprobación"
+
 #~ msgid "Your purchase request was accepted"
 #~ msgstr "Tu solicitud de compra fue aceptada"
 
@@ -1169,6 +1165,9 @@ msgstr "Cliente"
 
 #~ msgid "You cannot request the purchase of your own property"
 #~ msgstr "No puedes solicitar la compra de tu propia propiedad"
+
+#~ msgid "Request purchase"
+#~ msgstr "solicitar compra"
 
 #~ msgid "This property cannot receive a purchase request right now"
 #~ msgstr ""
@@ -1236,6 +1235,9 @@ msgstr "Cliente"
 
 #~ msgid "Accept"
 #~ msgstr "Aceptar"
+
+#~ msgid "No purchase requests yet"
+#~ msgstr "Aún no hay solicitudes de compra"
 
 #~ msgid "List property"
 #~ msgstr "Publicar propiedad"
