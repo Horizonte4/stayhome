@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: StayHome\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-19 19:15+0000\n"
+"POT-Creation-Date: 2026-05-19 21:13+0000\n"
 "PO-Revision-Date: 2026-03-24 19:49+0000\n"
 "Last-Translator: StayHome\n"
 "Language-Team: Spanish\n"
@@ -15,23 +15,21 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: comunication/views.py:34
-#, fuzzy
-#| msgid "This property is not for sale."
+#: comunication/views.py:35
 msgid "This property has no owner assigned."
-msgstr "Esta propiedad no está en venta."
+msgstr "Esta propiedad no tiene propietario."
 
-#: comunication/views.py:41
+#: comunication/views.py:42
 msgid "You cannot start a chat with yourself."
-msgstr ""
+msgstr "No puedes empexar un chat contigo mismo"
 
-#: comunication/views.py:54
+#: comunication/views.py:51
 msgid "Conversation started successfully."
-msgstr ""
+msgstr "conversacion iniciada"
 
-#: comunication/views.py:190
+#: comunication/views.py:180
 msgid "Message cannot be empty."
-msgstr ""
+msgstr "El mensaje no puede estar vacio"
 
 #: notifications/services.py:11
 msgid "The booking client must have an email address."
@@ -61,56 +59,56 @@ msgstr "Arriendo largo plazo"
 msgid "Sale"
 msgstr "Venta"
 
-#: properties/models.py:114 properties/models.py:116
-#: templates/properties/detail.html:117
+#: properties/models.py:119 properties/models.py:121
+#: templates/properties/detail.html:119
 msgid "Available"
 msgstr "Disponible"
 
-#: properties/models.py:116 templates/properties/detail.html:118
+#: properties/models.py:121 templates/properties/detail.html:120
 msgid "Unavailable"
 msgstr "No Disponible"
 
-#: properties/views.py:40
+#: properties/views.py:42
 msgid "Only property owners can create properties."
 msgstr "Solo propietarios pueden crear propiedades"
 
-#: properties/views.py:54
+#: properties/views.py:56
 msgid "Please correct the errors below."
 msgstr "Porfavor corrija los errores"
 
-#: properties/views.py:56
+#: properties/views.py:58
 msgid "Property created successfully."
 msgstr "Propiedad creada"
 
-#: properties/views.py:72
+#: properties/views.py:75
 msgid "You do not have permission to edit properties."
 msgstr "No tienes permiso para editar propiedades"
 
-#: properties/views.py:86
+#: properties/views.py:89
 msgid "Property updated successfully."
 msgstr "Propiedad actualiazada"
 
-#: properties/views.py:108
+#: properties/views.py:112
 msgid "You do not have permission to delete this property."
 msgstr "No tienes permiso para borrar esta propiedad"
 
-#: properties/views.py:114
+#: properties/views.py:118
 msgid "Property deleted successfully."
 msgstr "Propiedad borrada"
 
-#: properties/views.py:134
+#: properties/views.py:139
 msgid "You do not have permission to edit this calendar."
 msgstr "No tienes permiso para editar el calendario"
 
-#: properties/views.py:146
+#: properties/views.py:151
 msgid "Calendar updated successfully."
 msgstr "Calendario actualizado"
 
-#: stayhome/settings.py:100
+#: stayhome/settings.py:102
 msgid "English"
 msgstr "Inglés"
 
-#: stayhome/settings.py:101
+#: stayhome/settings.py:103
 msgid "Spanish"
 msgstr "Español"
 
@@ -154,52 +152,6 @@ msgstr "Productos de nuestros aleados"
 #: templates/api/products.html:19
 msgid "No data available."
 msgstr "Datos no disponibles"
-
-#: templates/auth/password_reset.html:7
-msgid "Forgot your password"
-msgstr "¿Olvidaste tu contraseña?"
-
-#: templates/auth/password_reset.html:8
-msgid "Enter your email to receive a reset link."
-msgstr "Ingresa tu correo para recibir un enlace de recuperación."
-
-#: templates/auth/password_reset.html:12
-msgid "Send link"
-msgstr "Enviar enlace"
-
-#: templates/auth/password_reset.html:14
-#: templates/auth/password_reset_done.html:10
-msgid "Back to login"
-msgstr "Volver al inicio de sesión"
-
-#: templates/auth/password_reset_complete.html:7
-msgid "Password updated"
-msgstr "Contraseña actualizada"
-
-#: templates/auth/password_reset_complete.html:8
-msgid "You can now log in with your new password."
-msgstr "Ya puedes iniciar sesión con tu nueva contraseña."
-
-#: templates/auth/password_reset_complete.html:9
-msgid "Go to login"
-msgstr "Ir al inicio de sesión"
-
-#: templates/auth/password_reset_confirm.html:7
-msgid "Set new password"
-msgstr "Establecer nueva contraseña"
-
-#: templates/auth/password_reset_confirm.html:13
-msgid "Change password"
-msgstr "Cambiar contraseña"
-
-#: templates/auth/password_reset_done.html:7
-msgid "Check your email"
-msgstr "Revisa tu correo"
-
-#: templates/auth/password_reset_done.html:8
-msgid "If the email exists, we sent you a link to reset your password."
-msgstr ""
-"Si el correo existe, te enviamos un enlace para restablecer tu contraseña."
 
 #: templates/base.html:38
 msgid "Home"
@@ -357,13 +309,20 @@ msgid "sale"
 msgstr "Venta"
 
 #: templates/partials/featured_property_card.html:30
+#: templates/properties/detail.html:31
+#: templates/properties/favorites_list.html:48
+#: templates/properties/list.html:158
+msgid "/night"
+msgstr "/noche"
+
+#: templates/partials/featured_property_card.html:32
 #: templates/properties/detail.html:33
 #: templates/properties/favorites_list.html:50
 #: templates/properties/list.html:160
 msgid "/mo"
 msgstr "/mes"
 
-#: templates/partials/featured_property_card.html:34
+#: templates/partials/featured_property_card.html:36
 msgid "View Details:"
 msgstr "Ver detalles"
 
@@ -478,10 +437,8 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #: templates/properties/detail.html:4
-#, fuzzy
-#| msgid "Property Type"
 msgid "Property Details"
-msgstr "Tipo de propiedad"
+msgstr "Detalles de la propiedad"
 
 #: templates/properties/detail.html:12
 msgid "Back to Properties"
@@ -495,12 +452,6 @@ msgstr "Propietario"
 #: templates/properties/detail.html:29
 msgid "sale price"
 msgstr "precio de venta"
-
-#: templates/properties/detail.html:31
-#: templates/properties/favorites_list.html:48
-#: templates/properties/list.html:158
-msgid "/night"
-msgstr "/noche"
 
 #: templates/properties/detail.html:44
 msgid "Remove from saved"
@@ -557,8 +508,8 @@ msgstr "inicia sesion para comprar propiedad"
 msgid "You are the owner of this property."
 msgstr "Eres el propietario"
 
-#: templates/properties/detail.html:98 transactions/services.py:173
-#: transactions/services.py:196
+#: templates/properties/detail.html:98 transactions/services.py:175
+#: transactions/services.py:199
 msgid "This property has already been sold."
 msgstr "Esta propiedad ha sido vendida"
 
@@ -574,21 +525,23 @@ msgstr "solicitar compra"
 msgid "Reserve property"
 msgstr "Reservar propiedad"
 
-#: templates/properties/detail.html:114 transactions/services.py:38
-msgid "Long term rentals require a minimum stay of 30 days."
+#: templates/properties/detail.html:115
+msgid ""
+"Long term rentals require a stay of months (30 days,60 days 90 days...)."
 msgstr ""
-"Los arriendos de larga duración requieren una estadía mínima de 30 días."
+"Los alquileres a largo plazo requieren una estadía de meses completos (30, "
+"60, 90 días...)."
 
-#: templates/properties/detail.html:125
+#: templates/properties/detail.html:127
 msgid "Green days are available. Red days are unavailable."
 msgstr "Dias en verde estan disponible. rojos no disponible"
 
-#: templates/properties/detail.html:127
+#: templates/properties/detail.html:129
 #, python-format
 msgid "Capacity: %(capacity)s guests"
 msgstr "Capacidad: %(capacity)s Capacidad"
 
-#: templates/properties/detail.html:131
+#: templates/properties/detail.html:133
 msgid "Request booking"
 msgstr "Solicitar reserva "
 
@@ -836,28 +789,12 @@ msgid "Password"
 msgstr "Contraseña"
 
 #: templates/registration/login.html:22
-msgid "forgot your password?"
-msgstr "¿olvidaste tu contraseña?"
-
-#: templates/registration/login.html:25
 msgid "Don't have an account?"
 msgstr "¿No tienes una cuenta?"
 
-#: templates/registration/login.html:26
+#: templates/registration/login.html:23
 msgid "Sign up"
 msgstr "Regístrate"
-
-#: templates/registration/password_reset_email.html:2
-msgid "We received a request to reset your password on StayHome."
-msgstr "Recibimos una solicitud para restablecer tu contraseña en StayHome."
-
-#: templates/registration/password_reset_email.html:2
-msgid "Click the following link:"
-msgstr "Haz clic en el siguiente enlace:"
-
-#: templates/registration/password_reset_email.html:2
-msgid "If this wasn't you, you can ignore this message."
-msgstr "Si no fuiste tú, puedes ignorar este mensaje."
 
 #: templates/registration/signup.html:7 templates/registration/signup.html:51
 msgid "Create Account"
@@ -928,10 +865,8 @@ msgid "Cancelled"
 msgstr "Cancelado"
 
 #: templates/transactions/my_bookings.html:22
-#, fuzzy
-#| msgid "Purchase"
 msgid "Purchases"
-msgstr "Compra"
+msgstr "compras"
 
 #: templates/transactions/my_bookings.html:36
 #: templates/transactions/my_bookings.html:68
@@ -979,14 +914,12 @@ msgid "You have no pending bookings"
 msgstr "No tienes reservas pendientes"
 
 #: templates/transactions/my_bookings.html:96
-#, fuzzy
-#| msgid "No cancelled bookings"
 msgid "Cancel booking"
-msgstr "No tienes reservas canceladas"
+msgstr "Cancelar reserva"
 
 #: templates/transactions/my_bookings.html:99
 msgid "Cancellation not available (less than 5 days before check-in)"
-msgstr ""
+msgstr "Cancelacion no disponible(menos de 5 dias antes del checkin)"
 
 #: templates/transactions/my_bookings.html:104
 msgid "You have no approved bookings"
@@ -1005,8 +938,6 @@ msgid "Sale price"
 msgstr "Precio de venta"
 
 #: templates/transactions/my_bookings.html:186
-#, fuzzy
-#| msgid "No purchase requests yet"
 msgid "No purchase requests."
 msgstr "Aún no hay solicitudes de compra"
 
@@ -1088,8 +1019,7 @@ msgstr "Comprador: %(email)s"
 
 #: templates/transactions/owner_bookings.html:165
 #: templates/transactions/owner_bookings.html:194
-#, fuzzy, python-format
-#| msgid "Reserved %(date)s"
+#, python-format
 msgid "Requested %(date)s"
 msgstr "Reservado el %(date)s"
 
@@ -1161,81 +1091,86 @@ msgstr "El correo no puede ser modificado"
 msgid "Cancel and return to dashboard"
 msgstr "Cancelar y volver al panel"
 
-#: transactions/services.py:29
+#: transactions/services.py:27
 msgid "Owners cannot book their own properties."
 msgstr "Los propietarios no pueden reservar sus propias propiedades."
 
-#: transactions/services.py:32
+#: transactions/services.py:30
 msgid "Sale properties cannot receive bookings."
 msgstr "Las propiedades en venta no pueden recibir reservas."
 
-#: transactions/services.py:43
+#: transactions/services.py:36
+msgid "Long term rentals require a minimum stay of 30 days."
+msgstr ""
+"Los arriendos de larga duración requieren una estadía mínima de 30 días."
+
+#: transactions/services.py:41
 msgid ""
 "Long term rentals must be booked in complete months (30, 60, 90 days...)."
 msgstr ""
 "Los arriendos de larga duración deben reservarse en meses completos (30, 60, "
 "90 días...)."
 
-#: transactions/services.py:48
+#: transactions/services.py:46
 msgid "The property is not available for those dates."
 msgstr "La propiedad no está disponible para esas fechas."
 
-#: transactions/services.py:70
+#: transactions/services.py:69
 #, python-format
 msgid "Invalid status: %(status)s"
 msgstr "Estado inválido: %(status)s"
 
-#: transactions/services.py:78 transactions/views.py:41
+#: transactions/services.py:77 transactions/views.py:42
 msgid "These dates are already booked."
 msgstr "Estas fechas ya están reservadas."
 
-#: transactions/services.py:117
+#: transactions/services.py:116
 #, python-format
 msgid "You can only cancel a booking at least %(days)s days before check-in."
 msgstr ""
 "Solo puedes cancelar una reserva al menos %(days)s días antes del check-in."
 
-#: transactions/services.py:164
+#: transactions/services.py:166
 msgid "This property is not for sale."
 msgstr "Esta propiedad no está en venta."
 
-#: transactions/services.py:167
+#: transactions/services.py:169
 msgid "You cannot buy your own property."
 msgstr "No puedes comprar tu propia propiedad."
 
-#: transactions/services.py:180
+#: transactions/services.py:182
 msgid "You already have a purchase request for this property."
 msgstr "Ya tienes una solicitud de compra para esta propiedad."
 
-#: transactions/services.py:205
+#: transactions/services.py:209
 msgid "Only pending purchases can be rejected."
 msgstr "Solo se pueden rechazar compras pendientes."
 
-#: transactions/views.py:26
+#: transactions/views.py:27
 msgid "Must select check in and check out."
 msgstr "Debe seleccionar check in y check out"
 
-#: transactions/views.py:33
+#: transactions/views.py:34
 msgid "Dates must use the YYYY-MM-DD format."
 msgstr "Fechas debes ser en formato AAAA-MM-DD"
 
-#: transactions/views.py:37
+#: transactions/views.py:38
 msgid "Check-out must be later than check-in."
 msgstr "Chec out debe ser despues de check in"
 
-#: transactions/views.py:85
+#: transactions/views.py:89
 msgid "You are not allowed to change this booking."
 msgstr "No tienes permitido cambiar esta reserva"
 
-#: transactions/views.py:110
+#: transactions/views.py:115
 msgid "Purchase request sent successfully."
 msgstr "Solicitud de compra creada"
 
-#: transactions/views.py:122
+#: transactions/views.py:128
 msgid "You are not allowed to change this purchase."
 msgstr "No tienes permitido cambiar esta compra"
 
-#: transactions/views.py:147
+#: transactions/views.py:154
 msgid "Booking cancelled successfully."
 msgstr "Reserva cancelada"
 
@@ -1246,6 +1181,52 @@ msgstr "Propietario"
 #: users/models.py:40
 msgid "client"
 msgstr "Cliente"
+
+#~ msgid "Forgot your password"
+#~ msgstr "¿Olvidaste tu contraseña?"
+
+#~ msgid "Enter your email to receive a reset link."
+#~ msgstr "Ingresa tu correo para recibir un enlace de recuperación."
+
+#~ msgid "Send link"
+#~ msgstr "Enviar enlace"
+
+#~ msgid "Back to login"
+#~ msgstr "Volver al inicio de sesión"
+
+#~ msgid "Password updated"
+#~ msgstr "Contraseña actualizada"
+
+#~ msgid "You can now log in with your new password."
+#~ msgstr "Ya puedes iniciar sesión con tu nueva contraseña."
+
+#~ msgid "Go to login"
+#~ msgstr "Ir al inicio de sesión"
+
+#~ msgid "Set new password"
+#~ msgstr "Establecer nueva contraseña"
+
+#~ msgid "Change password"
+#~ msgstr "Cambiar contraseña"
+
+#~ msgid "Check your email"
+#~ msgstr "Revisa tu correo"
+
+#~ msgid "If the email exists, we sent you a link to reset your password."
+#~ msgstr ""
+#~ "Si el correo existe, te enviamos un enlace para restablecer tu contraseña."
+
+#~ msgid "forgot your password?"
+#~ msgstr "¿olvidaste tu contraseña?"
+
+#~ msgid "We received a request to reset your password on StayHome."
+#~ msgstr "Recibimos una solicitud para restablecer tu contraseña en StayHome."
+
+#~ msgid "Click the following link:"
+#~ msgstr "Haz clic en el siguiente enlace:"
+
+#~ msgid "If this wasn't you, you can ignore this message."
+#~ msgstr "Si no fuiste tú, puedes ignorar este mensaje."
 
 #~ msgid "All dates available"
 #~ msgstr "Todas las fechas disponibles"
