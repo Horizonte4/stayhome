@@ -19,6 +19,7 @@ from .services import PropertyService
 
 
 def _get_property_filters(request):
+    """Extrae y limpia los filtros de búsqueda de la solicitud."""
     return {
         "q": request.GET.get("q", "").strip(),
         "city": request.GET.get("city", "").strip(),
@@ -35,6 +36,7 @@ def _get_property_filters(request):
 
 @login_required
 def create_property(request):
+    """Crea una propiedad si el usuario es dueño y el formulario es válido."""
     owner = getattr(request.user, "owner", None)
     if not owner:
         messages.error(request, _("Only property owners can create properties."))
@@ -61,6 +63,7 @@ def create_property(request):
 
 @login_required
 def edit_property(request, pk):
+    """Edita una propiedad si el usuario tiene permiso."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     try:
@@ -96,6 +99,7 @@ def edit_property(request, pk):
 @login_required
 @require_http_methods(["GET", "POST"])
 def delete_property(request, pk):
+    """Elimina una propiedad si el usuario tiene permiso."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     try:
@@ -123,6 +127,7 @@ def delete_property(request, pk):
 
 @login_required
 def edit_calendar(request, pk):
+    """Edita el calendario de disponibilidad de una propiedad."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     try:
@@ -156,6 +161,7 @@ def edit_calendar(request, pk):
 
 
 def list_properties(request):
+    """Muestra la lista de propiedades disponibles con filtros y paginación."""
     filters = _get_property_filters(request)
     properties_qs = list_available_properties(filters=filters)
 
@@ -178,6 +184,7 @@ def list_properties(request):
 @login_required
 @require_POST
 def toggle_saved_property(request, pk):
+    """Agrega o quita una propiedad de guardados del usuario."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     result = PropertyService.toggle_saved_property(
@@ -197,6 +204,7 @@ def toggle_saved_property(request, pk):
 
 @login_required
 def favorites_list(request):
+    """Muestra las propiedades guardadas como favoritas del usuario."""
     saved_properties = get_user_favorites(user=request.user)
     return render(
         request,
@@ -207,6 +215,7 @@ def favorites_list(request):
 
 @login_required
 def wishlist_list(request):
+    """Muestra las propiedades en la lista de deseos del usuario."""
     saved_properties = get_user_wishlist(user=request.user)
     return render(
         request,
@@ -216,6 +225,7 @@ def wishlist_list(request):
 
 
 def property_detail(request, pk):
+    """Muestra el detalle de una propiedad o lanza 404 si no existe."""
     property_obj = get_property_detail(pk=pk)
     if property_obj is None:
         raise Http404("Property not found.")

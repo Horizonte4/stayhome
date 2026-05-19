@@ -12,6 +12,7 @@ from .models import Conversation, Message
 
 
 def _get_conversation_for_user_or_404(conversation_id, user):
+    """Retorna una conversación donde el usuario es comprador o dueño, o lanza 404."""
     return get_object_or_404(
         Conversation.objects.with_related().filter(Q(buyer=user) | Q(owner=user)),
         pk=conversation_id,
@@ -21,7 +22,7 @@ def _get_conversation_for_user_or_404(conversation_id, user):
 @login_required
 @transaction.atomic
 def start_conversation(request, property_id):
-
+    """Crea o recupera una conversación entre el comprador y el dueño de la propiedad."""
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
 
@@ -40,10 +41,6 @@ def start_conversation(request, property_id):
     if buyer_user == owner_user:
         messages.error(request, _("You cannot start a chat with yourself."))
         return redirect("properties:property_detail", pk=property_obj.pk)
-    # -----------------------------
-    # CREAR / OBTENER CONVERSACIÓN
-    # -----------------------------
-
     conversation, created = Conversation.objects.get_or_create(
         property=property_obj,
         buyer=buyer_user,
@@ -58,6 +55,7 @@ def start_conversation(request, property_id):
 
 @login_required
 def inbox(request):
+    """Muestra todas las conversaciones del usuario con el último mensaje y no leídos."""
     last_message_subquery = Message.objects.filter(
         conversation=OuterRef("pk")
     ).order_by("-created_at")
@@ -107,13 +105,8 @@ def inbox(request):
 
 @login_required
 def conversation_detail(request, conversation_id):
-
+    """Muestra los mensajes de una conversación y marca los no leídos como leídos."""
     conversation = _get_conversation_for_user_or_404(conversation_id, request.user)
-
-    # -------------------------
-    # MENSAJES DE LA CONVERSACIÓN
-    # -------------------------
-
     messages_qs = (
         conversation.messages.with_related()
         .select_related("sender")
@@ -127,10 +120,6 @@ def conversation_detail(request, conversation_id):
     other_user = (
         conversation.owner if conversation.buyer == request.user else conversation.buyer
     )
-
-    # -------------------------
-    # CONVERSACIONES (SIDEBAR)
-    # -------------------------
 
     last_message_subquery = Message.objects.filter(
         conversation=OuterRef("pk")
@@ -172,7 +161,7 @@ def conversation_detail(request, conversation_id):
         "conversation": conversation,
         "messages_list": messages_qs,
         "other_user": other_user,
-        "conversation_rows": conversation_rows,  # 👈 IMPORTANTE
+        "conversation_rows": conversation_rows,
     }
 
     return render(request, "comunication/conversation_detail.html", context)
@@ -180,6 +169,7 @@ def conversation_detail(request, conversation_id):
 
 @login_required
 def send_message(request, conversation_id):
+    """Envía un mensaje en una conversación si el contenido no está vacío."""
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
 

@@ -1,9 +1,7 @@
-# Librerías externas
 from django.contrib import admin
 from django.utils.timezone import now
 from datetime import timedelta
 
-# Modelos
 from .models import Conversation, Message
 
 

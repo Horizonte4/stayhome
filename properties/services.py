@@ -9,6 +9,7 @@ from .models import SavedProperty
 
 
 def normalize_availability_dates(raw_dates):
+    """Limpia y valida las fechas de disponibilidad separadas por comas."""
     raw_dates = (raw_dates or "").strip()
     if not raw_dates:
         return "", []
@@ -33,10 +34,12 @@ def normalize_availability_dates(raw_dates):
 
 
 def get_blocked_dates(property_obj):
+    """Retorna las fechas bloqueadas de una propiedad."""
     return property_obj.get_blocked_dates()
 
 
 def get_reserved_dates(property_obj):
+    """Retorna las fechas reservadas de una propiedad según sus reservas aprobadas."""
     reserved_dates = set()
     approved_bookings = property_obj.bookings.filter(status=Booking.STATUS_APPROVED)
 
@@ -50,6 +53,7 @@ def get_reserved_dates(property_obj):
 
 
 def filter_properties_by_availability(queryset, start_date=None, end_date=None):
+    """Filtra propiedades disponibles para un rango de fechas."""
     available_ids = [
         property_obj.pk
         for property_obj in queryset
@@ -59,6 +63,7 @@ def filter_properties_by_availability(queryset, start_date=None, end_date=None):
 
 
 def build_calendar_payload(property_obj):
+    """Construye los datos del calendario con fechas bloqueadas y reservadas."""
     blocked_dates = [
         blocked_date.strftime("%Y-%m-%d")
         for blocked_date in get_blocked_dates(property_obj)
@@ -77,6 +82,7 @@ def build_calendar_payload(property_obj):
 class PropertyService:
     @staticmethod
     def validate_owner_access(user, property_obj):
+        """Verifica que el usuario sea el dueño de la propiedad."""
         owner = getattr(user, "owner", None)
 
         if not owner:
@@ -89,6 +95,7 @@ class PropertyService:
 
     @staticmethod
     def create_property(form, owner, availability_dates):
+        """Crea una propiedad con las fechas bloqueadas validadas."""
         blocked_dates, invalid_dates = normalize_availability_dates(availability_dates)
         if invalid_dates:
             raise ValueError("Invalid blocked date format: " + ", ".join(invalid_dates))
@@ -101,6 +108,7 @@ class PropertyService:
 
     @staticmethod
     def update_property(form, current_availability_dates=None):
+        """Actualiza una propiedad conservando las fechas de disponibilidad actuales."""
         property_obj = form.save(commit=False)
         if current_availability_dates is not None:
             property_obj.availability_dates = current_availability_dates
@@ -109,10 +117,12 @@ class PropertyService:
 
     @staticmethod
     def delete_property(property_obj):
+        """Elimina una propiedad."""
         property_obj.delete()
 
     @staticmethod
     def update_availability_calendar(property_obj, availability_dates):
+        """Actualiza las fechas bloqueadas del calendario de una propiedad."""
         blocked_dates, invalid_dates = normalize_availability_dates(availability_dates)
         if invalid_dates:
             raise ValueError("Invalid blocked date format: " + ", ".join(invalid_dates))
@@ -123,6 +133,7 @@ class PropertyService:
 
     @staticmethod
     def get_blocked_dates_json(property_obj):
+        """Retorna las fechas bloqueadas de una propiedad en formato JSON."""
         blocked_dates_list = [
             blocked_date.strftime("%Y-%m-%d")
             for blocked_date in get_blocked_dates(property_obj)
@@ -131,6 +142,7 @@ class PropertyService:
 
     @staticmethod
     def toggle_saved_property(user, property_obj):
+        """Agrega o quita una propiedad de los guardados del usuario."""
         saved_property, created = SavedProperty.objects.get_or_create(
             user=user,
             property_obj=property_obj,
@@ -155,6 +167,7 @@ class PropertyService:
 
     @staticmethod
     def build_property_detail_context(user, property_obj):
+        """Construye el contexto completo para la vista de detalle de una propiedad."""
         calendar_payload = build_calendar_payload(property_obj)
 
         is_saved = False

@@ -14,6 +14,7 @@ SECRET_KEY = os.getenv(
 )
 
 DEBUG = True
+
 ALLOWED_HOSTS = ["*"]
 
 LOGIN_REDIRECT_URL = "home"
@@ -96,13 +97,18 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = "en"
+
 LANGUAGES = [
     ("en", _("English")),
     ("es", _("Spanish")),
 ]
+
 TIME_ZONE = "UTC"
+
 USE_I18N = True
+
 USE_TZ = True
+
 LOCALE_PATHS = [BASE_DIR / "locale"]
 
 STATIC_URL = "/static/"
@@ -113,6 +119,7 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 AUTH_USER_MODEL = "users.User"
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))

@@ -14,6 +14,7 @@ from .services import BookingService, PurchaseService
 
 @login_required
 def create_booking(request, property_id):
+    """Crea una reserva para una propiedad si las fechas son válidas y no hay conflictos."""
     property_obj = get_object_or_404(Property, id=property_id)
 
     if request.method != "POST":
@@ -57,12 +58,14 @@ def create_booking(request, property_id):
 
 @login_required
 def my_bookings(request):
+    """Muestra las reservas del usuario actual."""
     context = BookingService.get_client_bookings(request.user)
     return render(request, "transactions/my_bookings.html", context)
 
 
 @login_required
 def owner_bookings(request):
+    """Muestra las reservas y compras de las propiedades del dueño."""
     if not hasattr(request.user, "owner"):
         return redirect("board")
     context = BookingService.get_owner_bookings(request.user.owner)
@@ -77,6 +80,7 @@ def owner_bookings(request):
 
 @login_required
 def change_booking_status(request, booking_id, new_status):
+    """Cambia el estado de una reserva si el usuario tiene permiso."""
     booking = get_object_or_404(Booking, id=booking_id)
     is_owner = BookingOwnerMixin.is_booking_owner(request, booking)
     is_client = booking.user == request.user and new_status == Booking.STATUS_CANCELLED
@@ -100,6 +104,7 @@ def change_booking_status(request, booking_id, new_status):
 
 @login_required
 def request_purchase(request, property_id):
+    """Envía una solicitud de compra para una propiedad."""
     property_obj = get_object_or_404(Property, id=property_id)
 
     if request.method != "POST":
@@ -116,6 +121,7 @@ def request_purchase(request, property_id):
 
 @login_required
 def change_purchase_status(request, purchase_id, new_status):
+    """Aprueba o rechaza una solicitud de compra si el usuario es el dueño."""
     purchase = get_object_or_404(Purchase, id=purchase_id)
 
     if purchase.property.owner.user != request.user:
@@ -137,6 +143,7 @@ def change_purchase_status(request, purchase_id, new_status):
 
 @login_required
 def cancel_booking(request, booking_id):
+    """Cancela una reserva del usuario actual."""
     if request.method != "POST":
         return redirect("transactions:my_bookings")
 
