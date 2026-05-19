@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
+from django.utils.translation import gettext_lazy as _
 
 from .forms import PropertyForm
 from .models import Property
@@ -36,7 +37,7 @@ def _get_property_filters(request):
 def create_property(request):
     owner = getattr(request.user, "owner", None)
     if not owner:
-        messages.error(request, "Only property owners can create properties.")
+        messages.error(request, _("Only property owners can create properties."))
         return redirect("home")
 
     form = PropertyForm(request.POST or None, request.FILES or None)
@@ -50,9 +51,9 @@ def create_property(request):
             )
         except ValueError as exc:
             form.add_error(None, str(exc))
-            messages.error(request, "Please correct the errors below.")
+            messages.error(request, _("Please correct the errors below."))
         else:
-            messages.success(request, "Property created successfully.")
+            messages.success(request, _("Property created successfully."))
             return redirect("properties:list_properties")
 
     return render(request, "properties/create.html", {"form": form})
@@ -68,7 +69,7 @@ def edit_property(request, pk):
             property_obj=property_obj,
         )
     except PermissionError:
-        messages.error(request, "You do not have permission to edit properties.")
+        messages.error(request, _("You do not have permission to edit properties."))
         return HttpResponseForbidden("Forbidden")
 
     form = PropertyForm(
@@ -82,7 +83,7 @@ def edit_property(request, pk):
             form=form,
             current_availability_dates=property_obj.availability_dates,
         )
-        messages.success(request, "Property updated successfully.")
+        messages.success(request, _("Property updated successfully."))
         return redirect("properties:list_properties")
 
     return render(
@@ -103,12 +104,14 @@ def delete_property(request, pk):
             property_obj=property_obj,
         )
     except PermissionError:
-        messages.error(request, "You do not have permission to delete this property.")
+        messages.error(
+            request, _("You do not have permission to delete this property.")
+        )
         return HttpResponseForbidden("Forbidden")
 
     if request.method == "POST":
         PropertyService.delete_property(property_obj=property_obj)
-        messages.success(request, "Property deleted successfully.")
+        messages.success(request, _("Property deleted successfully."))
         return redirect("properties:list_properties")
 
     return render(
@@ -128,7 +131,7 @@ def edit_calendar(request, pk):
             property_obj=property_obj,
         )
     except PermissionError:
-        messages.error(request, "You do not have permission to edit this calendar.")
+        messages.error(request, _("You do not have permission to edit this calendar."))
         return HttpResponseForbidden("Forbidden")
 
     if request.method == "POST":
@@ -140,7 +143,7 @@ def edit_calendar(request, pk):
         except ValueError as exc:
             messages.error(request, str(exc))
         else:
-            messages.success(request, "Calendar updated successfully.")
+            messages.success(request, _("Calendar updated successfully."))
             return redirect("properties:property_detail", pk=property_obj.pk)
 
     context = {

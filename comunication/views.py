@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import OuterRef, Q, Subquery
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.utils.translation import gettext_lazy as _
 
 from properties.models import Property
 
@@ -31,14 +31,14 @@ def start_conversation(request, property_id):
     )
 
     if not property_obj.owner:
-        messages.error(request, "This property has no owner assigned.")
+        messages.error(request, _("This property has no owner assigned."))
         return redirect("properties:property_detail", pk=property_obj.pk)
 
     owner_user = property_obj.owner.user
     buyer_user = request.user
 
     if buyer_user == owner_user:
-        messages.error(request, "You cannot start a chat with yourself.")
+        messages.error(request, _("You cannot start a chat with yourself."))
         return redirect("properties:property_detail", pk=property_obj.pk)
     # -----------------------------
     # CREAR / OBTENER CONVERSACIÓN
@@ -51,7 +51,7 @@ def start_conversation(request, property_id):
     )
 
     if created:
-        messages.success(request, "Conversation started successfully.")
+        messages.success(request, _("Conversation started successfully."))
 
     return redirect("comunication:conversation_detail", conversation_id=conversation.pk)
 
@@ -187,7 +187,7 @@ def send_message(request, conversation_id):
 
     content = request.POST.get("content", "").strip()
     if not content:
-        messages.error(request, "Message cannot be empty.")
+        messages.error(request, _("Message cannot be empty."))
         return redirect(
             "comunication:conversation_detail", conversation_id=conversation.pk
         )
