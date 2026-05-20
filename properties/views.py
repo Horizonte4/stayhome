@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_http_methods, require_POST
+from django.utils.translation import gettext_lazy as _
 
 from .forms import PropertyForm
 from .models import Property
@@ -18,6 +19,7 @@ from .services import PropertyService
 
 
 def _get_property_filters(request):
+    """Extrae y limpia los filtros de búsqueda de la solicitud."""
     return {
         "q": request.GET.get("q", "").strip(),
         "city": request.GET.get("city", "").strip(),
@@ -34,9 +36,10 @@ def _get_property_filters(request):
 
 @login_required
 def create_property(request):
+    """Crea una propiedad si el usuario es dueño y el formulario es válido."""
     owner = getattr(request.user, "owner", None)
     if not owner:
-        messages.error(request, "Only property owners can create properties.")
+        messages.error(request, _("Only property owners can create properties."))
         return redirect("home")
 
     form = PropertyForm(request.POST or None, request.FILES or None)
@@ -50,9 +53,9 @@ def create_property(request):
             )
         except ValueError as exc:
             form.add_error(None, str(exc))
-            messages.error(request, "Please correct the errors below.")
+            messages.error(request, _("Please correct the errors below."))
         else:
-            messages.success(request, "Property created successfully.")
+            messages.success(request, _("Property created successfully."))
             return redirect("properties:list_properties")
 
     return render(request, "properties/create.html", {"form": form})
@@ -60,6 +63,7 @@ def create_property(request):
 
 @login_required
 def edit_property(request, pk):
+    """Edita una propiedad si el usuario tiene permiso."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     try:
@@ -68,7 +72,7 @@ def edit_property(request, pk):
             property_obj=property_obj,
         )
     except PermissionError:
-        messages.error(request, "You do not have permission to edit properties.")
+        messages.error(request, _("You do not have permission to edit properties."))
         return HttpResponseForbidden("Forbidden")
 
     form = PropertyForm(
@@ -82,7 +86,7 @@ def edit_property(request, pk):
             form=form,
             current_availability_dates=property_obj.availability_dates,
         )
-        messages.success(request, "Property updated successfully.")
+        messages.success(request, _("Property updated successfully."))
         return redirect("properties:list_properties")
 
     return render(
@@ -95,6 +99,7 @@ def edit_property(request, pk):
 @login_required
 @require_http_methods(["GET", "POST"])
 def delete_property(request, pk):
+    """Elimina una propiedad si el usuario tiene permiso."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     try:
@@ -103,12 +108,14 @@ def delete_property(request, pk):
             property_obj=property_obj,
         )
     except PermissionError:
-        messages.error(request, "You do not have permission to delete this property.")
+        messages.error(
+            request, _("You do not have permission to delete this property.")
+        )
         return HttpResponseForbidden("Forbidden")
 
     if request.method == "POST":
         PropertyService.delete_property(property_obj=property_obj)
-        messages.success(request, "Property deleted successfully.")
+        messages.success(request, _("Property deleted successfully."))
         return redirect("properties:list_properties")
 
     return render(
@@ -120,6 +127,7 @@ def delete_property(request, pk):
 
 @login_required
 def edit_calendar(request, pk):
+    """Edita el calendario de disponibilidad de una propiedad."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     try:
@@ -128,7 +136,7 @@ def edit_calendar(request, pk):
             property_obj=property_obj,
         )
     except PermissionError:
-        messages.error(request, "You do not have permission to edit this calendar.")
+        messages.error(request, _("You do not have permission to edit this calendar."))
         return HttpResponseForbidden("Forbidden")
 
     if request.method == "POST":
@@ -140,7 +148,7 @@ def edit_calendar(request, pk):
         except ValueError as exc:
             messages.error(request, str(exc))
         else:
-            messages.success(request, "Calendar updated successfully.")
+            messages.success(request, _("Calendar updated successfully."))
             return redirect("properties:property_detail", pk=property_obj.pk)
 
     context = {
@@ -153,6 +161,7 @@ def edit_calendar(request, pk):
 
 
 def list_properties(request):
+    """Muestra la lista de propiedades disponibles con filtros y paginación."""
     filters = _get_property_filters(request)
     properties_qs = list_available_properties(filters=filters)
 
@@ -175,6 +184,7 @@ def list_properties(request):
 @login_required
 @require_POST
 def toggle_saved_property(request, pk):
+    """Agrega o quita una propiedad de guardados del usuario."""
     property_obj = get_object_or_404(Property, pk=pk)
 
     result = PropertyService.toggle_saved_property(
@@ -194,6 +204,7 @@ def toggle_saved_property(request, pk):
 
 @login_required
 def favorites_list(request):
+    """Muestra las propiedades guardadas como favoritas del usuario."""
     saved_properties = get_user_favorites(user=request.user)
     return render(
         request,
@@ -204,6 +215,7 @@ def favorites_list(request):
 
 @login_required
 def wishlist_list(request):
+    """Muestra las propiedades en la lista de deseos del usuario."""
     saved_properties = get_user_wishlist(user=request.user)
     return render(
         request,
@@ -213,6 +225,7 @@ def wishlist_list(request):
 
 
 def property_detail(request, pk):
+    """Muestra el detalle de una propiedad o lanza 404 si no existe."""
     property_obj = get_property_detail(pk=pk)
     if property_obj is None:
         raise Http404("Property not found.")

@@ -111,7 +111,9 @@
                 <div class="cal-header">
                     <div class="cal-title">{% trans "Reserve property" %}</div>
                     {% if property.listing_type == "long_term" %}
-                        <p class="sub" style="margin-top:6px;">{% trans "Long term rentals require a minimum stay of 30 days." %}</p>
+                        <p class="sub" style="margin-top:6px;">
+                            {% trans "Long term rentals require a stay of months (30 days,60 days 90 days...)." %}
+                        </p>
                     {% endif %}
                     <div class="legend">
                         <span><span class="dot detail-dot-available"></span> {% trans "Available" %}</span>
@@ -133,6 +135,17 @@
                         {% for message in messages %}<p style="color:red; margin-top:10px;">{{ message }}</p>{% endfor %}
                     {% endif %}
                 </form>
+                <div id="booking-summary" style="margin-top:10px; display:none;">
+                    <p class="sub">
+                        <strong>Check-in:</strong> <span id="summary-checkin"></span>
+                    </p>
+                    <p class="sub">
+                        <strong>Check-out:</strong> <span id="summary-checkout"></span>
+                    </p>
+                    <p class="sub" style="font-weight:600;">
+                        <span id="nights-count"></span>
+                    </p>
+                </div>
             </div>
         {% endif %}
     </section>
@@ -140,9 +153,12 @@
 const blockedDates = JSON.parse('{{ blocked_dates_json|escapejs }}');
 const reservedDates = JSON.parse('{{ reserved_dates_json|escapejs }}');
 const allDaysAvailable = JSON.parse('{{ all_days_available|yesno:"true,false"|escapejs }}');
+const isLongTerm = "{{ property.listing_type }}" === "long_term";
 const calendarElement = document.getElementById("calendar");
 
 if (calendarElement) {
+    let isSettingDates = false;
+
     flatpickr("#calendar", {
         inline: true,
         mode: "range",
@@ -172,12 +188,42 @@ if (calendarElement) {
                 dayElem.style.color = "white";
             }
         },
-        onChange: function (selectedDates) {
-            if (selectedDates.length === 2) {
-                document.getElementById("check_in").value = selectedDates[0].toISOString().split("T")[0];
-                document.getElementById("check_out").value = selectedDates[1].toISOString().split("T")[0];
-            }
-        }
+        onChange: function (selectedDates, dateStr, fp) {
+    if (isSettingDates) return;
+
+    if (isLongTerm && selectedDates.length === 2) {
+        const checkIn = selectedDates[0];
+        const diffDays = Math.round((selectedDates[1] - checkIn) / (1000 * 60 * 60 * 24));
+        const months = Math.max(1, Math.round(diffDays / 30));
+        const checkOut = new Date(checkIn);
+        checkOut.setDate(checkOut.getDate() + months * 30);
+
+        isSettingDates = true;
+        fp.setDate([checkIn, checkOut], false);
+        isSettingDates = false;
+
+        document.getElementById("check_in").value = checkIn.toISOString().split("T")[0];
+        document.getElementById("check_out").value = checkOut.toISOString().split("T")[0];
+
+        document.getElementById("summary-checkin").textContent = checkIn.toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" });
+        document.getElementById("summary-checkout").textContent = checkOut.toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" });
+        document.getElementById("nights-count").textContent = `${months * 30} días (${months} ${months === 1 ? "mes" : "meses"})`;
+        document.getElementById("booking-summary").style.display = "block";
+
+    } else if (!isLongTerm && selectedDates.length === 2) {
+        const checkIn = selectedDates[0];
+        const checkOut = selectedDates[1];
+
+        document.getElementById("check_in").value = checkIn.toISOString().split("T")[0];
+        document.getElementById("check_out").value = checkOut.toISOString().split("T")[0];
+
+        const diffDays = Math.round((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+        document.getElementById("summary-checkin").textContent = checkIn.toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" });
+        document.getElementById("summary-checkout").textContent = checkOut.toLocaleDateString("es-CO", { day: "2-digit", month: "long", year: "numeric" });
+        document.getElementById("nights-count").textContent = `${diffDays} ${diffDays === 1 ? "noche" : "noches"}`;
+        document.getElementById("booking-summary").style.display = "block";
+    }
+}
     });
 }
     </script>
