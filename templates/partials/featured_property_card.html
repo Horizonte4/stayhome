@@ -26,6 +26,8 @@
                 ${{ property.price|floatformat:0|intcomma }} COP
                 {% if property.listing_type == "sale" %}
                     <small>{% trans "sale" %}</small>
+                {% elif property.listing_type == "short_term" %}
+                    <small>{% trans "/night" %}</small>
                 {% else %}
                     <small>{% trans "/mo" %}</small>
                 {% endif %}

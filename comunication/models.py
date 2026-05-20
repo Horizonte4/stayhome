@@ -5,9 +5,11 @@ from django.urls import reverse
 
 class ConversationQuerySet(models.QuerySet):
     def for_user(self, user):
+        """Filtra las conversaciones donde el usuario es comprador o dueño."""
         return self.filter(models.Q(buyer=user) | models.Q(owner=user))
 
     def with_related(self):
+        """Agrega los datos de la propiedad, comprador y dueño a la consulta."""
         return self.select_related(
             "property",
             "property__owner",
@@ -51,14 +53,17 @@ class Conversation(models.Model):
         return f"Conversation about {self.property} ({self.buyer} ↔ {self.owner})"
 
     def get_absolute_url(self):
+        """Retorna la URL del detalle de la conversación."""
         return reverse("comunication:conversation_detail", args=[self.pk])
 
     def is_participant(self, user):
+        """Retorna True si el usuario es parte de la conversación."""
         return user == self.buyer or user == self.owner
 
 
 class MessageQuerySet(models.QuerySet):
     def with_related(self):
+        """Agrega los datos del remitente y la conversación a la consulta."""
         return self.select_related("sender", "conversation")
 
 

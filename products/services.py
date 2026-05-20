@@ -3,6 +3,7 @@ from django.conf import settings
 
 
 def get_products():
+    """Obtiene la lista de productos desde la API externa."""
     url = getattr(settings, "PRODUCT_API_URL", "")
     if not url:
         return []
