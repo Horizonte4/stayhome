@@ -3,7 +3,7 @@ from django.template.response import TemplateResponse
 from django.urls import path
 
 from .models import Booking
-from reports.services import ReportService
+from .services import ReportService
 
 
 class ContractAdmin(admin.ModelAdmin):

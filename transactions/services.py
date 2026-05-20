@@ -1,10 +1,14 @@
 from datetime import timedelta
 
+from django.contrib.auth import get_user_model
 from django.db import transaction
+from django.db.models import Count
 from django.utils.translation import gettext as _
 from django.utils import timezone
 from django.conf import settings
 from notifications.services import NotificationService
+from properties.models import Property
+from users.models import Client, Owner
 from .models import Booking, Purchase
 from .selectors import get_client_bookings_context
 
@@ -12,7 +16,6 @@ from .selectors import get_client_bookings_context
 class BookingService:
     @staticmethod
     def has_conflict(property_obj, check_in, check_out):
-        """Verifica si hay una reserva aprobada que choca con las fechas dadas."""
         return Booking.objects.filter(
             property=property_obj,
             status=Booking.STATUS_APPROVED,
@@ -22,7 +25,6 @@ class BookingService:
 
     @staticmethod
     def create_booking(property_obj, user, check_in, check_out):
-        """Crea una reserva si el usuario, la propiedad y las fechas son válidos."""
         if property_obj.owner and property_obj.owner.user_id == user.id:
             raise ValueError(_("Owners cannot book their own properties."))
 
@@ -58,7 +60,6 @@ class BookingService:
 
     @staticmethod
     def change_status(booking, new_status):
-        """Cambia el estado de una reserva y envía los correos correspondientes."""
         valid_statuses = {
             Booking.STATUS_APPROVED,
             Booking.STATUS_REJECTED,
@@ -131,12 +132,10 @@ class BookingService:
 
     @staticmethod
     def get_client_bookings(user):
-        """Obtiene el contexto con las reservas del cliente."""
         return get_client_bookings_context(user)
 
     @staticmethod
     def get_owner_bookings(owner):
-        """Obtiene las reservas del dueño agrupadas por estado."""
         today = timezone.localdate()
         bookings = Booking.objects.filter(property__owner=owner).select_related(
             "property",
@@ -161,7 +160,6 @@ class BookingService:
 class PurchaseService:
     @staticmethod
     def request_purchase(property_obj, user):
-        """Crea una solicitud de compra si la propiedad está disponible y el usuario puede comprarla."""
         if property_obj.listing_type != "sale":
             raise ValueError(_("This property is not for sale."))
 
@@ -191,7 +189,6 @@ class PurchaseService:
 
     @staticmethod
     def approve_purchase(purchase):
-        """Aprueba una solicitud de compra si la propiedad no ha sido vendida."""
         if Purchase.objects.filter(
             property=purchase.property,
             status=Purchase.STATUS_APPROVED,
@@ -204,10 +201,157 @@ class PurchaseService:
 
     @staticmethod
     def reject_purchase(purchase):
-        """Rechaza una solicitud de compra si está en estado pendiente."""
         if purchase.status != Purchase.STATUS_PENDING:
             raise ValueError(_("Only pending purchases can be rejected."))
 
         purchase.status = Purchase.STATUS_REJECTED
         purchase.save(update_fields=["status", "updated_at"])
         return purchase
+
+
+class ReportService:
+    @staticmethod
+    def get_admin_dashboard_data():
+        user_model = get_user_model()
+
+        total_users_created = user_model.objects.count()
+        total_clients = Client.objects.count()
+        total_owners = Owner.objects.count()
+        total_properties = Property.objects.count()
+
+        total_bookings = Booking.objects.count()
+        approved_bookings = Booking.objects.filter(
+            status=Booking.STATUS_APPROVED
+        ).count()
+        pending_bookings = Booking.objects.filter(status=Booking.STATUS_PENDING).count()
+        rejected_bookings = Booking.objects.filter(
+            status=Booking.STATUS_REJECTED
+        ).count()
+        cancelled_bookings = Booking.objects.filter(
+            status=Booking.STATUS_CANCELLED
+        ).count()
+
+        total_purchases = Purchase.objects.count()
+        approved_purchases = Purchase.objects.filter(
+            status=Purchase.STATUS_APPROVED
+        ).count()
+        pending_purchases = Purchase.objects.filter(
+            status=Purchase.STATUS_PENDING
+        ).count()
+        rejected_purchases = Purchase.objects.filter(
+            status=Purchase.STATUS_REJECTED
+        ).count()
+
+        most_booked_property = (
+            Booking.objects.values(
+                "property",
+                "property__title",
+                "property__city",
+                "property__listing_type",
+                "property__price",
+            )
+            .annotate(bookings_count=Count("id"))
+            .order_by("-bookings_count", "property__title")
+            .first()
+        )
+        if most_booked_property:
+            most_booked_property = {
+                "property_id": most_booked_property["property"],
+                "title": most_booked_property["property__title"],
+                "city": most_booked_property["property__city"],
+                "listing_type": most_booked_property["property__listing_type"],
+                "price": most_booked_property["property__price"],
+                "bookings_count": most_booked_property["bookings_count"],
+            }
+
+        top_booked_properties = list(
+            Booking.objects.values("property__title")
+            .annotate(bookings_count=Count("id"))
+            .order_by("-bookings_count", "property__title")[:5]
+        )
+        max_bookings = max(
+            (item["bookings_count"] for item in top_booked_properties),
+            default=0,
+        )
+        for item in top_booked_properties:
+            item["title"] = item.pop("property__title")
+            item["bar_width"] = (
+                (item["bookings_count"] * 100 / max_bookings) if max_bookings else 0
+            )
+
+        top_properties_by_sales = list(
+            Purchase.objects.filter(status=Purchase.STATUS_APPROVED)
+            .values("property__title")
+            .annotate(sales_count=Count("id"))
+            .order_by("-sales_count", "property__title")[:5]
+        )
+        max_sales = max(
+            (item["sales_count"] for item in top_properties_by_sales),
+            default=0,
+        )
+        for item in top_properties_by_sales:
+            item["title"] = item.pop("property__title")
+            item["bar_width"] = (
+                (item["sales_count"] * 100 / max_sales) if max_sales else 0
+            )
+
+        last_booking_obj = (
+            Booking.objects.select_related("property", "user")
+            .order_by("-created_at")
+            .first()
+        )
+        last_booking = None
+        if last_booking_obj:
+            last_booking = {
+                "booking_id": last_booking_obj.id,
+                "property_title": last_booking_obj.property.title,
+                "user_email": last_booking_obj.user.email,
+                "check_in": last_booking_obj.check_in,
+                "check_out": last_booking_obj.check_out,
+                "status": last_booking_obj.status,
+                "created_at": last_booking_obj.created_at,
+            }
+
+        last_confirmed_sale_obj = (
+            Purchase.objects.filter(status=Purchase.STATUS_APPROVED)
+            .select_related("property", "buyer")
+            .order_by("-created_at")
+            .first()
+        )
+        last_confirmed_sale = None
+        if last_confirmed_sale_obj:
+            last_confirmed_sale = {
+                "purchase_id": last_confirmed_sale_obj.id,
+                "property_title": last_confirmed_sale_obj.property.title,
+                "buyer_email": last_confirmed_sale_obj.buyer.email,
+                "total_value": last_confirmed_sale_obj.total_value,
+                "status": last_confirmed_sale_obj.status,
+                "created_at": last_confirmed_sale_obj.created_at,
+            }
+
+        return {
+            "summary_cards": [
+                {"label": "Total users", "value": total_users_created},
+                {"label": "Total clients", "value": total_clients},
+                {"label": "Total owners", "value": total_owners},
+                {"label": "Total properties", "value": total_properties},
+                {"label": "Total bookings", "value": total_bookings},
+                {"label": "Total purchases", "value": total_purchases},
+            ],
+            "bookings_status": {
+                "approved": approved_bookings,
+                "pending": pending_bookings,
+                "rejected": rejected_bookings,
+                "cancelled": cancelled_bookings,
+            },
+            "purchases_status": {
+                "approved": approved_purchases,
+                "pending": pending_purchases,
+                "rejected": rejected_purchases,
+            },
+            "most_booked_property": most_booked_property,
+            "top_booked_properties": top_booked_properties,
+            "top_properties_by_sales": top_properties_by_sales,
+            "last_booking": last_booking,
+            "last_confirmed_sale": last_confirmed_sale,
+        }
