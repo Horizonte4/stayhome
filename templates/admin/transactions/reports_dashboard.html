@@ -1,0 +1,163 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/transactions_admin.css' %}">
+{% endblock %}
+{% block content %}
+    <div id="content-main">
+        <h1>Transactions reports</h1>
+        <div class="reports-grid">
+            {% for card in report_data.summary_cards %}
+                <div class="report-card">
+                    <div class="report-card__label">{{ card.label }}</div>
+                    <div class="report-card__value">{{ card.value }}</div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="reports-panels">
+            <div class="report-panel">
+                <h2>Bookings by status</h2>
+                <div class="report-details">
+                    <div>Approved: {{ report_data.bookings_status.approved }}</div>
+                    <div>Pending: {{ report_data.bookings_status.pending }}</div>
+                    <div>Rejected: {{ report_data.bookings_status.rejected }}</div>
+                    <div>Cancelled: {{ report_data.bookings_status.cancelled }}</div>
+                </div>
+            </div>
+            <div class="report-panel">
+                <h2>Purchases by status</h2>
+                <div class="report-details">
+                    <div>Approved: {{ report_data.purchases_status.approved }}</div>
+                    <div>Pending: {{ report_data.purchases_status.pending }}</div>
+                    <div>Rejected: {{ report_data.purchases_status.rejected }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="reports-panels">
+            <div class="report-panel">
+                <h2>Top booked properties</h2>
+                {% if report_data.top_booked_properties %}
+                    <div class="bar-list">
+                        {% for item in report_data.top_booked_properties %}
+                            <div class="bar-item">
+                                <div class="bar-item__row">
+                                    <span>{{ item.title }}</span>
+                                    <strong>{{ item.bookings_count }}</strong>
+                                </div>
+                                <progress class="bar-item__progress"
+                                          value="{{ item.bookings_count }}"
+                                          max="{{ report_data.top_booked_properties.0.bookings_count }}"></progress>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No booking data available.</p>
+                {% endif %}
+            </div>
+            <div class="report-panel">
+                <h2>Top properties by approved sales</h2>
+                {% if report_data.top_properties_by_sales %}
+                    <div class="bar-list">
+                        {% for item in report_data.top_properties_by_sales %}
+                            <div class="bar-item">
+                                <div class="bar-item__row">
+                                    <span>{{ item.title }}</span>
+                                    <strong>{{ item.sales_count }}</strong>
+                                </div>
+                                <progress class="bar-item__progress"
+                                          value="{{ item.sales_count }}"
+                                          max="{{ report_data.top_properties_by_sales.0.sales_count }}"></progress>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>No approved sales data available.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="reports-panels">
+            <div class="report-panel">
+                <h2>Most booked property</h2>
+                {% if report_data.most_booked_property %}
+                    <div class="report-details">
+                        <div>
+                            <strong>Title:</strong> {{ report_data.most_booked_property.title }}
+                        </div>
+                        <div>
+                            <strong>City:</strong> {{ report_data.most_booked_property.city }}
+                        </div>
+                        <div>
+                            <strong>Type:</strong> {{ report_data.most_booked_property.listing_type }}
+                        </div>
+                        <div>
+                            <strong>Price:</strong> {{ report_data.most_booked_property.price }}
+                        </div>
+                        <div>
+                            <strong>Bookings:</strong> {{ report_data.most_booked_property.bookings_count }}
+                        </div>
+                    </div>
+                {% else %}
+                    <p>No bookings available.</p>
+                {% endif %}
+            </div>
+            <div class="report-panel">
+                <h2>Last booking</h2>
+                {% if report_data.last_booking %}
+                    <div class="report-details">
+                        <div>
+                            <strong>ID:</strong> {{ report_data.last_booking.booking_id }}
+                        </div>
+                        <div>
+                            <strong>Property:</strong> {{ report_data.last_booking.property_title }}
+                        </div>
+                        <div>
+                            <strong>User:</strong> {{ report_data.last_booking.user_email }}
+                        </div>
+                        <div>
+                            <strong>Check-in:</strong> {{ report_data.last_booking.check_in }}
+                        </div>
+                        <div>
+                            <strong>Check-out:</strong> {{ report_data.last_booking.check_out }}
+                        </div>
+                        <div>
+                            <strong>Status:</strong> {{ report_data.last_booking.status }}
+                        </div>
+                        <div>
+                            <strong>Created:</strong> {{ report_data.last_booking.created_at }}
+                        </div>
+                    </div>
+                {% else %}
+                    <p>No bookings available.</p>
+                {% endif %}
+            </div>
+            <div class="report-panel">
+                <h2>Last confirmed sale</h2>
+                {% if report_data.last_confirmed_sale %}
+                    <div class="report-details">
+                        <div>
+                            <strong>ID:</strong> {{ report_data.last_confirmed_sale.purchase_id }}
+                        </div>
+                        <div>
+                            <strong>Property:</strong> {{ report_data.last_confirmed_sale.property_title }}
+                        </div>
+                        <div>
+                            <strong>Buyer:</strong> {{ report_data.last_confirmed_sale.buyer_email }}
+                        </div>
+                        <div>
+                            <strong>Total value:</strong> {{ report_data.last_confirmed_sale.total_value }}
+                        </div>
+                        <div>
+                            <strong>Status:</strong> {{ report_data.last_confirmed_sale.status }}
+                        </div>
+                        <div>
+                            <strong>Created:</strong> {{ report_data.last_confirmed_sale.created_at }}
+                        </div>
+                    </div>
+                {% else %}
+                    <p>No confirmed sales available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

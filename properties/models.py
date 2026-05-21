@@ -59,6 +59,7 @@ class Property(models.Model):
         return f"{self.title} - {self.city}"
 
     def get_blocked_dates(self):
+        """Retorna las fechas bloqueadas de la propiedad como un conjunto de fechas."""
         if not self.availability_dates:
             return set()
 
@@ -72,6 +73,7 @@ class Property(models.Model):
         return blocked_dates
 
     def has_approved_booking_overlap(self, start_date, end_date):
+        """Verifica si hay una reserva aprobada que choca con el rango de fechas."""
         if self.listing_type == "sale":
             return False
 
@@ -82,6 +84,7 @@ class Property(models.Model):
         ).exists()
 
     def has_blocked_dates_overlap(self, start_date, end_date):
+        """Verifica si hay fechas bloqueadas dentro del rango dado."""
         if self.listing_type == "sale":
             return False
 
@@ -96,6 +99,7 @@ class Property(models.Model):
         return False
 
     def is_available(self, start_date=None, end_date=None):
+        """Retorna True si la propiedad está disponible para el rango de fechas."""
         if self.listing_type == "sale":
             return True
 
@@ -110,6 +114,7 @@ class Property(models.Model):
 
     @property
     def availability_label(self):
+        """Retorna la etiqueta de disponibilidad de la propiedad."""
         if self.listing_type == "sale":
             return _("Available")
 
@@ -118,28 +123,35 @@ class Property(models.Model):
 
 class SavedPropertyQuerySet(models.QuerySet):
     def with_related(self):
+        """Agrega los datos del usuario y la propiedad a la consulta."""
         return self.select_related("user", "property_obj")
 
     def favorites(self):
+        """Filtra las propiedades guardadas de tipo alquiler."""
         return self.with_related().filter(
             property_obj__listing_type__in=["short_term", "long_term"]
         )
 
     def wishlist(self):
+        """Filtra las propiedades guardadas de tipo venta."""
         return self.with_related().filter(property_obj__listing_type="sale")
 
     def for_user(self, user):
+        """Filtra las propiedades guardadas de un usuario."""
         return self.filter(user=user)
 
     def ids_for_user(self, user):
+        """Retorna los IDs de las propiedades guardadas por el usuario."""
         if not getattr(user, "is_authenticated", False):
             return set()
         return set(self.filter(user=user).values_list("property_obj_id", flat=True))
 
     def favorites_for(self, user):
+        """Retorna los favoritos del usuario ordenados por fecha."""
         return self.favorites().filter(user=user).order_by("-created_at")
 
     def wishlist_for(self, user):
+        """Retorna la lista de deseos del usuario ordenada por fecha."""
         return self.wishlist().filter(user=user).order_by("-created_at")
 
 
@@ -172,14 +184,17 @@ class SavedProperty(models.Model):
 
     @property
     def category(self):
+        """Retorna la categoría de la propiedad guardada: wishlist o favorite."""
         if self.property_obj.listing_type == "sale":
             return "wishlist"
         return "favorite"
 
     @property
     def is_favorite(self):
+        """Retorna True si la propiedad es de tipo alquiler."""
         return self.property_obj.listing_type in ["short_term", "long_term"]
 
     @property
     def is_wishlist(self):
+        """Retorna True si la propiedad es de tipo venta."""
         return self.property_obj.listing_type == "sale"

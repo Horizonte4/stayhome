@@ -21,4 +21,7 @@ urlpatterns = [
         views.change_purchase_status,
         name="change_purchase_status",
     ),
+    path(
+        "booking/<int:booking_id>/cancel/", views.cancel_booking, name="cancel_booking"
+    ),
 ]

@@ -19,9 +19,6 @@
                 </div>
                 <button type="submit" class="btn-list full-width">{% trans "Log in" %}</button>
                 <div class="auth-footer">
-                    <a href="{% url 'password_reset' %}" class="auth-link">{% trans "forgot your password?" %}</a>
-                </div>
-                <div class="auth-footer">
                     {% trans "Don't have an account?" %}
                     <a href="{% url 'registration' %}">{% trans "Sign up" %}</a>
                 </div>

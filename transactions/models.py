@@ -7,6 +7,7 @@ from core.models import TimeStampedModel
 
 class BookingQuerySet(models.QuerySet):
     def with_property_details(self):
+        """Agrega los datos de la propiedad y su dueño a la consulta."""
         return self.select_related(
             "property",
             "property__owner",
@@ -14,9 +15,11 @@ class BookingQuerySet(models.QuerySet):
         )
 
     def for_user(self, user):
+        """Filtra las reservas de un usuario con los datos de la propiedad."""
         return self.filter(user=user).with_property_details()
 
     def client_context(self, user):
+        """Retorna las reservas del usuario agrupadas por estado."""
         today = timezone.localdate()
         bookings = self.for_user(user)
         return {
@@ -66,10 +69,25 @@ class Booking(TimeStampedModel):
         ordering = ["-created_at"]
 
     def nights(self):
+        """Retorna el número de noches entre check-in y check-out."""
         return (self.check_out - self.check_in).days
 
+    def months(self):
+        """Retorna el número de meses completos de la reserva."""
+        return self.nights() // 30
+
     def total_price(self):
+        """Calcula el precio total según el tipo de propiedad."""
+        if self.property.listing_type == "long_term":
+            months = self.nights() // 30
+            return months * self.property.price
         return self.nights() * self.property.price
+
+    def can_cancel(self):
+        """Verifica si la reserva se puede cancelar según los días límite."""
+        today = timezone.localdate()
+        cancel_days_limit = getattr(settings, "BOOKING_CANCEL_DAYS_LIMIT", 5)
+        return (self.check_in - today).days > cancel_days_limit
 
     def __str__(self):
         return f"{self.user} - {self.property} ({self.check_in} -> {self.check_out})"
@@ -77,6 +95,7 @@ class Booking(TimeStampedModel):
 
 class PurchaseQuerySet(models.QuerySet):
     def with_property_details(self):
+        """Agrega los datos de la propiedad y su dueño a la consulta."""
         return self.select_related(
             "property",
             "property__owner",
@@ -84,9 +103,11 @@ class PurchaseQuerySet(models.QuerySet):
         )
 
     def for_buyer(self, user):
+        """Filtra las compras de un comprador con los datos de la propiedad."""
         return self.filter(buyer=user).with_property_details().order_by("-created_at")
 
     def for_owner(self, owner):
+        """Filtra las compras de las propiedades de un dueño."""
         return (
             self.filter(property__owner=owner)
             .with_property_details()

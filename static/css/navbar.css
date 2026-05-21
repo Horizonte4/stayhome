@@ -262,3 +262,123 @@ nav {
 li.nav-dropdown:hover > ul.nav-dropdown-menu {
     display: block !important;
 }
+
+#bookings-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 8px 0;
+    min-width: 200px;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    list-style: none;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 8px 16px;
+    color: #374151;
+    text-decoration: none;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 8px;
+}
+
+.hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+        position: relative;
+    }
+    .hamburger {
+        display: flex;
+        margin-left: auto;
+    }
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        gap: 4px;
+        padding: 12px 0;
+    }
+    .nav-links.open {
+        display: flex;
+    }
+    .nav-links li {
+        width: 100%;
+    }
+    .nav-links a {
+        padding: 10px 8px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .nav-right {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid rgba(0,0,0,0.08);
+    }
+    .nav-right.open {
+        display: flex;
+    }
+    .nav-right a {
+        width: 100%;
+        text-align: center;
+    }
+    form[action*="set_language"] {
+        width: 100%;
+        padding-top: 8px;
+    }
+    form[action*="set_language"] select {
+        width: 100%;
+    }
+    .dropdown-menu {
+        position: static !important;
+        display: flex !important;
+        flex-direction: column;
+        box-shadow: none;
+        padding-left: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-wrap: wrap;
+        padding: 12px 16px;
+        position: fixed;  /* ← cambia relative a fixed */
+        background: white;
+        z-index: 1000;
+    }
+
+    .nav-links.open,
+    .nav-right.open {
+        background: white;
+        z-index: 999;
+        padding: 8px 16px 16px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+}
